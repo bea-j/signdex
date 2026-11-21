@@ -1,7 +1,9 @@
 // Landmark debug page: draws the assembled Kaggle-layout frame over the video.
 import { FaceLandmarker, HandLandmarker, PoseLandmarker } from '@mediapipe/tasks-vision'
-import { computeFeatures, stage1 } from './features'
+import { stage1 } from './features'
+import { lookupSign } from './lookup'
 import { LOW_CONFIDENCE, SignModel } from './model'
+import { CameraPicker } from './ui/camera'
 import {
   COORDS_PER_POINT as C,
   LandmarkExtractor,
@@ -215,11 +217,8 @@ async function lookup() {
     if (frames.length === 0) throw new Error('no frames captured; is the video playing?')
     // Same pipeline as training: aspect correction, then features at the frame length this model expects.
     const corrected = toTrainingAspect(frames, video.videoWidth, video.videoHeight)
-    const s1 = stage1(corrected)
-    const t0 = performance.now()
-    const features = computeFeatures(corrected, model.length)
-    const matches = await model.topK(features, 5)
-    const ms = performance.now() - t0
+    const variants = Number($<HTMLSelectElement>('tta').value)
+    const { matches, stage1: s1, timing, variants: used } = await lookupSign(model, corrected, { variants, k: 5 })
     for (const m of matches) {
       const li = document.createElement('li')
       const pct = (m.confidence * 100).toFixed(1)
@@ -235,7 +234,9 @@ async function lookup() {
     lookupStatus.textContent =
       (unsure ? 'Not sure. Try again with just the one sign inside the 2 seconds. ' : '') +
       `${frames.length} frames recorded, ${handFrames} with hands after trimming` +
-      `${s1.mirrored ? ' (left-dominant, mirrored)' : ''}; features + model ${ms.toFixed(0)} ms.`
+      `${s1.mirrored ? ' (left-dominant, mirrored)' : ''}. ` +
+      `Lookup ${timing.totalMs.toFixed(0)} ms (features ${timing.featuresMs.toFixed(0)} + model ` +
+      `${timing.modelMs.toFixed(0)}), ${used === 1 ? 'single pass' : `averaged over ${used} trimmed versions`}.`
   } catch (e) {
     lookupStatus.textContent = `Lookup failed: ${(e as Error).message}`
   } finally {
@@ -256,14 +257,25 @@ SignModel.load()
     $('model-info').textContent = `No model loaded: ${(e as Error).message}. Put model.onnx and labels.json in model/ and restart npm run dev.`
   })
 
+const camera = new CameraPicker($<HTMLSelectElement>('camera'))
+void camera.refresh()
+
+async function showStream(stream: MediaStream, label: string) {
+  video.srcObject = stream
+  video.controls = false
+  await video.play()
+  sourceName = label
+  startRecorder() // same <video> element, so the recorder just keeps going on the new camera
+  if (camera.settingsText) status.textContent = `Running on ${label}: ${camera.settingsText}`
+}
+
+camera.onSwitch = (stream, label) => void showStream(stream, label)
+camera.onError = (message) => (status.textContent = message)
+
 $('webcam').addEventListener('click', async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 }, audio: false })
-    video.srcObject = stream
-    video.controls = false
-    await video.play()
-    sourceName = 'webcam'
-    startRecorder()
+    const stream = await camera.open()
+    await showStream(stream, camera.label)
   } catch (e) {
     status.textContent = `Webcam unavailable: ${(e as Error).message}`
   }
@@ -272,7 +284,7 @@ $('webcam').addEventListener('click', async () => {
 $<HTMLInputElement>('file').addEventListener('change', async (ev) => {
   const file = (ev.target as HTMLInputElement).files?.[0]
   if (!file) return
-  if (video.srcObject instanceof MediaStream) video.srcObject.getTracks().forEach((t) => t.stop())
+  camera.close()
   video.srcObject = null
   video.src = URL.createObjectURL(file)
   video.controls = true

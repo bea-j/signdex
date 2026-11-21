@@ -44,6 +44,8 @@
     <h1>Landmark debug</h1>
     <p>Shows what the model sees: landmarks assembled into the Kaggle layout, with hands placed in slots by nearest pose wrist. Runs on your device.</p>
     <div class="controls">
+      <label for="camera">Camera</label>
+      <select id="camera"><option value="">Default camera</option></select>
       <button id="webcam" type="button">Use webcam</button>
       <label for="file">Video file</label>
       <input id="file" type="file" accept="video/*" />
@@ -82,6 +84,12 @@
       <h2 id="lookup-heading">Look up a sign</h2>
       <p id="model-info" class="muted">Loading model…</p>
       <p>Start the webcam (or a video), then sign one sign within 2 seconds.</p>
+      <label for="tta">Test-time averaging</label>
+      <select id="tta">
+        <option value="1">Off (1 pass)</option>
+        <option value="3">3 trimmed versions</option>
+        <option value="5" selected>5 trimmed versions</option>
+      </select>
       <button id="lookup" type="button" disabled>Record 2 s and look up</button>
       <p id="lookup-status" aria-live="polite"></p>
       <ol id="matches" aria-label="Top 5 matching signs"></ol>

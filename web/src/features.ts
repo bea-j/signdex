@@ -189,6 +189,17 @@ export function stage1(frames: KaggleFrame[]): Stage1 {
   return { T, x, mirrored }
 }
 
+/**
+ * Drop `start` frames from the beginning and `end` from the end of a stage-1 sequence (keeps at least 1 frame).
+ * Used for test-time averaging; it is not part of the spec transform, so it doesn't affect parity.
+ */
+export function trimStage1(s1: Stage1, start: number, end: number): Stage1 {
+  if (s1.T === 0) return s1
+  const a = Math.max(0, Math.min(start, s1.T - 1))
+  const b = Math.max(0, Math.min(end, s1.T - 1 - a))
+  return { T: s1.T - a - b, x: s1.x.subarray(a * N * 2, (s1.T - b) * N * 2), mirrored: s1.mirrored }
+}
+
 export function resampleIndex(T: number, L = SEQUENCE_LENGTH): Int32Array {
   const idx = new Int32Array(L)
   for (let i = 0; i < L; i++) idx[i] = Math.min(T - 1, Math.floor(((2 * i + 1) * T) / (2 * L)))

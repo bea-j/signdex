@@ -52,14 +52,39 @@ export class SignModel {
 
   /** features: Float32Array of length * FEATURES_PER_FRAME from computeFeatures(frames, this.length). */
   async topK(features: Float32Array, k = 5): Promise<SignMatch[]> {
-    const expected = this.length * FEATURES_PER_FRAME
-    if (features.length !== expected) throw new Error(`expected ${expected} feature values, got ${features.length}`)
-    const input = new ort.Tensor('float32', features, [1, this.length, FEATURES_PER_FRAME])
+    return this.topKAveraged([features], k)
+  }
+
+  /**
+   * Test-time averaging: run several inputs for the same clip (e.g. trimmed variants) in ONE batched model call
+   * and average their probabilities. With one input this is a plain lookup.
+   */
+  async topKAveraged(inputs: Float32Array[], k = 5): Promise<SignMatch[]> {
+    const size = this.length * FEATURES_PER_FRAME
+    const n = inputs.length
+    if (n === 0) throw new Error('no inputs')
+    const batch = new Float32Array(n * size)
+    inputs.forEach((x, i) => {
+      if (x.length !== size) throw new Error(`expected ${size} feature values, got ${x.length}`)
+      batch.set(x, i * size)
+    })
+    const input = new ort.Tensor('float32', batch, [n, this.length, FEATURES_PER_FRAME])
     const out = await this.session.run({ [this.session.inputNames[0]]: input })
     const probs = out[this.session.outputNames[0]].data as Float32Array
-    return Array.from(probs.keys())
-      .sort((a, b) => probs[b] - probs[a])
+    const C = probs.length / n
+    const avg = new Float32Array(C)
+    for (let i = 0; i < n; i++) for (let c = 0; c < C; c++) avg[c] += probs[i * C + c] / n
+    return Array.from(avg.keys())
+      .sort((a, b) => avg[b] - avg[a])
       .slice(0, k)
-      .map((i) => ({ index: i, label: this.labels[i], gloss: this.labels[i].toUpperCase(), confidence: probs[i] }))
+      .map((i) => ({ index: i, label: this.labels[i], gloss: this.labels[i].toUpperCase(), confidence: avg[i] }))
+  }
+
+  /** For tests / Node: wrap an existing session (load() is the browser path). */
+  static fromSession(session: ort.InferenceSession, labels: string[]): SignModel {
+    const meta = session.inputMetadata[0]
+    const L = meta.isTensor ? meta.shape[1] : undefined
+    if (typeof L !== 'number') throw new Error('model input has no fixed frame length')
+    return new SignModel(session, labels, L)
   }
 }
