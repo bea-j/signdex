@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SignSeek landmark debug</title>
+    <style>
+      :root { color-scheme: light dark; --bg: #fff; --fg: #111; --muted: #555; --panel: #f3f3f3; --left: #e66100; --right: #1a6fdf; --face: #b8c7d9; --pose: #777; }
+      @media (prefers-color-scheme: dark) { :root { --bg: #121212; --fg: #eee; --muted: #aaa; --panel: #1e1e1e; --left: #ff9a3c; --right: #5aa9ff; --face: #b8c7d9; --pose: #aaa; } }
+      body { margin: 0; padding: 16px; font: 15px/1.4 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+      h1 { font-size: 1.3rem; margin: 0 0 8px; }
+      .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+      button, input[type='file'] { font: inherit; }
+      button { padding: 6px 12px; }
+      .layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(220px, 1fr); gap: 16px; }
+      @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
+      /* align-self: start, or the grid row stretches .stage taller than the video and the overlay with it */
+      .stage { position: relative; align-self: start; background: #000; }
+      .stage video { display: block; width: 100%; height: auto; object-fit: contain; }
+      /* left/top/width/height are set by debug.ts to the video's displayed picture rect */
+      .stage canvas { position: absolute; left: 0; top: 0; pointer-events: none; }
+      /* mirror the container, so video and overlay always flip together */
+      .stage.mirror { transform: scaleX(-1); }
+      .panel { background: var(--panel); padding: 12px; border-radius: 6px; }
+      .panel dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; }
+      .panel dt { color: var(--muted); }
+      .panel dd { margin: 0; font-variant-numeric: tabular-nums; }
+      .swatch { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+      .legend { margin-top: 12px; color: var(--muted); }
+      .legend div { margin: 2px 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Landmark debug</h1>
+    <p>Shows what the model sees: landmarks assembled into the Kaggle layout, with hands placed in slots by nearest pose wrist. Runs on your device.</p>
+    <div class="controls">
+      <button id="webcam" type="button">Use webcam</button>
+      <label for="file">Video file</label>
+      <input id="file" type="file" accept="video/*" />
+      <label><input id="mirror" type="checkbox" /> Mirror preview (display only)</label>
+      <label><input id="face-points" type="checkbox" /> Show face points</label>
+      <button id="download" type="button" disabled>Download last 6 s as JSON</button>
+    </div>
+    <div class="layout">
+      <div class="stage" id="stage">
+        <video id="video" playsinline muted loop controls aria-label="Input video"></video>
+        <canvas id="overlay" aria-hidden="true"></canvas>
+      </div>
+      <div class="panel">
+        <dl>
+          <dt>Status</dt><dd id="status" aria-live="polite">Loading MediaPipe…</dd>
+          <dt>Delegate</dt><dd id="delegate">–</dd>
+          <dt>Landmark fps</dt><dd id="fps">–</dd>
+          <dt>Frame</dt><dd id="size">–</dd>
+          <dt>Aspect y scale</dt><dd id="aspect">–</dd>
+          <dt>Left slot</dt><dd id="p-left">–</dd>
+          <dt>Right slot</dt><dd id="p-right">–</dd>
+          <dt>Lips</dt><dd id="p-lips">–</dd>
+          <dt>Pose</dt><dd id="p-pose">–</dd>
+          <dt>Last 2 s</dt><dd id="seq">–</dd>
+        </dl>
+        <div class="legend">
+          <div><span class="swatch" style="background: var(--left)"></span>left_hand slot (subject's left, pose 15)</div>
+          <div><span class="swatch" style="background: var(--right)"></span>right_hand slot (subject's right, pose 16)</div>
+          <div><span class="swatch" style="background: var(--face); opacity: 0.5"></span>face: lips outline; lips, eyes, eyebrows, forehead and chin points under "Show face points"</div>
+          <div><span class="swatch" style="background: var(--pose)"></span>upper-body pose (7 points used)</div>
+          <div>Large dots are the hand and pose points the model uses. Face points are drawn small and faint.</div>
+        </div>
+      </div>
+    </div>
+    <p><a href="./">Back to SignSeek</a></p>
+    <script type="module" src="/src/debug.ts"></script>
+  </body>
+</html>

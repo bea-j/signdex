@@ -2,8 +2,8 @@
 
     python model/parity.py IN.json OUT.json
 
-IN:  {"cases": [{"name": str, "frames": [T][543][2 or 3] with null = NaN}]}
-OUT: {"cases": [{"name": str, "features": [L][F]}]}   via prepare.FeatureExtractor.compute
+IN:  {"cases": [{"name": str, "frames": [T][543][2 or 3] with null = NaN, "length": optional L}]}
+OUT: {"cases": [{"name": str, "features": [L][F]}]}   via prepare.FeatureExtractor(spec, length=L).compute
 
 Needs only numpy.
 """
@@ -26,8 +26,13 @@ def main() -> None:
     src, dst = sys.argv[1], sys.argv[2]
     with open(src, encoding="utf-8") as fh:
         cases = json.load(fh)["cases"]
-    fx = FeatureExtractor(load_spec())
-    out = [{"name": c["name"], "features": fx.compute(to_array(c["frames"])).astype(float).tolist()} for c in cases]
+    spec = load_spec()
+    extractors: dict = {}
+    out = []
+    for c in cases:
+        L = c.get("length") or spec["resample"]["length"]
+        fx = extractors.setdefault(L, FeatureExtractor(spec, length=L))
+        out.append({"name": c["name"], "features": fx.compute(to_array(c["frames"])).astype(float).tolist()})
     with open(dst, "w", encoding="utf-8") as fh:
         json.dump({"cases": out}, fh)
 

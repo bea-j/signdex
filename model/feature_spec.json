@@ -1,6 +1,7 @@
 {
   "_comment": "Shared by model/prepare.py and web/src/features.ts. JSON has no comments: see feature_spec.md for the reasoning behind every choice.",
-  "version": 3,
+  "version": 4,
+  "per_frame_identical_to_versions": [3],
 
   "source_layout": {
     "points_per_frame": 543,
@@ -120,7 +121,8 @@
   },
 
   "resample": {
-    "length": 32,
+    "length": 64,
+    "_length_note": "v4 changed 32 -> 64; nothing else differs from v3. The model in use declares its own length in its ONNX input shape [batch, L, F]; features.ts/prepare.py take L as a parameter so a v3 (L=32) model keeps working.",
     "method": "nearest",
     "formula": "src_index(i) = min(T - 1, floor(((2 * i + 1) * T) / (2 * L))) for i in 0..L-1, integer arithmetic",
     "applies_to": "points and presence masks",
@@ -134,7 +136,7 @@
 
   "output": {
     "dtype": "float32",
-    "shape": [32, 222],
+    "shape": [64, 222],
     "frame_layout": "for each group in 'groups' order, for each point in that group's order: x, y; then the 4 presence masks in mask_order (1.0 present, 0.0 missing). upper_face has no mask of its own: it comes from the same face detection as lips.",
     "point_features": 218,
     "mask_features": 4,

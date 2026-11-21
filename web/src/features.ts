@@ -9,6 +9,10 @@ import { COORDS_PER_POINT, type KaggleFrame } from './layout'
 import { featureSpec as spec } from './spec'
 
 const groups = spec.groups
+/**
+ * The spec's resample length. The model in use may have been trained with a different L (its ONNX input is
+ * [batch, L, F]); pass that L to computeFeatures/stage2. v3 models use 32, v4 models 64.
+ */
 export const SEQUENCE_LENGTH: number = spec.resample.length
 export const NUM_POINTS: number = spec.num_points
 const MASKS: string[] = spec.presence.mask_order
@@ -191,13 +195,13 @@ export function resampleIndex(T: number, L = SEQUENCE_LENGTH): Int32Array {
   return idx
 }
 
-/** Returns Float32Array of length SEQUENCE_LENGTH * FEATURES_PER_FRAME, row-major (frame, feature). */
-export function stage2(s1: Stage1): Float32Array {
-  const L = SEQUENCE_LENGTH
+/** Returns Float32Array of length L * FEATURES_PER_FRAME, row-major (frame, feature). */
+export function stage2(s1: Stage1, L: number = SEQUENCE_LENGTH): Float32Array {
+  if (!Number.isInteger(L) || L < 1) throw new Error(`invalid resample length ${L}`)
   const F = FEATURES_PER_FRAME
   const out = new Float32Array(L * F)
   if (s1.T === 0) return out
-  const idx = resampleIndex(s1.T)
+  const idx = resampleIndex(s1.T, L)
   const sel = new Float32Array(L * N * 2)
   for (let i = 0; i < L; i++) sel.set(s1.x.subarray(idx[i] * N * 2, (idx[i] + 1) * N * 2), i * N * 2)
   const masks = presence(sel, L)
@@ -211,6 +215,7 @@ export function stage2(s1: Stage1): Float32Array {
   return out
 }
 
-export function computeFeatures(frames: KaggleFrame[]): Float32Array {
-  return stage2(stage1(frames))
+/** L: resample length of the model in use (its ONNX input [batch, L, F]); defaults to the spec's. */
+export function computeFeatures(frames: KaggleFrame[], L: number = SEQUENCE_LENGTH): Float32Array {
+  return stage2(stage1(frames), L)
 }

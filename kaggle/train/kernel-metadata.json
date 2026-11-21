@@ -1,0 +1,13 @@
+{
+  "id": "beatricej/signseek-train",
+  "title": "SignSeek train",
+  "code_file": "signseek_train.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [],
+  "competition_sources": ["asl-signs"],
+  "kernel_sources": []
+}

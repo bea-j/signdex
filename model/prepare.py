@@ -41,10 +41,11 @@ def find_data_root() -> str:
 
 
 class FeatureExtractor:
-    def __init__(self, spec: dict):
+    def __init__(self, spec: dict, length: int | None = None):
+        """length: resample length L; defaults to the spec's. Pass the L of the model in use (its ONNX input)."""
         self.spec = spec
         groups = spec["groups"]
-        self.L = int(spec["resample"]["length"])
+        self.L = int(length or spec["resample"]["length"])
         self.fill = float(spec["missing"]["fill_value"])
         self.gidx = np.array([i for g in groups for i in g["global_index"]], dtype=np.int64)
         self.n = len(self.gidx)
@@ -89,7 +90,7 @@ class FeatureExtractor:
 
         self.mask_order = spec["presence"]["mask_order"]
         self.F = self.n * len(spec["coords"]) + len(self.mask_order)
-        assert [self.L, self.F] == spec["output"]["shape"]
+        assert self.F == spec["output"]["shape"][1]
 
     # ---- helpers ----
     def presence(self, x: np.ndarray) -> np.ndarray:

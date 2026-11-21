@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
   "name": "SignSeek",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Look up ASL signs you see in videos. Runs on your device.",
   "minimum_chrome_version": "116",
-  "permissions": ["sidePanel", "storage"],
+  "permissions": ["sidePanel", "storage", "tabCapture", "offscreen", "scripting", "activeTab"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
@@ -21,6 +21,9 @@
       "description": "Look up a sign from the last few seconds of video"
     }
   },
+  "web_accessible_resources": [
+    { "resources": ["capture-frame.html"], "matches": ["<all_urls>"] }
+  ],
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   }

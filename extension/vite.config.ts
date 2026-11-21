@@ -14,7 +14,13 @@ export default defineConfig({
     rollupOptions: {
       input: {
         sidepanel: here('sidepanel.html'),
+        offscreen: here('offscreen.html'),
+        'capture-frame': here('capture-frame.html'),
         background: here('src/background.ts'),
+        // Injected with chrome.scripting.executeScript({ files: [...] }): must stay classic scripts with no
+        // imports (they only import types).
+        probe: here('src/probe.ts'),
+        'capture-video': here('src/capture-video.ts'),
       },
       output: {
         // MV3 manifest refers to background.js by a fixed name.

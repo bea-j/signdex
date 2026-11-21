@@ -24,9 +24,16 @@ const REPO = fileURLToPath(new URL('../..', import.meta.url))
 interface Case {
   name: string
   frames: NestedFrame[]
+  /** Resample length L to compute at. */
+  length?: number
   expected?: number[][] // features computed on Kaggle (fixture only)
   expectMirrored?: boolean
 }
+
+/** Spec L (v4: 64) and the v3 model's L (32), which stays in use until a v4 model beats it. */
+const LENGTHS = [...new Set([SEQUENCE_LENGTH, 32])]
+const atLengths = (cs: Case[]): Case[] =>
+  cs.flatMap((c) => LENGTHS.map((L) => ({ ...c, name: `${c.name} [L=${L}]`, length: L })))
 
 // ------------------------------------------------------------------ synthetic sequences
 
@@ -111,14 +118,20 @@ function fixtureCases(): Case[] {
     spec_version: number
     cases: { sequence_id: number; sign: string; mirrored: boolean; raw_xy: NestedFrame[]; features: number[][] }[]
   }
-  // Raw landmarks are always useful; Kaggle-computed features only match the spec version that made them.
-  const current = fx.spec_version === featureSpec.version
-  return fx.cases.map((c) => ({
-    name: `kaggle: sequence ${c.sequence_id} "${c.sign}"${c.mirrored ? ' (mirrored)' : ''}${current ? '' : ` (fixture spec v${fx.spec_version}, raw only)`}`,
-    frames: c.raw_xy,
-    expected: current ? c.features : undefined,
-    expectMirrored: c.mirrored,
-  }))
+  // Raw landmarks are always useful. Kaggle-computed features are compared only if the fixture's spec
+  // version has the same per-frame transform (feature_spec.per_frame_identical_to_versions), at its own L.
+  const same: number[] = [featureSpec.version, ...(featureSpec.per_frame_identical_to_versions ?? [])]
+  const comparable = same.includes(fx.spec_version)
+  return fx.cases.flatMap((c) => {
+    const base = {
+      name: `kaggle: sequence ${c.sequence_id} "${c.sign}"${c.mirrored ? ' (mirrored)' : ''} (fixture spec v${fx.spec_version})`,
+      frames: c.raw_xy,
+      expectMirrored: c.mirrored,
+    }
+    if (!comparable) return atLengths([base])
+    const L = c.features.length
+    return [{ ...base, name: `${base.name} [L=${L}, vs Kaggle]`, length: L, expected: c.features }]
+  })
 }
 
 function recordingCases(): Case[] {
@@ -143,21 +156,21 @@ function python(): string {
   return process.platform === 'win32' ? 'python' : 'python3'
 }
 
-const cases: Case[] = [...syntheticCases(), ...fixtureCases(), ...recordingCases()]
+const cases: Case[] = [...atLengths(syntheticCases()), ...fixtureCases(), ...atLengths(recordingCases())]
 const pyFeatures = new Map<string, number[][]>()
 
 beforeAll(() => {
   const dir = mkdtempSync(join(tmpdir(), 'signseek-parity-'))
   const input = join(dir, 'landmarks.json')
   const output = join(dir, 'features.json')
-  writeFileSync(input, JSON.stringify({ cases: cases.map(({ name, frames }) => ({ name, frames })) }))
+  writeFileSync(input, JSON.stringify({ cases: cases.map(({ name, frames, length }) => ({ name, frames, length })) }))
   execFileSync(python(), [join(REPO, 'model', 'parity.py'), input, output], { cwd: join(REPO, 'model'), stdio: 'pipe' })
   const out = JSON.parse(readFileSync(output, 'utf8')) as { cases: { name: string; features: number[][] }[] }
   for (const c of out.cases) pyFeatures.set(c.name, c.features)
 }, 120_000)
 
-function maxDiff(ts: Float32Array, rows: number[][]): number {
-  expect(rows.length).toBe(SEQUENCE_LENGTH)
+function maxDiff(ts: Float32Array, rows: number[][], L: number): number {
+  expect(rows.length).toBe(L)
   let m = 0
   rows.forEach((row, i) => {
     expect(row.length).toBe(FEATURES_PER_FRAME)
@@ -171,19 +184,21 @@ function maxDiff(ts: Float32Array, rows: number[][]): number {
 }
 
 describe('features.ts matches prepare.py', () => {
-  it('found test cases', () => {
-    expect(cases.length).toBeGreaterThanOrEqual(11)
+  it('found test cases at every length', () => {
+    expect(cases.length).toBeGreaterThanOrEqual(11 * LENGTHS.length)
+    expect(new Set(cases.map((c) => c.name)).size).toBe(cases.length)
   })
 
   for (const c of cases) {
     it(c.name, () => {
+      const L = c.length ?? SEQUENCE_LENGTH
       const frames = c.frames.map(frameFromNested)
-      const ts = computeFeatures(frames)
-      expect(ts.length).toBe(SEQUENCE_LENGTH * FEATURES_PER_FRAME)
-      const d = maxDiff(ts, pyFeatures.get(c.name)!)
+      const ts = computeFeatures(frames, L)
+      expect(ts.length).toBe(L * FEATURES_PER_FRAME)
+      const d = maxDiff(ts, pyFeatures.get(c.name)!, L)
       expect(d, `max |ts - py| = ${d}`).toBeLessThanOrEqual(TOL)
       if (c.expected) {
-        const dk = maxDiff(ts, c.expected)
+        const dk = maxDiff(ts, c.expected, L)
         expect(dk, `max |ts - kaggle| = ${dk}`).toBeLessThanOrEqual(TOL)
       }
       if (c.expectMirrored !== undefined) expect(stage1(frames).mirrored).toBe(c.expectMirrored)

@@ -69,11 +69,21 @@ separate web landmarkers, which would break parity.
    After this, the dominant hand is always in the `right_hand` slot.
 6. Normalize: center on mid-shoulder, divide by shoulder width. Both are **per-sequence** means, not
    per-frame, so shoulder jitter does not shake the whole skeleton.
-7. Resample to 32 frames by nearest index, `src = min(T-1, ((2i+1)·T) // (2L))` in integer arithmetic
-   (no interpolation, so a missing hand never gets blended with a present one, and Python and JS pick
-   identical frames).
+7. Resample to L = 64 frames by nearest index, `src = min(T-1, ((2i+1)·T) // (2L))` in integer
+   arithmetic (no interpolation, so a missing hand never gets blended with a present one, and Python and
+   JS pick identical frames).
 8. NaN to 0.
-9. Flatten to `(32, 222)`: 109 points as interleaved x, y (218), then the 4 masks.
+9. Flatten to `(64, 222)`: 109 points as interleaved x, y (218), then the 4 masks.
+
+**Frame length and the model in use (v4).** v4 changed only L, from 32 to 64; every per-frame value is
+the same as in v3. The model's ONNX input is `[batch, L, 222]`. `features.ts` (`computeFeatures(frames,
+L)`) and `prepare.py` (`FeatureExtractor(spec, length=L)`) take L as a parameter, so the app should
+pass the L declared by the `model.onnx` it loads. The current v3 model (L = 32) keeps working until a
+v4 model replaces it. The parity test checks both lengths.
+
+**Velocity is computed inside the v4 model,** not in the features. The model derives frame-to-frame
+differences `x[t+1] − x[t]` and `x[t+2] − x[t]` from its input, zeroed wherever either frame is missing
+(using the presence masks). So the browser computes the same per-frame features as before.
 
 ## Data check results (spec v2)
 
@@ -97,7 +107,8 @@ right_hand order, and their frame numbers were strictly increasing.
 - **Shoulder width:** median 0.56 of image width, so subjects are framed tightly. Shoulders were present
   in 100% of frames; the fallback is now center (0.49, 0.65), scale 0.56.
 - **Frame counts (after trim):** median 23, p75 45, p95 129; 33% are over 32 frames and 13% over 64.
-  Keeping 32: two thirds of signs lose nothing, and longer clips are mostly slow signers.
+  v2/v3 used 32 frames. v4 uses 64, as the top Kaggle ISLR solutions use longer windows: 87% of signs
+  are then never downsampled, and the longer window gives the in-model velocity features finer timing.
 - **Lip mirror pairs: verified.** Each pair's midpoint is within 1.5% of mouth width of the face midline.
 - **Presence:** lips 99%, pose 100%, left hand 28% and right hand 38% of frames (hands are often
   undetected, which is why the masks exist).

@@ -15,6 +15,9 @@ Pixel 11, small translator apps) watch *you* signing live into your own camera. 
 in someone else's video and get a dictionary result.
 
 ## What we are building (in priority order)
+SignSeek is a dictionary for single isolated signs. It does not do live interpreting or continuous translation, and
+UI text should never suggest it does.
+
 1. **Web app (MUST, this is the guaranteed demo)**: upload a clip or use webcam, trim a 1 to 3 s window, get top 5
    sign matches with confidence, reference links, and "looks similar to" alternatives.
 2. **Chrome extension (SHOULD)**: while watching a video in Chrome, press a hotkey; the extension uses the last few
