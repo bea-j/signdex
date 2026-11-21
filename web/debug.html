@@ -27,6 +27,16 @@
       .panel dd { margin: 0; font-variant-numeric: tabular-nums; }
       .swatch { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
       .legend { margin-top: 12px; color: var(--muted); }
+      .muted { color: var(--muted); }
+      .lookup { margin-top: 16px; background: var(--panel); padding: 12px; border-radius: 6px; max-width: 640px; }
+      .lookup h2 { font-size: 1.1rem; margin: 0 0 6px; }
+      #matches { padding-left: 1.4em; }
+      #matches li { margin: 6px 0; }
+      .match { display: grid; grid-template-columns: minmax(8em, auto) 1fr 4em; gap: 8px; align-items: center; }
+      .gloss { font-weight: 600; }
+      .bar { height: 0.7em; background: color-mix(in srgb, var(--fg) 12%, transparent); border-radius: 4px; overflow: hidden; }
+      .bar > span { display: block; height: 100%; background: var(--right); }
+      .pct { text-align: right; font-variant-numeric: tabular-nums; }
       .legend div { margin: 2px 0; }
     </style>
   </head>
@@ -68,6 +78,14 @@
         </div>
       </div>
     </div>
+    <section class="lookup" aria-labelledby="lookup-heading">
+      <h2 id="lookup-heading">Look up a sign</h2>
+      <p id="model-info" class="muted">Loading model…</p>
+      <p>Start the webcam (or a video), then sign one sign within 2 seconds.</p>
+      <button id="lookup" type="button" disabled>Record 2 s and look up</button>
+      <p id="lookup-status" aria-live="polite"></p>
+      <ol id="matches" aria-label="Top 5 matching signs"></ol>
+    </section>
     <p><a href="./">Back to SignSeek</a></p>
     <script type="module" src="/src/debug.ts"></script>
   </body>

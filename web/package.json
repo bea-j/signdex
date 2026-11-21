@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "fetch-mediapipe": "node scripts/fetch-mediapipe.mjs",
-    "predev": "node scripts/fetch-mediapipe.mjs",
+    "predev": "node scripts/fetch-mediapipe.mjs && node scripts/copy-model.mjs",
     "dev": "vite",
-    "prebuild": "node scripts/fetch-mediapipe.mjs",
+    "prebuild": "node scripts/fetch-mediapipe.mjs && node scripts/copy-model.mjs",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test",

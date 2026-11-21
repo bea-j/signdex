@@ -49,7 +49,7 @@ ARCH_CFG = {
     # v4, after the top Kaggle ISLR solutions: deeper conv+transformer, wide depthwise kernels, stochastic depth,
     # weight EMA (evaluated and exported), "late dropout" on the head, more label smoothing.
     "v4": {"lr": 1e-3, "wd": 0.05, "label_smoothing": 0.2, "ema": 0.999, "late_dropout": 0.4, "late_dropout_at": 0.4,
-           "depth": 3, "kernel": 17, "drop_path": 0.1},
+           "depth": 3, "kernel": 17, "drop_path": 0.1, "max_epochs": 400},
 }
 CFG = ARCH_CFG[ARCH]
 
@@ -368,10 +368,19 @@ def topk(probs: np.ndarray, y: np.ndarray, k: int) -> float:
     return float((np.argsort(-probs, axis=1)[:, :k] == y[:, None]).any(axis=1).mean())
 
 
+def parallel(model: nn.Module) -> nn.Module:
+    """Wrap in DataParallel when several GPUs are visible (Kaggle "GPU T4 x2"). The batch is split across GPUs,
+    so the effective batch (BATCH) and the optimization are unchanged."""
+    return nn.DataParallel(model) if torch.cuda.device_count() > 1 else model
+
+
 def time_steps(loader, model, device, n: int = 40) -> float:
-    """Seconds per optimizer step including data loading (throwaway model)."""
+    """Seconds per optimizer step, measured exactly like a training step (data loading, AMP, DataParallel,
+    grad clipping, scheduler-free step, EMA update) on a throwaway model."""
     opt = torch.optim.AdamW(model.parameters(), lr=1e-4)
     scaler = torch.amp.GradScaler("cuda", enabled=device == "cuda")
+    ema = EMA(model, 0.999) if CFG["ema"] > 0 else None
+    net = parallel(model)
     model.train()
     it = iter(loader)
     for s in range(n + 5):
@@ -382,11 +391,16 @@ def time_steps(loader, model, device, n: int = 40) -> float:
         xb, yb = next(it)
         xb, yb = xb.to(device, non_blocking=True), yb.to(device, non_blocking=True)
         with torch.autocast(device_type="cuda", dtype=torch.float16, enabled=device == "cuda"):
-            loss = nn.functional.cross_entropy(model(xb), yb)
+            loss = nn.functional.cross_entropy(net(xb), yb)
         opt.zero_grad(set_to_none=True)
         scaler.scale(loss).backward()
+        scaler.unscale_(opt)
+        nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         scaler.step(opt)
         scaler.update()
+        if ema is not None:
+            ema.update(model)
+        loss.item()
     if device == "cuda":
         torch.cuda.synchronize()
     return (time.time() - t) / n
@@ -396,6 +410,7 @@ def train_run(name, loader, F, L, n_classes, Xv, yv, epochs, device, fx):
     """Returns (model to evaluate/export, history, minutes). With CFG['ema'] > 0 that is the EMA model."""
     torch.manual_seed(SEED)
     model = build_model(F, L, n_classes, fx).to(device)
+    net = parallel(model)  # forward/backward through `net`; EMA, dropout, clipping and export use `model`
     steps = len(loader)
     total, warm = epochs * steps, max(1, WARMUP_EPOCHS * steps)
     opt = torch.optim.AdamW(model.parameters(), lr=CFG["lr"], weight_decay=CFG["wd"])
@@ -415,7 +430,7 @@ def train_run(name, loader, F, L, n_classes, Xv, yv, epochs, device, fx):
         for xb, yb in loader:
             xb, yb = xb.to(device, non_blocking=True), yb.to(device, non_blocking=True)
             with torch.autocast(device_type="cuda", dtype=torch.float16, enabled=device == "cuda"):
-                loss = crit(model(xb), yb)
+                loss = crit(net(xb), yb)
             opt.zero_grad(set_to_none=True)
             scaler.scale(loss).backward()
             scaler.unscale_(opt)
@@ -527,7 +542,7 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     ensure_packages()
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    log("device:", device, torch.cuda.get_device_name(0) if device == "cuda" else "", "| torch", torch.__version__,
+    log("device:", device, torch.cuda.get_device_name(0) if device == "cuda" else "", f"x{torch.cuda.device_count()}", "| torch", torch.__version__, "| AMP fp16" if device == "cuda" else "",
         "| smoke" if SMOKE else "")
 
     spec = prepare.load_spec()
@@ -581,16 +596,19 @@ def run(df, out: Path, mode: str, root, spec, fx, sign_map, labels, device, pair
         epochs, do_baseline = FIXED_EPOCHS, BASELINE
         log(f"fixed schedule: {epochs} epochs, baseline without augmentation: {do_baseline}")
     else:
+        # Fit the epochs to the time budget, from a step timed exactly like training.
         sps = time_steps(aug_loader, build_model(F, L, n_classes, fx).to(device), device)
-        epoch_min = sps * len(aug_loader) / 60 * 1.05  # + periodic eval
+        epoch_min = sps * len(aug_loader) / 60 * 1.10  # +10%: periodic eval and safety margin
         avail = minutes_left() - RESERVE_MIN
+        cap = CFG.get("max_epochs", MAX_EPOCHS)
         both = int(avail / (2 * epoch_min))
-        if both >= MIN_EPOCHS:
-            epochs, do_baseline = min(MAX_EPOCHS, both), True
+        if BASELINE and both >= MIN_EPOCHS:
+            epochs, do_baseline = min(cap, both), True
         else:
-            epochs, do_baseline = max(MIN_EPOCHS, min(MAX_EPOCHS, int(avail / epoch_min))), False
-        log(f"{sps * 1000:.0f} ms/step, {epoch_min:.2f} min/epoch, {avail:.0f} min available -> "
-            f"{epochs} epochs, baseline without augmentation: {do_baseline}")
+            epochs, do_baseline = max(MIN_EPOCHS, min(cap, int(avail / epoch_min))), False
+        log(f"{torch.cuda.device_count()} GPU(s), {sps * 1000:.0f} ms/step, {epoch_min:.2f} min/epoch, "
+            f"{avail:.0f} min available -> {epochs} epochs (~{epochs * epoch_min:.0f} min), "
+            f"baseline without augmentation: {do_baseline}")
 
     model, hist_aug, min_aug = train_run("aug", aug_loader, F, L, n_classes, Xv, yv, epochs, device, fx)
     probs = predict(model, Xv, device)
@@ -614,7 +632,7 @@ def run(df, out: Path, mode: str, root, spec, fx, sign_map, labels, device, pair
                  if (yv == i).any()}
     ranked = sorted(per_class.items(), key=lambda kv: kv[1])
     metrics = {
-        "mode": mode, "device": torch.cuda.get_device_name(0) if device == "cuda" else "cpu",
+        "mode": mode, "device": torch.cuda.get_device_name(0) if device == "cuda" else "cpu", "gpus": torch.cuda.device_count(), "amp": device == "cuda",
         "fixed_epochs": FIXED_EPOCHS or None, "seed": SEED,
         "spec_version": spec["version"], "num_points": fx.n, "input_shape": [L, F],
         "face_mirror_pair_check": pair_check, "n_train": int(len(tr_idx)), "n_val": int(len(val_idx)),

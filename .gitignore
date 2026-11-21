@@ -10,4 +10,6 @@ __pycache__/
 model/checkpoints/
 kaggle/train/signseek_train.py
 web/public/mediapipe/
+web/public/model/
+web/public/ort/
 extension/public/mediapipe/

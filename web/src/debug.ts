@@ -1,6 +1,7 @@
 // Landmark debug page: draws the assembled Kaggle-layout frame over the video.
 import { FaceLandmarker, HandLandmarker, PoseLandmarker } from '@mediapipe/tasks-vision'
-import { stage1 } from './features'
+import { computeFeatures, stage1 } from './features'
+import { LOW_CONFIDENCE, SignModel } from './model'
 import {
   COORDS_PER_POINT as C,
   LandmarkExtractor,
@@ -180,7 +181,80 @@ function startRecorder() {
   recorder.start()
   downloadBtn.disabled = false
   status.textContent = `Running on ${sourceName}`
+  updateLookupButton()
 }
+
+// ---------------------------------------------------------------- sign lookup
+
+const lookupBtn = $<HTMLButtonElement>('lookup')
+const lookupStatus = $('lookup-status')
+const matchesEl = $('matches')
+let model: SignModel | null = null
+let busy = false
+const RECORD_MS = 2000
+
+function updateLookupButton() {
+  lookupBtn.disabled = !model || !recorder || busy
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+async function lookup() {
+  if (!model || !recorder) return
+  busy = true
+  updateLookupButton()
+  matchesEl.innerHTML = ''
+  try {
+    recorder.clear()
+    const start = performance.now()
+    while (performance.now() - start < RECORD_MS) {
+      lookupStatus.textContent = `Recording… ${((RECORD_MS - (performance.now() - start)) / 1000).toFixed(1)} s`
+      await sleep(100)
+    }
+    const frames = recorder.frames().map((f) => f.frame)
+    if (frames.length === 0) throw new Error('no frames captured; is the video playing?')
+    // Same pipeline as training: aspect correction, then features at the frame length this model expects.
+    const corrected = toTrainingAspect(frames, video.videoWidth, video.videoHeight)
+    const s1 = stage1(corrected)
+    const t0 = performance.now()
+    const features = computeFeatures(corrected, model.length)
+    const matches = await model.topK(features, 5)
+    const ms = performance.now() - t0
+    for (const m of matches) {
+      const li = document.createElement('li')
+      const pct = (m.confidence * 100).toFixed(1)
+      li.innerHTML = `<div class="match"><span class="gloss"></span><div class="bar" role="img"><span></span></div><span class="pct">${pct}%</span></div>`
+      li.querySelector('.gloss')!.textContent = m.gloss
+      const bar = li.querySelector<HTMLElement>('.bar')!
+      bar.setAttribute('aria-label', `${pct} percent confidence`)
+      bar.querySelector('span')!.style.width = `${Math.max(1, m.confidence * 100)}%`
+      matchesEl.appendChild(li)
+    }
+    const handFrames = s1.T
+    const unsure = matches[0].confidence < LOW_CONFIDENCE
+    lookupStatus.textContent =
+      (unsure ? 'Not sure. Try again with just the one sign inside the 2 seconds. ' : '') +
+      `${frames.length} frames recorded, ${handFrames} with hands after trimming` +
+      `${s1.mirrored ? ' (left-dominant, mirrored)' : ''}; features + model ${ms.toFixed(0)} ms.`
+  } catch (e) {
+    lookupStatus.textContent = `Lookup failed: ${(e as Error).message}`
+  } finally {
+    busy = false
+    updateLookupButton()
+  }
+}
+
+lookupBtn.addEventListener('click', () => void lookup())
+
+SignModel.load()
+  .then((m) => {
+    model = m
+    $('model-info').textContent = `Model loaded: ${m.labels.length} signs, expects ${m.length} frames × 222 features (features.ts resamples to ${m.length}).`
+    updateLookupButton()
+  })
+  .catch((e) => {
+    $('model-info').textContent = `No model loaded: ${(e as Error).message}. Put model.onnx and labels.json in model/ and restart npm run dev.`
+  })
 
 $('webcam').addEventListener('click', async () => {
   try {
