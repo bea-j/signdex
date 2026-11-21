@@ -1,0 +1,13 @@
+{
+  "id": "beatricej/signseek-evaluate",
+  "title": "SignSeek evaluate",
+  "code_file": "signseek_evaluate.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": true,
+  "dataset_sources": ["beatricej/signseek-models"],
+  "competition_sources": ["asl-signs"],
+  "kernel_sources": []
+}

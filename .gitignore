@@ -12,3 +12,5 @@ kaggle/train/signseek_train.py
 web/public/mediapipe/
 web/public/model/
 extension/public/mediapipe/
+model/runs/
+kaggle/evaluate/signseek_evaluate.py
