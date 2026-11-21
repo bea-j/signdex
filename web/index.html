@@ -4,27 +4,219 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Signdex</title>
+    <meta name="description" content="Look up ASL signs you see in videos. Runs in your browser; your video never leaves your device." />
+    <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
   </head>
-  <body>
-    <header>
-      <h1>Signdex</h1>
-      <p>Look up an ASL sign you saw in a video. Everything runs on your device; no video leaves your browser.</p>
+  <body class="ambient-page">
+    <!-- icons (from the design), used with <svg><use href="#i-..."/></svg> -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5" /><path d="M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14" /></symbol>
+        <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="13" height="11" rx="2" /><path d="m16 10 5-2.5v9L16 14" /></symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10" /></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 7 8 5-8 5V7Z" /></symbol>
+        <symbol id="i-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-4-6 4V4.5Z" /></symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-5-5 5 5-5 5" /></symbol>
+        <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 12h8" /></symbol>
+        <symbol id="i-chrome" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3.5" /><path d="M20.2 8H12M7.7 20l4.1-7M3.8 8h8" /></symbol>
+        <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6" /></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 11v5m0-8h.01" /></symbol>
+      </defs>
+    </svg>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="wrap">
+        <a class="logo" href="./" data-go="home"><img src="/brand/signdex-logo.png" alt="Signdex home" width="64" height="64" /></a>
+        <nav class="nav" aria-label="Main navigation">
+          <span class="nav-pill"><svg class="icon-sm" aria-hidden="true"><use href="#i-chrome" /></svg> Chrome extension</span>
+          <button class="nav-link" type="button" data-go="how">How it works</button>
+          <button class="nav-saved" type="button" data-go="saved" id="nav-saved">
+            <svg class="icon-sm" aria-hidden="true"><use href="#i-bookmark" /></svg>
+            <span class="label">My signs</span>
+            <span class="count" id="saved-count" aria-label="0 saved">0</span>
+          </button>
+        </nav>
+      </div>
     </header>
-    <main>
-      <section aria-labelledby="input-heading">
-        <h2 id="input-heading">Choose a clip</h2>
-        <label for="file-input">Upload a video</label>
-        <input id="file-input" type="file" accept="video/*" />
-        <button id="webcam-button" type="button">Use webcam</button>
+
+    <main id="main">
+      <!-- ============================================================ home -->
+      <section class="hero" id="screen-home" aria-labelledby="home-title">
+        <div class="blob blob-sand" aria-hidden="true"></div>
+        <div class="blob blob-sage" aria-hidden="true"></div>
+        <div class="hero-grid">
+          <div>
+            <span class="badge"><svg class="icon-sm" aria-hidden="true"><use href="#i-chrome" /></svg> Made for Chrome, powered on-device</span>
+            <h1 id="home-title">Understand <span>American Sign Language with ease</span></h1>
+            <p class="lede">Look up ASL signs from any video without leaving the page. Capture the moment and find the closest matches in a snap.</p>
+            <div class="cta">
+              <button class="btn btn-primary square" type="button" id="home-upload"><svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg> Upload a clip</button>
+              <button class="btn btn-secondary square" type="button" data-go="webcam"><svg class="icon" aria-hidden="true"><use href="#i-camera" /></svg> Use webcam</button>
+            </div>
+            <p class="privacy"><svg class="icon-sm" aria-hidden="true"><use href="#i-lock" /></svg> Runs in your browser. Your video never leaves your device.</p>
+          </div>
+
+          <figure class="mock" aria-label="Illustration: the Signdex side panel showing a best match" style="margin: 0 auto">
+            <div class="mock-glow" aria-hidden="true"></div>
+            <div class="mock-panel" aria-hidden="true">
+              <div class="mock-bar">
+                <div class="traffic"><span></span><span></span><span></span></div>
+                <span class="mock-title">Signdex panel</span>
+              </div>
+              <div class="figure">
+                <span class="bg"></span><span class="head"></span><span class="body"></span><span class="hand-l"></span><span class="hand-r"></span>
+                <span class="focus"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i></span>
+                <span class="live-badge"><span class="dot"></span>Tracking hands and body</span>
+                <span class="play"><svg class="icon" style="margin-left: 2px; width: 24px; height: 24px"><use href="#i-play" /></svg></span>
+              </div>
+              <div class="mock-match">
+                <div class="row">
+                  <div><p class="small">Best match</p><p class="big">Thank you</p></div>
+                  <span class="match-pill">82% match</span>
+                </div>
+                <div class="bar conf-high"><span style="width: 82%; box-shadow: 0 0 12px rgb(83 148 111 / 35%)"></span></div>
+              </div>
+              <p class="mock-hint">Alt + Shift + S captures the last few seconds</p>
+            </div>
+          </figure>
+        </div>
+
+        <div class="features" id="how" aria-label="How it works">
+          <article class="feature feature-sage">
+            <div class="feature-content">
+              <div class="feature-top"><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg></span><span class="feature-number">01</span></div>
+              <h2>Choose a clip</h2>
+              <p>Upload a video or sign with your webcam, then pick the moment with the sign in it.</p>
+            </div>
+          </article>
+          <article class="feature feature-sand">
+            <div class="feature-content">
+              <div class="feature-top"><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-scan" /></svg></span><span class="feature-number">02</span></div>
+              <h2>Track the movement</h2>
+              <p>Hands, face, and body movement are analyzed locally within the 1 to 3 second moment you select.</p>
+            </div>
+          </article>
+          <article class="feature feature-mist">
+            <div class="feature-content">
+              <div class="feature-top"><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-bookmark" /></svg></span><span class="feature-number">03</span></div>
+              <h2>Learn and save</h2>
+              <p>View similar signs, then save new words to practice later and improve your ASL skills.</p>
+            </div>
+          </article>
+        </div>
       </section>
-      <section aria-labelledby="results-heading">
-        <h2 id="results-heading">Matches</h2>
-        <div id="results" aria-live="polite"></div>
+
+      <!-- ============================================================ webcam -->
+      <section class="flow" id="screen-webcam" aria-labelledby="webcam-title" hidden>
+        <button class="back" type="button" data-go="home">← Back to start</button>
+        <div class="panel glass-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Webcam lookup</p>
+              <h1 class="title" id="webcam-title">Sign when you’re ready</h1>
+            </div>
+            <label class="camera-field">Camera <select id="camera"><option value="">Default camera</option></select></label>
+          </div>
+          <div class="stage" id="webcam-stage">
+            <video id="webcam-video" class="mirror" playsinline muted aria-label="Webcam preview (mirrored)"></video>
+            <p class="stage-empty" id="webcam-empty">Starting the camera…</p>
+            <span class="live-badge warn" id="hands-badge" hidden><span class="dot"></span><span id="hands-text">Looking for hands</span></span>
+            <div class="countdown" id="webcam-countdown" aria-hidden="true" hidden></div>
+            <div class="busy" id="webcam-busy" hidden>Finding matches…</div>
+          </div>
+          <div class="record-row">
+            <button class="btn btn-primary" type="button" id="record" disabled aria-keyshortcuts="Space R">
+              <span class="rec-dot" aria-hidden="true"></span><span id="record-label">Record 2 seconds</span>
+            </button>
+            <p class="hint">Press <kbd>Space</kbd> or <kbd>R</kbd>: 3, 2, 1, then sign one sign.</p>
+          </div>
+          <p class="status-line" id="webcam-status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- ============================================================ trim (uploaded clip) -->
+      <section class="flow" id="screen-trim" aria-labelledby="trim-title" hidden>
+        <button class="back" type="button" data-go="home">← Back to start</button>
+        <div class="panel glass-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Uploaded clip</p>
+              <h1 class="title" id="trim-title">Choose the sign moment</h1>
+            </div>
+            <span class="file-pill" id="file-name"></span>
+          </div>
+          <div class="stage">
+            <video id="trim-video" playsinline muted aria-label="Selected part of the uploaded clip"></video>
+            <div class="busy" id="trim-busy" hidden></div>
+          </div>
+          <div class="timeline">
+            <div class="timeline-head">
+              <div>
+                <h3 id="trim-help">Drag the box around the sign</h3>
+                <p>Choose a 1 to 3 second moment. Arrow keys move the box or its edges.</p>
+              </div>
+              <span class="duration-pill" id="window-length">–</span>
+            </div>
+            <div class="strip" id="strip">
+              <div class="window" id="window" tabindex="0" role="group" aria-labelledby="trim-help" aria-describedby="window-length">
+                <span class="handle start" id="handle-start" tabindex="0" role="slider" aria-label="Start of the sign"></span>
+                <span class="handle end" id="handle-end" tabindex="0" role="slider" aria-label="End of the sign"></span>
+              </div>
+              <span class="playhead" id="playhead" aria-hidden="true"></span>
+            </div>
+            <div class="times"><span id="window-start">00:00</span><span id="clip-length">00:00</span></div>
+          </div>
+          <p class="status-line" id="trim-status" aria-live="polite"></p>
+          <div class="actions">
+            <button class="btn btn-secondary" type="button" id="another-clip">Choose another clip</button>
+            <button class="btn btn-primary" type="button" id="trim-lookup" disabled aria-keyshortcuts="Space R">Look up this sign <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ results -->
+      <section class="results" id="screen-results" aria-labelledby="results-title" hidden>
+        <div class="results-head">
+          <div>
+            <p class="eyebrow" id="results-count">5 possible matches</p>
+            <h1 class="title" id="results-title">Here’s what the sign could be</h1>
+          </div>
+          <button class="btn btn-secondary" type="button" id="try-another">Try another sign</button>
+        </div>
+        <div class="results-grid">
+          <div class="results-side">
+            <div class="stage compact"><video id="result-video" playsinline muted loop aria-label="Your clip, playing on a loop"></video></div>
+            <p class="clip-caption" id="clip-caption"></p>
+            <div class="banner banner-info" role="note"><svg class="icon" aria-hidden="true"><use href="#i-info" /></svg><span>Results are suggestions, not translations. Compare the movement with a dictionary example.</span></div>
+          </div>
+          <div class="cards" id="cards" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- ============================================================ my signs -->
+      <section class="saved" id="screen-saved" aria-labelledby="saved-title" hidden>
+        <h1 class="title" id="saved-title">My signs</h1>
+        <p class="muted" style="margin-top: 8px">Your personal list for review and practice. Saved on this device only.</p>
+        <div class="saved-empty glass-panel" id="saved-empty">
+          <svg class="icon" aria-hidden="true"><use href="#i-bookmark" /></svg>
+          <h2>Signs you save will show up here.</h2>
+          <button class="btn btn-primary" type="button" data-go="home">Look up a sign</button>
+        </div>
+        <ul class="saved-list" id="saved-list"></ul>
       </section>
     </main>
-    <footer>
-      <p>Sign data: PopSign ASL v1.0 (CC BY 4.0) via the Google Isolated Sign Language Recognition Kaggle competition.</p>
+
+    <input type="file" id="file-input" accept="video/*" hidden />
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>Built with PopSign ASL v1.0 (CC BY 4.0) and Google’s <a href="https://www.kaggle.com/competitions/asl-signs" target="_blank" rel="noreferrer">Isolated Sign Language Recognition</a> dataset.</p>
+        <p>250 common signs • On-device analysis • <a href="./debug.html">Landmark debug</a></p>
+      </div>
     </footer>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
