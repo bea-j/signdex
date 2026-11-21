@@ -3,7 +3,15 @@
 // and a v4 model (L=64) both work; pass `model.length` to computeFeatures. The model outputs probabilities
 // (softmax is part of the exported graph). Shared with the extension.
 import * as ort from 'onnxruntime-web/wasm'
+// The .wasm binary as a Vite asset: served from node_modules in dev, emitted to dist/assets in the build
+// (offline either way). Only the .wasm is given: this "bundle" build embeds its JS loader, and giving a
+// wasmPaths *prefix* would make ORT import() a separate .mjs, which Vite refuses to serve from /public.
+import ortWasmUrl from 'onnxruntime-web/ort-wasm-simd-threaded.wasm?url'
 import { FEATURES_PER_FRAME } from './features'
+
+ort.env.wasm.wasmPaths = { wasm: ortWasmUrl }
+// One thread: multi-threading needs cross-origin isolation (COOP/COEP headers), and the model is small.
+ort.env.wasm.numThreads = 1
 
 export interface SignMatch {
   index: number
@@ -26,7 +34,6 @@ export class SignModel {
   ) {}
 
   static async load(base = `${import.meta.env.BASE_URL}model/`): Promise<SignModel> {
-    ort.env.wasm.wasmPaths = `${import.meta.env.BASE_URL}ort/` // served locally (scripts/copy-model.mjs)
     const [session, labels] = await Promise.all([
       ort.InferenceSession.create(`${base}model.onnx`, { executionProviders: ['wasm'] }),
       fetch(`${base}labels.json`).then((r) => {
