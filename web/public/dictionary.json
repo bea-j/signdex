@@ -1,0 +1,1760 @@
+{
+ "_readme": [
+  "One entry per sign the model knows, keyed by its label. null = not filled in yet; the app then falls back:",
+  "display -> the label with a capital first letter; meaning -> hidden; link -> https://www.signasl.org/sign/<label>;",
+  "clip -> no example clip. clip is a URL or a path under web/public/ (e.g. /examples/after.mp4);",
+  "clip_captions is an optional WebVTT file for that clip. Do not copy videos from other dictionaries; link to them."
+ ],
+ "signs": {
+  "after": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "airplane": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "all": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "alligator": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "animal": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "another": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "any": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "apple": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "arm": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "aunt": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "awake": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "backyard": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "bad": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "balloon": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "bath": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "because": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "bed": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "bedroom": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "bee": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "before": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "beside": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "better": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "bird": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "black": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "blow": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "blue": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "boat": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "book": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "boy": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "brother": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "brown": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "bug": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "bye": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "callonphone": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "can": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "car": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "carrot": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "cat": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "cereal": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "chair": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "cheek": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "child": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "chin": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "chocolate": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "clean": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "close": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "closet": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "cloud": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "clown": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "cow": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "cowboy": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "cry": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "cut": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "cute": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "dad": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "dance": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "dirty": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "dog": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "doll": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "donkey": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "down": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "drawer": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "drink": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "drop": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "dry": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "dryer": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "duck": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "ear": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "elephant": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "empty": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "every": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "eye": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "face": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "fall": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "farm": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "fast": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "feet": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "find": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "fine": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "finger": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "finish": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "fireman": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "first": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "fish": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "flag": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "flower": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "food": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "for": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "frenchfries": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "frog": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "garbage": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "gift": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "giraffe": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "girl": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "give": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "glasswindow": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "go": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "goose": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "grandma": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "grandpa": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "grass": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "green": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "gum": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "hair": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "happy": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "hat": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "hate": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "have": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "haveto": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "head": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "hear": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "helicopter": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "hello": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "hen": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "hesheit": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "hide": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "high": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "home": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "horse": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "hot": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "hungry": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "icecream": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "if": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "into": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "jacket": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "jeans": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "jump": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "kiss": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "kitty": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "lamp": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "later": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "like": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "lion": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "lips": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "listen": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "look": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "loud": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "mad": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "make": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "man": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "many": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "milk": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "minemy": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "mitten": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "mom": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "moon": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "morning": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "mouse": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "mouth": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "nap": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "napkin": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "night": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "no": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "noisy": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "nose": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "not": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "now": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "nuts": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "old": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "on": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "open": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "orange": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "outside": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "owie": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "owl": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "pajamas": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "pen": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "pencil": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "penny": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "person": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "pig": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "pizza": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "please": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "police": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "pool": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "potty": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "pretend": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "pretty": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "puppy": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "puzzle": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "quiet": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "radio": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "rain": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "read": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "red": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "refrigerator": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "ride": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "room": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "sad": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "same": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "say": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "scissors": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "see": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "shhh": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "shirt": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "shoe": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "shower": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "sick": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "sleep": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "sleepy": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "smile": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "snack": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "snow": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "stairs": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "stay": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "sticky": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "store": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "story": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "stuck": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "sun": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "table": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "talk": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "taste": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "thankyou": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "that": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "there": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "think": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "thirsty": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "tiger": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "time": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "tomorrow": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "tongue": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "tooth": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "toothbrush": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "touch": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "toy": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "tree": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "TV": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "uncle": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "underwear": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "up": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "vacuum": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "wait": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "wake": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "water": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "wet": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "weus": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "where": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "white": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "who": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "why": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "will": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "wolf": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "yellow": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "yes": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "yesterday": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "yourself": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "yucky": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "zebra": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  },
+  "zipper": {
+   "display": null,
+   "meaning": null,
+   "link": null,
+   "clip": null,
+   "clip_captions": null
+  }
+ }
+}

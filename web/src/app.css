@@ -63,6 +63,8 @@ button:focus-visible, a:focus-visible, select:focus-visible, [tabindex]:focus-vi
   outline: 2px solid var(--primary); outline-offset: 3px;
 }
 [hidden] { display: none !important; }
+/* headings receive focus on screen changes (for screen readers); no outline for that */
+h1[tabindex='-1']:focus { outline: none; }
 .icon { width: 20px; height: 20px; flex: none; }
 .icon-sm { width: 16px; height: 16px; flex: none; }
 .muted { color: var(--muted); }
