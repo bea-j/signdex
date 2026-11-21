@@ -1,0 +1,13 @@
+{
+  "id": "beatricej/signseek-data-check",
+  "title": "SignSeek data check",
+  "code_file": "datacheck.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": false,
+  "dataset_sources": [],
+  "competition_sources": ["asl-signs"],
+  "kernel_sources": []
+}

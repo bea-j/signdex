@@ -1,0 +1,245 @@
+{
+ "n_sequences_total": 94477,
+ "n_participants": 21,
+ "n_signs": 250,
+ "n_sampled": 500,
+ "layout_ok": 500,
+ "layout_bad": [],
+ "frames_strictly_increasing": 500,
+ "presence": {
+  "left_hand": 0.2811,
+  "right_hand": 0.3778,
+  "lips": 0.9919,
+  "pose": 1.0,
+  "pose_wrists": 1.0,
+  "shoulders": 1.0
+ },
+ "hand_slots": {
+  "left_hand": {
+   "frames": 5371,
+   "frac_nearer_pose15": 0.9993,
+   "median_dist_pose15": 0.0496,
+   "median_dist_pose16": 0.9187,
+   "median_x_minus_midshoulder": 0.2907
+  },
+  "right_hand": {
+   "frames": 6141,
+   "frac_nearer_pose15": 0.0007,
+   "median_dist_pose15": 0.9303,
+   "median_dist_pose16": 0.0488,
+   "median_x_minus_midshoulder": -0.3201
+  }
+ },
+ "dominant_slot": {
+  "left_more": 207,
+  "right_more": 292,
+  "tie": 1
+ },
+ "pose_side": {
+  "median_x_pose15_minus_pose16": 0.7762,
+  "median_x_pose11_minus_pose12": 0.5703
+ },
+ "ranges": {
+  "all_points": {
+   "x": {
+    "p1": 0.1728,
+    "p50": 0.4723,
+    "p99": 0.7866,
+    "mean": 0.4708,
+    "n": 9547257
+   },
+   "y": {
+    "p1": 0.228,
+    "p50": 0.4299,
+    "p99": 2.0313,
+    "mean": 0.4688,
+    "n": 9547257
+   }
+  },
+  "hands": {
+   "x": {
+    "p1": 0.091,
+    "p50": 0.4693,
+    "p99": 0.885,
+    "mean": 0.4719,
+    "n": 241752
+   },
+   "y": {
+    "p1": 0.248,
+    "p50": 0.5902,
+    "p99": 0.9765,
+    "mean": 0.5977,
+    "n": 241752
+   }
+  },
+  "shoulders": {
+   "x": {
+    "p1": 0.0573,
+    "p50": 0.4875,
+    "p99": 0.9305,
+    "mean": 0.4972,
+    "n": 37314
+   },
+   "y": {
+    "p1": 0.4793,
+    "p50": 0.6547,
+    "p99": 0.8293,
+    "mean": 0.6536,
+    "n": 37314
+   }
+  },
+  "nose": {
+   "x": {
+    "p1": 0.3057,
+    "p50": 0.4794,
+    "p99": 0.6047,
+    "mean": 0.4725,
+    "n": 18657
+   },
+   "y": {
+    "p1": 0.2964,
+    "p50": 0.4344,
+    "p99": 0.5761,
+    "mean": 0.4272,
+    "n": 18657
+   }
+  },
+  "lips": {
+   "x": {
+    "p1": 0.2865,
+    "p50": 0.4762,
+    "p99": 0.628,
+    "mean": 0.4712,
+    "n": 668448
+   },
+   "y": {
+    "p1": 0.351,
+    "p50": 0.4837,
+    "p99": 0.6434,
+    "mean": 0.4821,
+    "n": 668448
+   }
+  }
+ },
+ "aspect": {
+  "method": "argmin over candidate H/W of median std(log 3D palm-bone length) across frames",
+  "best_H_over_W_xyz": 1.2011,
+  "best_H_over_W_xy_only": 1.3572,
+  "groups": 2639,
+  "score_at_named": {
+   "9:16 portrait (H/W 1.778)": 0.11341,
+   "3:4 portrait (1.333)": 0.10407,
+   "1:1 (1.0)": 0.10687,
+   "4:3 landscape (0.75)": 0.12191,
+   "16:9 landscape (0.5625)": 0.13529
+  },
+  "curve": {
+   "0.4": 0.15263,
+   "0.452": 0.14682,
+   "0.5107": 0.14016,
+   "0.5771": 0.13417,
+   "0.6521": 0.12898,
+   "0.7368": 0.12282,
+   "0.8326": 0.11578,
+   "0.9407": 0.10896,
+   "1.063": 0.10563,
+   "1.2011": 0.10311,
+   "1.3572": 0.10415,
+   "1.5336": 0.10659,
+   "1.7329": 0.11211,
+   "1.958": 0.11867,
+   "2.2125": 0.12645,
+   "2.5": 0.13407
+  },
+  "per_sequence_best": {
+   "p10": 0.7832,
+   "p25": 0.9699,
+   "p50": 1.165,
+   "p75": 1.3993,
+   "p90": 1.7866,
+   "mean": 1.243,
+   "n": 253
+  },
+  "per_sequence_nearest_named": {
+   "9:16 portrait (H/W 1.778)": 48,
+   "3:4 portrait (1.333)": 82,
+   "1:1 (1.0)": 86,
+   "4:3 landscape (0.75)": 25,
+   "16:9 landscape (0.5625)": 12
+  }
+ },
+ "shoulder_width": {
+  "per_sequence_mean": {
+   "p1": 0.4425,
+   "p5": 0.4671,
+   "p25": 0.5106,
+   "p50": 0.5612,
+   "p75": 0.6089,
+   "p95": 0.6677,
+   "p99": 0.7053,
+   "mean": 0.5628,
+   "n": 500
+  },
+  "per_frame": {
+   "p1": 0.4309,
+   "p5": 0.4685,
+   "p25": 0.5269,
+   "p50": 0.572,
+   "p75": 0.6167,
+   "p95": 0.6715,
+   "p99": 0.7056,
+   "mean": 0.5713,
+   "n": 18657
+  },
+  "per_frame_aspect_corrected": {
+   "p1": 0.432,
+   "p5": 0.4689,
+   "p25": 0.5275,
+   "p50": 0.573,
+   "p75": 0.6171,
+   "p95": 0.6721,
+   "p99": 0.706,
+   "mean": 0.572,
+   "n": 18657
+  }
+ },
+ "frame_counts": {
+  "raw": {
+   "p1": 6.0,
+   "p5": 6.0,
+   "p25": 12.0,
+   "p50": 23.0,
+   "p75": 45.0,
+   "p95": 129.05,
+   "p99": 215.04,
+   "mean": 37.314,
+   "n": 500
+  },
+  "trimmed": {
+   "p1": 1.0,
+   "p5": 2.0,
+   "p25": 12.0,
+   "p50": 23.0,
+   "p75": 45.0,
+   "p95": 129.05,
+   "p99": 215.04,
+   "mean": 36.962,
+   "n": 500
+  },
+  "sequences_without_any_hand": 0,
+  "trimmed_frac_gt": {
+   "16": 0.612,
+   "24": 0.458,
+   "32": 0.334,
+   "48": 0.214,
+   "64": 0.132,
+   "96": 0.082
+  }
+ },
+ "lip_pairs": {
+  "pairs_median_abs_dy_over_mouth_width": 0.0221,
+  "pairs_p95_abs_dy_over_mouth_width": 0.0978,
+  "pairs_median_midpoint_offset_over_mouth_width": 0.0149,
+  "wrong_pairs_median_abs_dy_over_mouth_width": 0.0441
+ }
+}

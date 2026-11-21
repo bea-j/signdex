@@ -1,6 +1,6 @@
 {
   "_comment": "Shared by model/prepare.py and web/src/features.ts. JSON has no comments: see feature_spec.md for the reasoning behind every choice.",
-  "version": 1,
+  "version": 3,
 
   "source_layout": {
     "points_per_frame": 543,
@@ -45,17 +45,39 @@
       "type": "pose",
       "landmark_index": [0, 11, 12, 13, 14, 15, 16],
       "global_index": [489, 500, 501, 502, 503, 504, 505]
+    },
+    {
+      "name": "upper_face",
+      "type": "face",
+      "landmark_index": [
+        33, 133, 159, 145, 263, 362, 386, 374,
+        70, 63, 105, 66, 107, 300, 293, 334, 296, 336,
+        10, 152
+      ],
+      "global_index": [
+        33, 133, 159, 145, 263, 362, 386, 374,
+        70, 63, 105, 66, 107, 300, 293, 334, 296, 336,
+        10, 152
+      ]
     }
   ],
-  "num_points": 89,
+  "num_points": 109,
 
   "hand_assignment": {
-    "_note": "Browser only. Kaggle data already has hands in slots. Do NOT trust HandLandmarker handedness labels (they assume a mirrored selfie image).",
+    "_note": "Browser only. Kaggle data already has hands in slots. Use HandLandmarker handedness labels only as a fallback when no pose is detected: their meaning has changed across versions (tasks-vision 1.2.3 documents them as the subject's hands for an unmirrored image).",
     "method": "nearest_pose_wrist",
     "left_hand_slot_wrist": { "type": "pose", "landmark_index": 15 },
     "right_hand_slot_wrist": { "type": "pose", "landmark_index": 16 },
     "hand_point": { "landmark_index": 0 },
-    "verified_against_kaggle": false
+    "verified_against_kaggle": true,
+    "_evidence": "datacheck v1, 500 sequences: Kaggle left_hand is nearer pose 15 in 99.93% of frames, right_hand nearer pose 16 in 99.93%"
+  },
+
+  "input_aspect": {
+    "_note": "Browser only, applied to raw landmarks before features. Training data is used as-is. x and y are normalized to image width and height separately, so landmarks from a frame with a different H/W must be rescaled in y to look like training data.",
+    "train_H_over_W": 1.25,
+    "browser_transform": "y' = 0.5 + (y - 0.5) * (H / W) / train_H_over_W, x unchanged, where W x H is the frame given to MediaPipe",
+    "_evidence": "datacheck v1: rigid palm-bone length is most rotation-invariant at H/W 1.20 (xyz) / 1.36 (xy); 3:4 portrait and 1:1 both fit, 16:9 landscape clearly does not"
   },
 
   "presence": {
@@ -79,7 +101,11 @@
         [78, 308], [191, 415], [80, 310], [81, 311], [82, 312],
         [95, 324], [88, 318], [178, 402], [87, 317]
       ],
-      "_self_symmetric": { "pose": [0], "lips": [0, 17, 13, 14] }
+      "upper_face": [
+        [33, 263], [133, 362], [159, 386], [145, 374],
+        [70, 300], [63, 293], [105, 334], [66, 296], [107, 336]
+      ],
+      "_self_symmetric": { "pose": [0], "lips": [0, 17, 13, 14], "upper_face": [10, 152] }
     }
   },
 
@@ -89,15 +115,16 @@
     "scale": { "type": "pose", "landmark_index": [11, 12], "reduce": "euclidean_distance_xy" },
     "statistic": "per_sequence: center = nanmean over frames of per-frame midpoint; scale = nanmean over frames of per-frame distance",
     "apply": "x' = (x - cx) / scale; y' = (y - cy) / scale",
-    "fallback_if_no_shoulders": { "center": [0.5, 0.5], "scale": 0.35, "_todo": "replace 0.35 with median shoulder width measured by prepare.py" },
+    "fallback_if_no_shoulders": { "center": [0.49, 0.65], "scale": 0.56, "_evidence": "datacheck v1 medians: mid-shoulder x 0.49, y 0.65; shoulder width 0.56 (per-sequence mean). Shoulders were present in 100% of sampled frames." },
     "eps": 1e-6
   },
 
   "resample": {
     "length": 32,
     "method": "nearest",
-    "formula": "src_index(i) = min(T - 1, floor((i + 0.5) * T / L)) for i in 0..L-1",
-    "applies_to": "points and presence masks"
+    "formula": "src_index(i) = min(T - 1, floor(((2 * i + 1) * T) / (2 * L))) for i in 0..L-1, integer arithmetic",
+    "applies_to": "points and presence masks",
+    "_evidence": "datacheck v1 frame counts after trim: median 23, p75 45, p95 129; 67% of sequences have <= 32 frames"
   },
 
   "missing": {
@@ -107,9 +134,9 @@
 
   "output": {
     "dtype": "float32",
-    "shape": [32, 182],
-    "frame_layout": "for each group in 'groups' order, for each point in that group's order: x, y; then the 4 presence masks in mask_order (1.0 present, 0.0 missing)",
-    "point_features": 178,
+    "shape": [32, 222],
+    "frame_layout": "for each group in 'groups' order, for each point in that group's order: x, y; then the 4 presence masks in mask_order (1.0 present, 0.0 missing). upper_face has no mask of its own: it comes from the same face detection as lips.",
+    "point_features": 218,
     "mask_features": 4,
     "empty_sequence": "if T == 0, return all zeros"
   },

@@ -8,3 +8,5 @@ dist/
 __pycache__/
 .venv/
 model/checkpoints/
+kaggle/train/signseek_train.py
+web/public/mediapipe/
