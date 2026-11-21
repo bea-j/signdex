@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "SignSeek",
+  "name": "Signdex",
   "version": "0.0.3",
   "description": "Look up ASL signs you see in videos. Runs on your device.",
   "minimum_chrome_version": "116",
@@ -13,7 +13,7 @@
     "default_path": "sidepanel.html"
   },
   "action": {
-    "default_title": "Open SignSeek"
+    "default_title": "Open Signdex"
   },
   "commands": {
     "lookup-sign": {

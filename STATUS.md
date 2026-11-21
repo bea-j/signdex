@@ -1,4 +1,4 @@
-# SignSeek status
+# Signdex status
 
 _Updated Sat Nov 21, 4:20 PM ET. Hacking ends Sun 12:00 PM._
 

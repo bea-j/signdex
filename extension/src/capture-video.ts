@@ -56,7 +56,7 @@ declare global {
     iframe.src = frameUrl
     iframe.setAttribute('aria-hidden', 'true')
     iframe.tabIndex = -1
-    iframe.title = 'SignSeek capture'
+    iframe.title = 'Signdex capture'
     // 1x1 and transparent, but inside the viewport (off-screen cross-origin frames get throttled)
     iframe.style.cssText =
       'position:fixed;right:0;bottom:0;width:1px;height:1px;opacity:0;border:0;pointer-events:none;z-index:-1'

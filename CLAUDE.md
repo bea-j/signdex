@@ -1,10 +1,10 @@
-# SignSeek: look up ASL signs you see in videos
+# Signdex: look up ASL signs you see in videos
 
 Hackathon project for WHACK 2026 (Wellesley, Nov 21 to 22). Hacking ends **Sunday 12:00 PM**. Judging 12:30 PM.
 Track: Better Worlds (accessibility, education). Name is a placeholder.
 
 ## One-liner
-Google's new sign-to-text helps signers type on Pixel 11. SignSeek helps anyone learning ASL understand the
+Google's new sign-to-text helps signers type on Pixel 11. Signdex helps anyone learning ASL understand the
 signs they see in other people's videos, on any device, right in the browser.
 
 ## The problem
@@ -15,7 +15,7 @@ Pixel 11, small translator apps) watch *you* signing live into your own camera. 
 in someone else's video and get a dictionary result.
 
 ## What we are building (in priority order)
-SignSeek is a dictionary for single isolated signs. It does not do live interpreting or continuous translation, and
+Signdex is a dictionary for single isolated signs. It does not do live interpreting or continuous translation, and
 UI text should never suggest it does.
 
 1. **Web app (MUST, this is the guaranteed demo)**: upload a clip or use webcam, trim a 1 to 3 s window, get top 5

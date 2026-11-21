@@ -48,6 +48,6 @@ import type { ProbeResult } from './messages'
     }
   }
 
-  console.log('[SignSeek probe]', result.tainted === true ? 'canvas TAINTED' : result.tainted === false ? (result.blank ? 'canvas readable but BLANK' : 'canvas readable') : 'no drawable video', result)
+  console.log('[Signdex probe]', result.tainted === true ? 'canvas TAINTED' : result.tainted === false ? (result.blank ? 'canvas readable but BLANK' : 'canvas readable') : 'no drawable video', result)
   return result
 })()

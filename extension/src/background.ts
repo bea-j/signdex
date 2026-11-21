@@ -13,7 +13,7 @@ let activeTab: number | null = null
 let activeFrame: number | null = null
 
 const log = (text: string) => {
-  console.log('[SignSeek]', text)
+  console.log('[Signdex]', text)
   void send({ target: 'panel', type: 'log', text })
 }
 
