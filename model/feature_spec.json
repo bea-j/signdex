@@ -1,0 +1,121 @@
+{
+  "_comment": "Shared by model/prepare.py and web/src/features.ts. JSON has no comments: see feature_spec.md for the reasoning behind every choice.",
+  "version": 1,
+
+  "source_layout": {
+    "points_per_frame": 543,
+    "columns": ["frame", "type", "landmark_index", "x", "y", "z"],
+    "type_offsets": { "face": 0, "left_hand": 468, "pose": 489, "right_hand": 522 },
+    "type_sizes": { "face": 468, "left_hand": 21, "pose": 33, "right_hand": 21 }
+  },
+
+  "coords": ["x", "y"],
+
+  "groups": [
+    {
+      "name": "left_hand",
+      "type": "left_hand",
+      "landmark_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      "global_index": [468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488]
+    },
+    {
+      "name": "right_hand",
+      "type": "right_hand",
+      "landmark_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+      "global_index": [522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542]
+    },
+    {
+      "name": "lips",
+      "type": "face",
+      "landmark_index": [
+        61, 185, 40, 39, 37, 0, 267, 269, 270, 409,
+        291, 146, 91, 181, 84, 17, 314, 405, 321, 375,
+        78, 191, 80, 81, 82, 13, 312, 311, 310, 415,
+        95, 88, 178, 87, 14, 317, 402, 318, 324, 308
+      ],
+      "global_index": [
+        61, 185, 40, 39, 37, 0, 267, 269, 270, 409,
+        291, 146, 91, 181, 84, 17, 314, 405, 321, 375,
+        78, 191, 80, 81, 82, 13, 312, 311, 310, 415,
+        95, 88, 178, 87, 14, 317, 402, 318, 324, 308
+      ]
+    },
+    {
+      "name": "pose",
+      "type": "pose",
+      "landmark_index": [0, 11, 12, 13, 14, 15, 16],
+      "global_index": [489, 500, 501, 502, 503, 504, 505]
+    }
+  ],
+  "num_points": 89,
+
+  "hand_assignment": {
+    "_note": "Browser only. Kaggle data already has hands in slots. Do NOT trust HandLandmarker handedness labels (they assume a mirrored selfie image).",
+    "method": "nearest_pose_wrist",
+    "left_hand_slot_wrist": { "type": "pose", "landmark_index": 15 },
+    "right_hand_slot_wrist": { "type": "pose", "landmark_index": 16 },
+    "hand_point": { "landmark_index": 0 },
+    "verified_against_kaggle": false
+  },
+
+  "presence": {
+    "rule": "a group is present in a frame if any of its selected x values is not NaN",
+    "mask_order": ["left_hand", "right_hand", "lips", "pose"]
+  },
+
+  "trim": {
+    "rule": "drop leading and trailing frames where neither hand is present; if no frame has a hand, keep all frames"
+  },
+
+  "mirroring": {
+    "decide": "after trim, count frames with left_hand present (nL) and right_hand present (nR); mirror iff nL > nR",
+    "x_transform": "x' = 1 - x (raw normalized image coords, before centering)",
+    "swap_groups": [["left_hand", "right_hand"]],
+    "swap_pairs": {
+      "pose": [[11, 12], [13, 14], [15, 16]],
+      "lips": [
+        [61, 291], [185, 409], [40, 270], [39, 269], [37, 267],
+        [146, 375], [91, 321], [181, 405], [84, 314],
+        [78, 308], [191, 415], [80, 310], [81, 311], [82, 312],
+        [95, 324], [88, 318], [178, 402], [87, 317]
+      ],
+      "_self_symmetric": { "pose": [0], "lips": [0, 17, 13, 14] }
+    }
+  },
+
+  "normalization": {
+    "order": "after mirroring",
+    "center": { "type": "pose", "landmark_index": [11, 12], "reduce": "midpoint" },
+    "scale": { "type": "pose", "landmark_index": [11, 12], "reduce": "euclidean_distance_xy" },
+    "statistic": "per_sequence: center = nanmean over frames of per-frame midpoint; scale = nanmean over frames of per-frame distance",
+    "apply": "x' = (x - cx) / scale; y' = (y - cy) / scale",
+    "fallback_if_no_shoulders": { "center": [0.5, 0.5], "scale": 0.35, "_todo": "replace 0.35 with median shoulder width measured by prepare.py" },
+    "eps": 1e-6
+  },
+
+  "resample": {
+    "length": 32,
+    "method": "nearest",
+    "formula": "src_index(i) = min(T - 1, floor((i + 0.5) * T / L)) for i in 0..L-1",
+    "applies_to": "points and presence masks"
+  },
+
+  "missing": {
+    "fill_value": 0.0,
+    "when": "after normalization and resampling, replace every NaN with fill_value"
+  },
+
+  "output": {
+    "dtype": "float32",
+    "shape": [32, 182],
+    "frame_layout": "for each group in 'groups' order, for each point in that group's order: x, y; then the 4 presence masks in mask_order (1.0 present, 0.0 missing)",
+    "point_features": 178,
+    "mask_features": 4,
+    "empty_sequence": "if T == 0, return all zeros"
+  },
+
+  "capture": {
+    "target_fps": 30,
+    "_note": "Resampling makes the model length-agnostic, but capture near the Kaggle frame rate keeps motion detail comparable."
+  }
+}

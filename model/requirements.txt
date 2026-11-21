@@ -1,0 +1,7 @@
+numpy>=1.26
+pandas>=2.2
+pyarrow>=15
+torch>=2.5
+onnx>=1.16
+onnxruntime>=1.19   # check the exported model matches torch before shipping it to the browser
+kaggle>=1.6         # kaggle competitions download -c asl-signs

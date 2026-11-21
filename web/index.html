@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SignSeek</title>
+  </head>
+  <body>
+    <header>
+      <h1>SignSeek</h1>
+      <p>Look up an ASL sign you saw in a video. Everything runs on your device; no video leaves your browser.</p>
+    </header>
+    <main>
+      <section aria-labelledby="input-heading">
+        <h2 id="input-heading">Choose a clip</h2>
+        <label for="file-input">Upload a video</label>
+        <input id="file-input" type="file" accept="video/*" />
+        <button id="webcam-button" type="button">Use webcam</button>
+      </section>
+      <section aria-labelledby="results-heading">
+        <h2 id="results-heading">Matches</h2>
+        <div id="results" aria-live="polite"></div>
+      </section>
+    </main>
+    <footer>
+      <p>Sign data: PopSign ASL v1.0 (CC BY 4.0) via the Google Isolated Sign Language Recognition Kaggle competition.</p>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

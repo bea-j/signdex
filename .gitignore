@@ -1,0 +1,10 @@
+kaggle.json
+access_token
+node_modules/
+data/
+*.parquet
+.env
+dist/
+__pycache__/
+.venv/
+model/checkpoints/
