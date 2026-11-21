@@ -200,6 +200,15 @@ function updateLookupButton() {
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+const countdownEl = $('countdown')
+const COUNTDOWN_FROM = 3
+
+function showOverlay(text: string | null, rec = false) {
+  countdownEl.hidden = text === null
+  countdownEl.classList.toggle('rec', rec)
+  countdownEl.innerHTML = ''
+  if (text !== null) countdownEl.append(Object.assign(document.createElement('span'), { textContent: text }))
+}
 
 async function lookup() {
   if (!model || !recorder) return
@@ -207,12 +216,21 @@ async function lookup() {
   updateLookupButton()
   matchesEl.innerHTML = ''
   try {
+    // 3-2-1 so the hands can get ready; the landmark recorder keeps running but its buffer is cleared after
+    for (let n = COUNTDOWN_FROM; n > 0; n--) {
+      showOverlay(String(n))
+      lookupStatus.textContent = `Get ready… recording starts in ${n}`
+      await sleep(1000)
+    }
     recorder.clear()
     const start = performance.now()
     while (performance.now() - start < RECORD_MS) {
-      lookupStatus.textContent = `Recording… ${((RECORD_MS - (performance.now() - start)) / 1000).toFixed(1)} s`
+      const left = ((RECORD_MS - (performance.now() - start)) / 1000).toFixed(1)
+      showOverlay(`● REC ${left} s`, true)
+      lookupStatus.textContent = `Recording… ${left} s`
       await sleep(100)
     }
+    showOverlay(null)
     const frames = recorder.frames().map((f) => f.frame)
     if (frames.length === 0) throw new Error('no frames captured; is the video playing?')
     // Same pipeline as training: aspect correction, then features at the frame length this model expects.
@@ -240,12 +258,32 @@ async function lookup() {
   } catch (e) {
     lookupStatus.textContent = `Lookup failed: ${(e as Error).message}`
   } finally {
+    showOverlay(null)
     busy = false
     updateLookupButton()
   }
 }
 
 lookupBtn.addEventListener('click', () => void lookup())
+
+// Space or R anywhere on the page starts a lookup, except while typing in / operating a form field
+// (inputs, checkboxes, selects keep their own Space behavior). Other buttons still activate with Enter.
+document.addEventListener('keydown', (e) => {
+  if (e.repeat || e.ctrlKey || e.altKey || e.metaKey) return
+  const isSpace = e.code === 'Space' || e.key === ' '
+  if (!isSpace && e.key.toLowerCase() !== 'r') return
+  const t = e.target as HTMLElement
+  if (t.closest('input, select, textarea, [contenteditable=""], [contenteditable="true"]')) return
+  e.preventDefault() // no page scroll, no click on the focused button, no play/pause on the video
+  if (busy) return
+  if (!model) lookupStatus.textContent = 'The model is still loading.'
+  else if (!recorder) lookupStatus.textContent = 'Start the webcam or a video first.'
+  else void lookup()
+})
+// buttons activate on Space keyup in some browsers, so swallow that half too
+document.addEventListener('keyup', (e) => {
+  if ((e.code === 'Space' || e.key === ' ') && !(e.target as HTMLElement).closest('input, select, textarea')) e.preventDefault()
+})
 
 SignModel.load()
   .then((m) => {

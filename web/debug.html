@@ -12,11 +12,44 @@
       .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
       button, input[type='file'] { font: inherit; }
       button { padding: 6px 12px; }
-      .layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(220px, 1fr); gap: 16px; }
-      @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
+      /* Wide: video + debug info on the left, the lookup panel sticky on the right.
+         Narrow: one column, lookup panel last and sticky to the bottom of the screen. */
+      .layout {
+        display: grid; gap: 16px; align-items: start;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+        grid-template-areas: 'stage lookup' 'info lookup';
+      }
+      .stage-wrap { grid-area: stage; position: relative; }
+      .layout > .panel { grid-area: info; }
+      .lookup {
+        grid-area: lookup; position: sticky; top: 16px; z-index: 2;
+        max-height: calc(100vh - 32px); overflow-y: auto;
+        background: var(--panel); padding: 12px; border-radius: 6px;
+      }
+      @media (max-width: 760px) {
+        .layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'stage' 'info' 'lookup'; }
+        .lookup {
+          position: sticky; top: auto; bottom: 0; max-height: 48vh; margin: 0 -16px; border-radius: 6px 6px 0 0;
+          box-shadow: 0 -2px 12px rgb(0 0 0 / 0.25);
+        }
+        .lookup .hint { display: none; }
+        body { padding-bottom: 0; } /* the pinned panel is the last thing on the page */
+      }
+      .back { margin: 0 0 4px; font-size: 0.9em; }
       /* align-self: start, or the grid row stretches .stage taller than the video and the overlay with it */
       .stage { position: relative; align-self: start; background: #000; }
-      .stage video { display: block; width: 100%; height: auto; object-fit: contain; }
+      /* cap the height so the whole picture fits on screen next to the panel; object-fit keeps the aspect */
+      .stage video { display: block; width: 100%; height: auto; max-height: calc(100vh - 140px); object-fit: contain; }
+      @media (max-width: 760px) { .stage video { max-height: 50vh; } }
+      /* 3-2-1 countdown and recording badge; outside .stage so the mirror transform doesn't flip the text */
+      .countdown {
+        position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none;
+        font: 700 clamp(4rem, 18vw, 9rem)/1 system-ui, sans-serif; color: #fff; text-shadow: 0 2px 12px rgb(0 0 0 / 0.7);
+      }
+      .countdown[hidden] { display: none; }
+      .countdown.rec { place-items: start end; padding: 12px; font-size: 1.1rem; }
+      .countdown.rec span { background: #c01c28; padding: 4px 10px; border-radius: 4px; text-shadow: none; }
+      kbd { font: 0.85em ui-monospace, monospace; padding: 1px 5px; border: 1px solid var(--muted); border-radius: 3px; }
       /* left/top/width/height are set by debug.ts to the video's displayed picture rect */
       .stage canvas { position: absolute; left: 0; top: 0; pointer-events: none; }
       /* mirror the container, so video and overlay always flip together */
@@ -28,11 +61,14 @@
       .swatch { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
       .legend { margin-top: 12px; color: var(--muted); }
       .muted { color: var(--muted); }
-      .lookup { margin-top: 16px; background: var(--panel); padding: 12px; border-radius: 6px; max-width: 640px; }
       .lookup h2 { font-size: 1.1rem; margin: 0 0 6px; }
-      #matches { padding-left: 1.4em; }
+      .lookup p { margin: 6px 0; }
+      .lookup .row { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 8px 0; }
+      #lookup { width: 100%; padding: 10px 12px; font-weight: 600; }
+      #model-info, #lookup-status { font-size: 0.9em; }
+      #matches { padding-left: 1.4em; margin: 8px 0 0; }
       #matches li { margin: 6px 0; }
-      .match { display: grid; grid-template-columns: minmax(8em, auto) 1fr 4em; gap: 8px; align-items: center; }
+      .match { display: grid; grid-template-columns: minmax(6em, auto) 1fr 3.5em; gap: 8px; align-items: center; }
       .gloss { font-weight: 600; }
       .bar { height: 0.7em; background: color-mix(in srgb, var(--fg) 12%, transparent); border-radius: 4px; overflow: hidden; }
       .bar > span { display: block; height: 100%; background: var(--right); }
@@ -41,6 +77,7 @@
     </style>
   </head>
   <body>
+    <p class="back"><a href="./">← Back to Signdex</a></p>
     <h1>Landmark debug</h1>
     <p>Shows what the model sees: landmarks assembled into the Kaggle layout, with hands placed in slots by nearest pose wrist. Runs on your device.</p>
     <div class="controls">
@@ -54,10 +91,29 @@
       <button id="download" type="button" disabled>Download last 6 s as JSON</button>
     </div>
     <div class="layout">
-      <div class="stage" id="stage">
-        <video id="video" playsinline muted loop controls aria-label="Input video"></video>
-        <canvas id="overlay" aria-hidden="true"></canvas>
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <video id="video" playsinline muted loop controls aria-label="Input video"></video>
+          <canvas id="overlay" aria-hidden="true"></canvas>
+        </div>
+        <div class="countdown" id="countdown" aria-hidden="true" hidden></div>
       </div>
+      <section class="lookup" aria-labelledby="lookup-heading">
+        <h2 id="lookup-heading">Look up a sign</h2>
+        <p id="model-info" class="muted">Loading model…</p>
+        <p class="hint muted">Start the webcam (or a video). Press <kbd>Space</kbd> or <kbd>R</kbd>: 3-2-1, then sign one sign within the 2 seconds.</p>
+        <button id="lookup" type="button" disabled aria-keyshortcuts="Space R">Record 2 s and look up (Space / R)</button>
+        <div class="row">
+          <label for="tta">Test-time averaging</label>
+          <select id="tta">
+            <option value="1">Off (1 pass)</option>
+            <option value="3">3 trimmed versions</option>
+            <option value="5" selected>5 trimmed versions</option>
+          </select>
+        </div>
+        <p id="lookup-status" aria-live="polite"></p>
+        <ol id="matches" aria-label="Top 5 matching signs"></ol>
+      </section>
       <div class="panel">
         <dl>
           <dt>Status</dt><dd id="status" aria-live="polite">Loading MediaPipe…</dd>
@@ -80,21 +136,6 @@
         </div>
       </div>
     </div>
-    <section class="lookup" aria-labelledby="lookup-heading">
-      <h2 id="lookup-heading">Look up a sign</h2>
-      <p id="model-info" class="muted">Loading model…</p>
-      <p>Start the webcam (or a video), then sign one sign within 2 seconds.</p>
-      <label for="tta">Test-time averaging</label>
-      <select id="tta">
-        <option value="1">Off (1 pass)</option>
-        <option value="3">3 trimmed versions</option>
-        <option value="5" selected>5 trimmed versions</option>
-      </select>
-      <button id="lookup" type="button" disabled>Record 2 s and look up</button>
-      <p id="lookup-status" aria-live="polite"></p>
-      <ol id="matches" aria-label="Top 5 matching signs"></ol>
-    </section>
-    <p><a href="./">Back to Signdex</a></p>
     <script type="module" src="/src/debug.ts"></script>
   </body>
 </html>
