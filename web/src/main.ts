@@ -2,6 +2,7 @@
 import './app.css'
 import { resultSource, stopResults } from './app/results'
 import { currentScreen, onLeave, show, type Screen } from './app/router'
+import './app/my-signs'
 import './app/trim'
 import { record, recordAgain } from './app/webcam'
 

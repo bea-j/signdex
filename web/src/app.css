@@ -56,6 +56,9 @@ body {
   font: 400 16px/1.5 var(--font); color: var(--text);
   -webkit-font-smoothing: antialiased;
 }
+/* footer at the bottom on short screens */
+body { display: flex; flex-direction: column; }
+main { flex: 1 0 auto; }
 h1, h2, h3, p { margin: 0; }
 button, a, select { cursor: pointer; }
 button, select, input { font: inherit; color: inherit; }
