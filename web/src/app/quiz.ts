@@ -1,9 +1,11 @@
-// Quiz from "My signs". Questions come from the Signdex quiz Worker (only the saved signs' names are sent: no
-// video, no landmarks). If the Worker is unreachable or returns something unusable, a local quiz is built from
-// similar.json (look-alike signs as the wrong options), so the quiz also works offline.
+// Quiz from "My signs", about meanings and usage only (quiz-content.ts says what that allows).
+// The Worker is asked for questions (only the saved signs' names are sent). Its meaning/usage questions are kept,
+// always with the dictionary's meaning as the explanation; signs left without a question get one from the
+// dictionary. If the Worker can't be reached, the whole quiz comes from the dictionary, so it also works offline.
 import { referenceClip } from '../reference'
 import { prefersReducedMotion, SkeletonPlayer } from '../ui/skeleton'
 import { entry, knownLabels, loadReferenceData, signerLink, similarTo } from './engine'
+import { interchangeable, isMeaningOrUsage } from './quiz-content'
 import { onEnter, onLeave, show } from './router'
 import { savedSigns } from './saved'
 
@@ -11,7 +13,7 @@ export const QUIZ_URL = 'https://asl-tutor-api.ph105.workers.dev/'
 const MIN_SIGNS = 4
 /** The Worker takes 2 to 15 signs (it slices anything over 15); we send the 15 most recently saved. */
 const MAX_WORKER_SIGNS = 15
-const MAX_LOCAL_QUESTIONS = 10
+const MAX_QUESTIONS = 10
 /**
  * Signs the quiz service is not asked about, and whose generated questions are dropped, because it produced
  * wrong content for them (DRINK: it claimed an S/fist handshape; DRINK uses a C handshape, like holding a cup).
@@ -95,7 +97,7 @@ async function fetchWorkerQuiz(labels: string[]): Promise<QuizQuestion[]> {
   }
 }
 
-// ---------------------------------------------------------------- local quiz from similar.json
+// ---------------------------------------------------------------- dictionary questions
 const shuffle = <T>(a: T[]): T[] => {
   const b = [...a]
   for (let i = b.length - 1; i > 0; i--) {
@@ -105,29 +107,33 @@ const shuffle = <T>(a: T[]): T[] => {
   return b
 }
 
-const listOf = (xs: string[]) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`)
+/** The only explanation ever shown: the meaning from our dictionary. */
+function explain(label: string): string {
+  const e = entry(label)
+  return e.meaning ? `${e.display} means “${e.meaning}”.` : ''
+}
 
-export async function localQuiz(labels: string[]): Promise<QuizQuestion[]> {
+/** One meaning question per sign; signs the model confuses with it are the wrong options. */
+export async function dictionaryQuiz(labels: string[], limit = MAX_QUESTIONS): Promise<QuizQuestion[]> {
   const all = knownLabels()
   const out: QuizQuestion[] = []
-  for (const label of shuffle(labels).slice(0, MAX_LOCAL_QUESTIONS)) {
+  for (const label of shuffle(labels).slice(0, limit)) {
     const e = entry(label)
-    const sims = similarTo(label, 3).map((s) => s.label).filter((l) => l !== label)
-    const wrong = [...sims]
-    for (const l of shuffle([...labels, ...all])) {
+    const wrong: string[] = []
+    for (const l of [...similarTo(label, 3).map((s) => s.label), ...shuffle([...labels, ...all])]) {
       if (wrong.length >= 3) break
-      if (l !== label && !wrong.includes(l)) wrong.push(l)
+      // two options that mean the same thing (or are the same sign) would make the question unfair
+      if (l !== label && !wrong.includes(l) && ![label, ...wrong].some((o) => interchangeable(o, l))) wrong.push(l)
     }
     const options = shuffle([label, ...wrong.slice(0, 3)])
     const hasClip = !!(await referenceClip(label))
-    const look = sims.length ? ` It looks similar to ${listOf(sims.map((l) => entry(l).display!))}, so watch the handshape and movement.` : ''
     out.push({
       targetSign: e.display!,
       label,
-      question: hasClip ? 'Which sign is this signer making?' : `Which sign means “${e.meaning ?? e.display}”?`,
+      question: hasClip ? 'What does this sign mean?' : `Which sign means “${e.meaning ?? e.display}”?`,
       options: options.map((l) => entry(l).display!),
       correctIndex: options.indexOf(label),
-      explanation: `${e.display}${e.meaning ? ` means “${e.meaning}”.` : '.'}${look}`,
+      explanation: explain(label),
     })
   }
   return out
@@ -167,8 +173,29 @@ function view(state: 'loading' | 'question' | 'summary' | 'error') {
 
 /** Our label for a sign name the Worker sends back (display name or label, any case). */
 function labelFor(name: string, saved: string[]): string | undefined {
-  const n = name.trim().toLowerCase()
-  return saved.find((l) => l.toLowerCase() === n || entry(l).display!.toLowerCase() === n)
+  const key = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
+  return saved.find((l) => key(l) === key(name) || key(entry(l).display!) === key(name))
+}
+
+/** The service's meaning/usage questions, plus dictionary questions for the signs those don't cover. */
+async function composeQuiz(fromService: QuizQuestion[], saved: string[]) {
+  const asked = saved.slice(-MAX_WORKER_SIGNS).filter((l) => !excluded(l))
+  const kept: QuizQuestion[] = []
+  for (const q of fromService) {
+    if (kept.length >= MAX_QUESTIONS || !isMeaningOrUsage(q)) continue
+    if ([q.targetSign, q.question, ...q.options].some(excluded)) continue
+    const label = labelFor(q.targetSign, asked)
+    if (!label) continue // not one of their signs
+    kept.push({ ...q, label, explanation: explain(label) })
+  }
+  const uncovered = asked.filter((l) => !kept.some((q) => q.label === l))
+  const filled = await dictionaryQuiz(uncovered, MAX_QUESTIONS - kept.length)
+  const source = !kept.length
+    ? 'Questions from the Signdex dictionary'
+    : filled.length
+      ? 'Questions from the quiz service and the Signdex dictionary'
+      : 'Questions written by the Signdex quiz service'
+  return { questions: [...kept, ...filled], source }
 }
 
 export async function startQuiz() {
@@ -184,11 +211,10 @@ export async function startQuiz() {
   try {
     const qs = await fetchWorkerQuiz(saved)
     if (my !== run) return
-    // drop anything about an excluded sign, even if the service brings it up on its own
-    const kept = qs.filter((q) => ![q.targetSign, q.question, q.explanation, ...q.options].some(excluded))
-    if (!kept.length) throw new QuizServiceError('no usable questions')
-    questions = kept.map((q) => ({ ...q, label: labelFor(q.targetSign, saved) }))
-    $('quiz-source').textContent = 'Questions written by the Signdex quiz service'
+    const composed = await composeQuiz(qs, saved)
+    if (my !== run) return
+    questions = composed.questions
+    $('quiz-source').textContent = composed.source
   } catch (e) {
     if (my !== run) return
     console.warn('quiz service failed:', e)
@@ -199,8 +225,8 @@ export async function startQuiz() {
       view('error')
       return
     }
-    $('quiz-error-text').textContent = 'We couldn’t reach the quiz service, so here is an offline quiz built from look-alike signs.'
-    questions = await localQuiz(saved)
+    $('quiz-error-text').textContent = 'We couldn’t reach the quiz service, so here is an offline quiz from the Signdex dictionary.'
+    questions = await dictionaryQuiz(saved)
     if (my !== run) return
     $('quiz-source').textContent = 'Offline quiz'
   }
