@@ -56,6 +56,9 @@ export function entry(label: string): DictionaryEntry {
   }
 }
 
+/** Every sign label in dictionary.json (all the model's signs once loaded). */
+export const knownLabels = (): string[] => Object.keys(dictionary)
+
 /** "Watch a real signer" link: visible text plus an accessible label naming the site. */
 export function signerLink(e: DictionaryEntry): { href: string; aria: string } {
   let site = 'a dictionary'

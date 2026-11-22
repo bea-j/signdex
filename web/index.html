@@ -216,14 +216,56 @@
 
       <!-- ============================================================ my signs -->
       <section class="saved" id="screen-saved" aria-labelledby="saved-title" hidden>
-        <h1 class="title" id="saved-title">My signs</h1>
-        <p class="muted" style="margin-top: 8px">Your personal list for review and practice. Saved on this device only.</p>
+        <div class="saved-head">
+          <div>
+            <h1 class="title" id="saved-title">My signs</h1>
+            <p class="muted" style="margin-top: 8px">Your personal list for review and practice. Saved on this device only.</p>
+          </div>
+          <div class="quiz-start">
+            <button class="btn btn-primary" type="button" id="start-quiz" disabled aria-describedby="quiz-hint">Start quiz <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button>
+            <p class="quiz-hint" id="quiz-hint">Save at least 4 signs to start a quiz.</p>
+          </div>
+        </div>
         <div class="saved-empty glass-panel" id="saved-empty">
           <svg class="icon" aria-hidden="true"><use href="#i-bookmark" /></svg>
           <h2>Signs you save will show up here.</h2>
           <button class="btn btn-primary" type="button" data-go="home">Look up a sign</button>
         </div>
         <ul class="saved-list" id="saved-list"></ul>
+      </section>
+
+      <!-- ============================================================ quiz (from My signs) -->
+      <section class="saved quiz" id="screen-quiz" aria-labelledby="quiz-title" hidden>
+        <button class="back" type="button" data-go="saved">← My signs</button>
+        <div class="panel glass-panel quiz-panel">
+          <div class="quiz-top">
+            <p class="eyebrow" id="quiz-progress">Quiz</p>
+            <p class="quiz-source" id="quiz-source"></p>
+          </div>
+          <h1 class="visually-hidden" id="quiz-title">Sign quiz</h1>
+          <div class="banner banner-warning" id="quiz-error" role="status" hidden>
+            <svg class="icon" aria-hidden="true"><use href="#i-info" /></svg>
+            <span><span id="quiz-error-text"></span> <button class="link inline" type="button" id="quiz-retry">Try again</button></span>
+          </div>
+          <div class="quiz-loading" id="quiz-loading" hidden><span class="spinner" aria-hidden="true"></span><span>Writing your quiz…</span></div>
+          <div class="quiz-q" id="quiz-q" hidden>
+            <button class="ref quiz-ref" type="button" id="quiz-ref" hidden aria-label="Replay the reference signer"><canvas aria-hidden="true"></canvas></button>
+            <h2 class="quiz-question" id="quiz-question" tabindex="-1"></h2>
+            <ol class="quiz-options" id="quiz-options"></ol>
+            <div class="quiz-feedback" id="quiz-feedback" aria-live="polite" hidden></div>
+            <div class="actions"><button class="btn btn-primary" type="button" id="quiz-next" hidden>Next <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button></div>
+          </div>
+          <div class="quiz-summary" id="quiz-summary" hidden>
+            <p class="quiz-score" id="quiz-score" tabindex="-1"></p>
+            <p class="muted" id="quiz-score-note"></p>
+            <div id="quiz-review"></div>
+            <div class="actions">
+              <button class="btn btn-secondary" type="button" data-go="saved">Back to My signs</button>
+              <button class="btn btn-primary" type="button" id="quiz-retake">Retake</button>
+            </div>
+          </div>
+        </div>
+        <p class="quiz-privacy"><svg class="icon-sm" aria-hidden="true"><use href="#i-lock" /></svg> The quiz sends only the names of your saved signs to Signdex’s quiz service. No video or landmarks.</p>
       </section>
     </main>
 

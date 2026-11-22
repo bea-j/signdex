@@ -3,6 +3,7 @@ import './app.css'
 import { currentScreen, show, type Screen } from './app/router'
 import './app/demo'
 import './app/my-signs'
+import './app/quiz'
 import './app/trim'
 import { record } from './app/webcam'
 
