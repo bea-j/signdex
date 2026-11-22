@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "prebuild": "node ../web/scripts/fetch-mediapipe.mjs && node scripts/copy-mediapipe.mjs",
+    "prebuild": "node ../web/scripts/fetch-mediapipe.mjs && node ../web/scripts/copy-model.mjs && node scripts/copy-mediapipe.mjs && node scripts/copy-shared.mjs",
     "build": "tsc --noEmit && vite build",
     "watch": "vite build --watch",
     "typecheck": "tsc --noEmit"

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Signdex",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Look up ASL signs you see in videos. Runs on your device.",
   "minimum_chrome_version": "116",
   "permissions": ["sidePanel", "storage", "tabCapture", "offscreen", "scripting", "activeTab"],

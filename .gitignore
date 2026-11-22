@@ -14,3 +14,7 @@ web/public/model/
 extension/public/mediapipe/
 model/runs/
 kaggle/evaluate/signseek_evaluate.py
+extension/public/model/
+extension/public/dictionary.json
+extension/public/brand/
+extension/public/ambient/

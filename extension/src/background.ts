@@ -12,6 +12,17 @@ chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(consol
 let activeTab: number | null = null
 let activeFrame: number | null = null
 
+/** Remember which tab is being captured: the service worker may be restarted between hotkey presses. */
+function setActive(tab: number | null, frame: number | null = null) {
+  activeTab = tab
+  activeFrame = frame
+  void chrome.storage.session.set({ activeTab: tab, activeFrame: frame })
+}
+const restored = chrome.storage.session.get(['activeTab', 'activeFrame']).then((v) => {
+  if (activeTab === null && typeof v.activeTab === 'number') activeTab = v.activeTab
+  if (activeFrame === null && typeof v.activeFrame === 'number') activeFrame = v.activeFrame
+})
+
 const log = (text: string) => {
   console.log('[Signdex]', text)
   void send({ target: 'panel', type: 'log', text })
@@ -46,8 +57,7 @@ async function toOffscreen(msg: Msg): Promise<void> {
 async function stopAll(): Promise<void> {
   await send({ target: 'pipeline', type: 'stop' }) // whichever pipeline is active (iframe or offscreen)
   if (activeTab !== null) await toTab(activeTab, { cs: 'stop' }) // content scripts in all frames
-  activeTab = null
-  activeFrame = null
+  setActive(null)
 }
 
 async function probe(tabId: number): Promise<{ frameId: number; result: ProbeResult }[]> {
@@ -79,8 +89,7 @@ async function startVideoPath(tabId: number, frameId: number): Promise<void> {
   await chrome.storage.session.set({ captureNonce: nonce }) // readable by the capture iframe, not by the page
   await chrome.scripting.executeScript({ target: { tabId, frameIds: [frameId] }, files: ['capture-video.js'] })
   await toTab(tabId, { cs: 'start-video', nonce, frameUrl: chrome.runtime.getURL('capture-frame.html') }, frameId)
-  activeTab = tabId
-  activeFrame = frameId
+  setActive(tabId, frameId)
   log(`primary path: page <video> element (frame ${frameId})`)
 }
 
@@ -90,7 +99,7 @@ async function startTabPath(tabId: number, reason: string, top?: ProbeResult): P
   const crop = cropFrom(top) // null -> full tab
   const viewport: Viewport | null = top?.viewport ?? null
   await toOffscreen({ target: 'offscreen', type: 'start', streamId, crop, viewport, reason })
-  activeTab = tabId
+  setActive(tabId)
   // keep the crop rect current while the user scrolls/resizes (top-frame videos only)
   if (top?.rect) {
     await chrome.scripting.executeScript({ target: { tabId, frameIds: [0] }, files: ['capture-video.js'] })
@@ -130,11 +139,36 @@ async function begin(tabId: number): Promise<void> {
   await startTabPath(tabId, reason, top?.chosen ? top : undefined)
 }
 
+/** Is a landmark pipeline running (iframe or offscreen)? Asks it directly, so it survives a worker restart. */
+async function capturing(): Promise<boolean> {
+  const r = await send<{ status?: { capturing?: boolean } }>({ target: 'pipeline', type: 'get-buffer' })
+  return !!r?.status?.capturing
+}
+
+/** The panel may still be opening: retry the lookup request briefly until it answers. */
+async function askPanelToLookUp(): Promise<void> {
+  for (let i = 0; i < 20; i++) {
+    try {
+      // other extension pages (offscreen, capture iframe) also receive it; only the panel answers true
+      if ((await chrome.runtime.sendMessage({ target: 'panel', type: 'lookup' } satisfies Msg)) === true) return
+    } catch {
+      /* no receiver yet */
+    }
+    await new Promise((r) => setTimeout(r, 100))
+  }
+}
+
+// First press on a tab: start capturing it. Pressed again while that tab is being captured: look up.
 chrome.commands.onCommand.addListener((command, tab) => {
   if (command !== 'lookup-sign' || tab?.id === undefined) return
   // Must be called synchronously inside the hotkey's user gesture, before any await.
   chrome.sidePanel.open({ windowId: tab.windowId }).catch(console.error)
-  begin(tab.id).catch((e) => log(`capture failed: ${(e as Error).message}`))
+  const tabId = tab.id
+  void (async () => {
+    await restored
+    if (activeTab === tabId && (await capturing())) return askPanelToLookUp()
+    await begin(tabId)
+  })().catch((e) => log(`capture failed: ${(e as Error).message}`))
 })
 
 chrome.runtime.onMessage.addListener((msg: Msg, sender) => {

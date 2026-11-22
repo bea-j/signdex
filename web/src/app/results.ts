@@ -159,30 +159,39 @@ function card(m: SignMatch, rank: number, unsure: boolean): HTMLElement {
   return el
 }
 
+/**
+ * Top-k result cards into `container` (web app results screen and the extension side panel).
+ * Below LOW_CONFIDENCE on the top match, a warning banner with `unsureText` comes first.
+ */
+export function renderCards(container: HTMLElement, matches: SignMatch[], unsureText: string) {
+  const unsure = matches[0].confidence < LOW_CONFIDENCE
+  cardSubscriptions.forEach((off) => off())
+  cardSubscriptions = []
+  container.innerHTML = ''
+  if (unsure) {
+    const b = document.createElement('div')
+    b.className = 'banner banner-warning'
+    b.setAttribute('role', 'status')
+    b.innerHTML = `${icon('info', 'icon')}<span>${esc(unsureText)}</span>`
+    container.append(b)
+  }
+  matches.forEach((m, i) => container.append(card(m, i + 1, unsure)))
+}
+
 let lastSource: ResultView['source'] = 'webcam'
 export const resultSource = () => lastSource
 
 export function renderResults(view: ResultView) {
   lastSource = view.source
-  const unsure = view.matches[0].confidence < LOW_CONFIDENCE
   $('results-count').textContent = `${view.matches.length} possible matches`
   const secs = view.seconds.toFixed(1)
   $('clip-caption').textContent = `Your ${view.source === 'webcam' ? 'recorded' : 'selected'} ${secs} second clip plays on a loop`
-  const cards = $('cards')
-  cardSubscriptions.forEach((off) => off())
-  cardSubscriptions = []
-  cards.innerHTML = ''
-  if (unsure) {
-    const b = document.createElement('div')
-    b.className = 'banner banner-warning'
-    b.setAttribute('role', 'status')
-    b.innerHTML = `${icon('info', 'icon')}<span>${
-      view.source === 'webcam'
-        ? 'Not sure. Try again with just the one sign inside the 2 seconds.'
-        : 'Not sure. Try trimming tighter around the sign.'
-    }</span>`
-    cards.append(b)
-  }
-  view.matches.forEach((m, i) => cards.append(card(m, i + 1, unsure)))
+  renderCards(
+    $('cards'),
+    view.matches,
+    view.source === 'webcam'
+      ? 'Not sure. Try again with just the one sign inside the 2 seconds.'
+      : 'Not sure. Try trimming tighter around the sign.',
+  )
   playLoop(view)
 }

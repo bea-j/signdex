@@ -73,6 +73,8 @@ export type Msg =
   | { target: 'panel'; type: 'status'; status: CaptureStatus }
   | { target: 'panel'; type: 'probe-result'; result: ProbeResult }
   | { target: 'panel'; type: 'log'; text: string }
+  /** Alt+Shift+S pressed again while capturing this tab: look up the last few seconds. */
+  | { target: 'panel'; type: 'lookup' }
 
 /** Service worker -> content script (chrome.tabs.sendMessage). */
 export type CsMsg =
