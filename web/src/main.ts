@@ -41,6 +41,11 @@ document.addEventListener('keyup', (e) => {
   if ((e.code === 'Space' || e.key === ' ') && !inField(e) && shortcutScreens.includes(currentScreen())) e.preventDefault()
 })
 
+// how-it-works steps: each card's width in proportion to the amount of text it holds
+for (const card of document.querySelectorAll<HTMLElement>('.feature')) {
+  card.style.setProperty('--grow', String(card.textContent?.replace(/\s+/g, ' ').trim().length ?? 1))
+}
+
 // feature cards: pointer glow + slight tilt, as in the design
 for (const card of document.querySelectorAll<HTMLElement>('.feature')) {
   card.addEventListener('pointermove', (e) => {

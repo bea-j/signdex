@@ -727,3 +727,98 @@ body.bg-live { background: transparent; }
 .bg-live .panel, .bg-live .results-panel, .bg-live .feature, .bg-live .saved-item, .bg-live .saved-empty, .bg-live .details {
   background-color: rgb(12 11 10 / 60%);
 }
+
+/* ------------------------------------------------------------------ home: demo panel (fixed aspect, labeled), how-it-works */
+/* The demo panel keeps one aspect ratio; everything inside scales with its width (container query units). */
+.mock { container-type: inline-size; }
+.mock-panel { aspect-ratio: 520 / 430; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: 2.3cqw; }
+.mock-bar { margin-bottom: 2.3cqw; padding: 0.8cqw 1.5cqw; }
+.traffic { gap: 1.5cqw; }
+.traffic span { width: 2.3cqw; height: 2.3cqw; }
+.mock-title { padding: 0.8cqw 2.3cqw; font-size: 2.7cqw; }
+.mock .figure { aspect-ratio: auto; height: 100%; border-radius: 3cqw; }
+.mock .live-badge { top: 3cqw; left: 3cqw; gap: 1.5cqw; padding: 1.15cqw 2.3cqw; font-size: 2.7cqw; }
+.mock .live-badge .dot { width: 1.5cqw; height: 1.5cqw; }
+.mock .figure .play { width: 10.8cqw; height: 10.8cqw; }
+.demo-tag {
+  position: absolute; top: 3cqw; right: 3cqw; z-index: 3; padding: 0.9cqw 2cqw; border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 45%); background: rgb(12 11 10 / 55%); color: #fff;
+  font-size: 2.5cqw; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.mock-match { margin-top: 2.3cqw; padding: 3cqw; }
+.mock-match .small { font-size: 2.7cqw; }
+.mock-match .big { font-size: 3.85cqw; }
+.match-pill { padding: 1.15cqw 2.3cqw; font-size: 2.7cqw; }
+.mock-match .bar { margin-top: 2.3cqw; height: 1.6cqw; }
+.mock-caption { position: relative; margin-top: 14px; text-align: center; font-size: 13px; font-weight: 600; color: var(--muted); }
+
+/* how-it-works steps: white translucent glass, width in proportion to their text (set from main.ts), uneven heights
+   and vertical offsets kept; curved arrows between them */
+.features { list-style: none; padding-left: 0; padding-right: 0; }
+.feature {
+  min-height: 0; border-color: rgb(255 255 255 / 30%);
+  background: linear-gradient(145deg, rgb(255 255 255 / 16%), rgb(255 255 255 / 7%));
+}
+/* over the animated background a dark base under the white tint keeps text readable wherever the light is */
+.bg-live .feature { background-color: rgb(12 11 10 / 72%); background-image: linear-gradient(145deg, rgb(255 255 255 / 16%), rgb(255 255 255 / 8%)); }
+.feature p { color: #e4e2da; }
+.feature h2 { margin-top: 20px; }
+.flow-arrow { display: grid; place-items: center; color: rgb(255 255 255 / 70%); }
+.flow-arrow svg { width: 88px; height: 110px; overflow: visible; }
+.flow-arrow path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 2 7; }
+@media (min-width: 768px) {
+  .features { display: flex; align-items: flex-start; gap: 0; }
+  .feature, .feature-sage, .feature-sand, .feature-mist { flex: var(--grow, 1) 1 0; min-width: 0; min-height: 0; grid-column: auto; }
+  .feature-sage { margin-top: 0; }
+  .feature-sand { margin-top: 72px; }
+  .feature-mist { margin-top: 28px; }
+  .flow-arrow { flex: none; width: 76px; align-self: flex-start; position: relative; z-index: 2; }
+  .flow-arrow svg { width: 150px; height: 150px; margin: 0 -37px; }
+  .flow-arrow.over { margin-top: -78px; }
+  .flow-arrow.under { margin-top: 178px; }
+}
+@media (max-width: 767px) {
+  .features { gap: 0; }
+  .flow-arrow { height: 64px; }
+  .flow-arrow svg { width: 52px; height: 64px; transform: rotate(90deg); }
+}
+.guide-link { position: relative; margin: 28px auto 0; max-width: 72rem; text-align: center; }
+.guide-link .link { display: inline-flex; font-size: 15px; }
+
+/* ------------------------------------------------------------------ guide */
+.guide { display: grid; gap: 16px; }
+.guide .title { margin-top: 0; }
+.guide-intro { font-size: 18px; line-height: 30px; color: #dedcd4; }
+.guide-toc ol { margin: 0; padding-left: 20px; columns: 2 220px; column-gap: 32px; }
+.guide-toc li { margin: 4px 0; break-inside: avoid; }
+.guide-toc a { color: var(--sage-text); font-weight: 600; text-underline-offset: 3px; }
+.guide-pipeline { margin: 0; }
+.guide-pipeline ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; counter-reset: step; }
+.guide-pipeline li {
+  position: relative; padding: 12px; border-radius: var(--radius-lg); border: 1px solid rgb(255 255 255 / 18%);
+  background: rgb(255 255 255 / 6%); display: grid; gap: 2px;
+}
+.guide-pipeline li strong { font-size: 15px; }
+.guide-pipeline li span { font-size: 13px; color: var(--muted); }
+.guide-step { scroll-margin-top: 20px; }
+.guide-step h2 { display: flex; align-items: center; gap: 12px; font-size: 22px; letter-spacing: -0.02em; }
+.step-no {
+  display: grid; place-items: center; width: 34px; height: 34px; flex: none; border-radius: 999px;
+  border: 1px solid #9db5a1; background: var(--primary); color: #fff; font-size: 15px;
+}
+.guide-step p, .guide-step ul { margin: 12px 0 0; line-height: 1.65; color: #dedcd4; }
+.guide-step ul { padding-left: 20px; }
+.guide-step li { margin: 6px 0; }
+.conf-word { font-weight: 700; }
+.conf-word.high { color: var(--conf-high-text); }
+.conf-word.amber { color: var(--conf-amber-text); }
+.conf-word.low { color: var(--conf-low-text); }
+.guide-credit { font-size: 13px; color: var(--muted); }
+.guide .actions { margin-top: 4px; }
+/* readable white glass: the backdrop behind each step is blurred and darkened, then the white tint goes on top */
+.feature p { color: var(--text); }
+.guide-link .link {
+  padding: 10px 18px; border-radius: 999px; border: 1px solid rgb(255 255 255 / 22%);
+  background: rgb(12 11 10 / 62%); backdrop-filter: blur(12px); text-decoration: none;
+}
+.guide-link .link:hover { border-color: rgb(255 255 255 / 40%); }

@@ -20,6 +20,7 @@
         <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 12h8" /></symbol>
         <symbol id="i-chrome" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22.0" fill="#fff"/><path d="M24.000 14.000L43.596 14.000A22.0 22.0 0 0 0 5.542 12.029L15.340 29.000A10.0 10.0 0 0 1 24.000 14.000Z" fill="#DB4437"/><path d="M24.000 14.000L43.596 14.000A22.0 22.0 0 0 0 5.542 12.029L15.340 29.000A10.0 10.0 0 0 1 24.000 14.000Z" fill="#F4B400" transform="rotate(120 24 24)"/><path d="M24.000 14.000L43.596 14.000A22.0 22.0 0 0 0 5.542 12.029L15.340 29.000A10.0 10.0 0 0 1 24.000 14.000Z" fill="#0F9D58" transform="rotate(240 24 24)"/><circle cx="24" cy="24" r="8.0" fill="#4285F4"/></symbol>
         <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6" /></symbol>
+        <marker id="arrowhead" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="rgb(255 255 255 / 70%)" /></marker>
         <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 11v5m0-8h.01" /></symbol>
       </defs>
     </svg>
@@ -33,8 +34,7 @@
           <label class="switch bg-switch" title="Animated background (paused automatically while hand tracking runs)">
             <input type="checkbox" role="switch" id="bg-toggle" /><span class="track" aria-hidden="true"></span><span class="bg-label">Background</span>
           </label>
-          <span class="nav-pill"><svg class="icon-sm" aria-hidden="true"><use href="#i-chrome" /></svg> Chrome extension</span>
-          <button class="nav-link" type="button" data-go="how">How it works</button>
+          <button class="nav-link" type="button" data-go="guide">How it works</button>
           <button class="nav-saved" type="button" data-go="saved" id="nav-saved">
             <svg class="icon-sm" aria-hidden="true"><use href="#i-bookmark" /></svg>
             <span class="label">My signs</span>
@@ -52,7 +52,7 @@
         <div class="hero-grid">
           <div class="hero-copy">
             <span class="badge"><svg class="icon-sm" aria-hidden="true"><use href="#i-chrome" /></svg> Made for Chrome, powered on-device</span>
-            <h1 id="home-title">Understand <span>American Sign Language with ease</span></h1>
+            <h1 id="home-title">Understand <span>American Sign Language</span> with ease</h1>
             <p class="lede">Look up ASL signs from any video without leaving the page. Capture the moment and find the closest matches in a snap.</p>
             <div class="cta">
               <button class="btn btn-primary square" type="button" id="home-upload"><svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg> Upload a clip</button>
@@ -61,17 +61,18 @@
             <p class="privacy"><svg class="icon-sm" aria-hidden="true"><use href="#i-lock" /></svg> Runs in your browser. Your video never leaves your device.</p>
           </div>
 
-          <figure class="mock" aria-label="Demo: Signdex tracking a signer's hands and showing the closest match" style="margin: 0 auto">
+          <figure class="mock" aria-label="Demo animation: an example lookup with a sample signer, not your camera" style="margin: 0 auto">
             <div class="mock-glow" aria-hidden="true"></div>
             <div class="mock-panel" aria-hidden="true">
               <div class="mock-bar">
                 <div class="traffic"><span></span><span></span><span></span></div>
-                <span class="mock-title">Signdex panel</span>
+                <span class="mock-title">Demo · example lookup</span>
               </div>
               <div class="figure" id="demo-stage">
                 <span class="bg"></span>
                 <canvas class="demo-canvas" id="demo-canvas"></canvas><span class="head"></span><span class="body"></span><span class="hand-l"></span><span class="hand-r"></span>
                 <span class="focus"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i></span>
+                <span class="demo-tag">Demo</span>
                 <span class="live-badge" id="demo-badge"><span class="dot"></span><span id="demo-badge-text">Tracking hands and body</span></span>
                 <span class="play"><svg class="icon" style="margin-left: 2px; width: 24px; height: 24px"><use href="#i-play" /></svg></span>
               </div>
@@ -82,34 +83,37 @@
                 </div>
                 <div class="bar conf-high" id="demo-barwrap"><span id="demo-bar" style="width: 82%; box-shadow: 0 0 12px rgb(83 148 111 / 35%)"></span></div>
               </div>
-              <p class="mock-hint">Alt + Shift + S captures the last few seconds</p>
             </div>
+            <figcaption class="mock-caption">Demo animation of a sample signer (PopSign ASL), not your camera. Use Upload or Webcam to look up a sign yourself.</figcaption>
           </figure>
         </div>
 
-        <div class="features" id="how" aria-label="How it works">
-          <article class="feature feature-sage">
+        <ol class="features" id="how" aria-label="How it works, in three steps">
+          <li class="feature feature-sage">
             <div class="feature-content">
               <div class="feature-top"><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg></span><span class="feature-number">01</span></div>
               <h2>Choose a clip</h2>
               <p>Upload a video or sign with your webcam, then pick the moment with the sign in it.</p>
             </div>
-          </article>
-          <article class="feature feature-sand">
+          </li>
+          <li class="flow-arrow over" aria-hidden="true"><svg viewBox="0 0 150 150"><path d="M40 100 C 48 8, 112 6, 120 136" marker-end="url(#arrowhead)" /></svg></li>
+          <li class="feature feature-sand">
             <div class="feature-content">
               <div class="feature-top"><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-scan" /></svg></span><span class="feature-number">02</span></div>
               <h2>Track the movement</h2>
               <p>Hands, face, and body movement are analyzed locally within the 1 to 3 second moment you select.</p>
             </div>
-          </article>
-          <article class="feature feature-mist">
+          </li>
+          <li class="flow-arrow under" aria-hidden="true"><svg viewBox="0 0 150 150"><path d="M40 52 C 44 150, 110 152, 116 100" marker-end="url(#arrowhead)" /></svg></li>
+          <li class="feature feature-mist">
             <div class="feature-content">
               <div class="feature-top"><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-bookmark" /></svg></span><span class="feature-number">03</span></div>
               <h2>Learn and save</h2>
               <p>View similar signs, then save new words to practice later and improve your ASL skills.</p>
             </div>
-          </article>
-        </div>
+          </li>
+        </ol>
+        <p class="guide-link"><button class="link" type="button" data-go="guide">Read the full guide to how Signdex works <svg class="icon-sm" aria-hidden="true"><use href="#i-arrow" /></svg></button></p>
       </section>
 
       <!-- ============================================================ webcam: camera left, results right -->
@@ -235,6 +239,105 @@
           <button class="btn btn-primary" type="button" data-go="home">Look up a sign</button>
         </div>
         <ul class="saved-list" id="saved-list"></ul>
+      </section>
+
+      <!-- ============================================================ guide: how Signdex works -->
+      <section class="saved guide" id="screen-guide" aria-labelledby="guide-title" hidden>
+        <button class="back" type="button" data-go="home">← Back to start</button>
+        <p class="eyebrow">Guide</p>
+        <h1 class="title" id="guide-title">How Signdex works</h1>
+        <p class="guide-intro">Signdex is a dictionary for single ASL signs. You show it one sign, from a video or your webcam, and it suggests the five signs it knows that move most like it. It does not interpret or translate sentences, and everything that looks at your video runs inside your browser.</p>
+
+        <nav class="guide-toc panel glass-panel" aria-label="On this page">
+          <ol>
+            <li><a href="#g-capture">Show it a sign</a></li>
+            <li><a href="#g-track">Track hands, face and body</a></li>
+            <li><a href="#g-prepare">Prepare the movement</a></li>
+            <li><a href="#g-model">Recognize the sign</a></li>
+            <li><a href="#g-results">Read the results</a></li>
+            <li><a href="#g-learn">Learn and practice</a></li>
+            <li><a href="#g-privacy">Privacy</a></li>
+            <li><a href="#g-tips">Tips for good results</a></li>
+            <li><a href="#g-limits">What it can’t do</a></li>
+          </ol>
+        </nav>
+
+        <figure class="guide-pipeline panel glass-panel" aria-label="Pipeline: video, landmarks, prepared movement, model, top 5 matches">
+          <ol>
+            <li><strong>Video</strong><span>webcam, clip or tab</span></li>
+            <li><strong>Landmarks</strong><span>hands, lips, face, pose</span></li>
+            <li><strong>Movement</strong><span>trimmed, centered, 64 frames</span></li>
+            <li><strong>Model</strong><span>250 signs</span></li>
+            <li><strong>Top 5</strong><span>with confidence</span></li>
+          </ol>
+        </figure>
+
+        <article class="guide-step panel glass-panel" id="g-capture">
+          <h2><span class="step-no">1</span> Show it a sign</h2>
+          <ul>
+            <li><strong>Webcam:</strong> press Record (or <kbd>Space</kbd> / <kbd>R</kbd>), wait for 3, 2, 1, then sign one sign within the 2 seconds. Press again to try another.</li>
+            <li><strong>Uploaded clip:</strong> drag the box on the timeline around the sign (1 to 3 seconds; arrow keys work too) and choose Look up.</li>
+            <li><strong>Chrome extension:</strong> while a video plays, press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> to start, then press it again right after the sign to look up the last 1 to 5 seconds.</li>
+          </ul>
+        </article>
+
+        <article class="guide-step panel glass-panel" id="g-track">
+          <h2><span class="step-no">2</span> Track hands, face and body</h2>
+          <p>Google’s MediaPipe models find 543 landmark points in each video frame, about 20 times a second: 21 on each hand, 468 on the face and 33 on the body. Signdex keeps the 109 that matter for signing: both hands, the lips, 20 points around the eyes, eyebrows and face outline, and 7 upper-body points (nose, shoulders, elbows, wrists). Turn on “Show hand &amp; body points” to see what it tracks.</p>
+        </article>
+
+        <article class="guide-step panel glass-panel" id="g-prepare">
+          <h2><span class="step-no">3</span> Prepare the movement</h2>
+          <ul>
+            <li>Frames before the first and after the last visible hand are dropped.</li>
+            <li>Left-handed signing is mirrored, so it’s compared like right-handed signing.</li>
+            <li>Positions are centered between the shoulders and scaled by shoulder width, so distance from the camera and where you stand don’t matter.</li>
+            <li>The picture shape is corrected to match the videos the model learned from.</li>
+            <li>The sign is resampled to 64 frames, so fast and slow signing look alike.</li>
+          </ul>
+        </article>
+
+        <article class="guide-step panel glass-panel" id="g-model">
+          <h2><span class="step-no">4</span> Recognize the sign</h2>
+          <p>A small neural network (convolution and attention layers) compares the movement with the 250 signs it was trained on. It learned from about 77,000 recordings of the PopSign ASL dataset. On signers it never saw during training it puts the right sign first 69% of the time and in the top 5 about 84% of the time. Each lookup also checks a few slightly trimmed versions of your clip and averages them, and takes about a fifth of a second on a laptop.</p>
+        </article>
+
+        <article class="guide-step panel glass-panel" id="g-results">
+          <h2><span class="step-no">5</span> Read the results</h2>
+          <ul>
+            <li>The five most likely signs, with a confidence bar: <span class="conf-word high">high</span> (60% or more), <span class="conf-word amber">medium</span> (40 to 60%) or <span class="conf-word low">low</span>. Below 40% for the top match, Signdex says it isn’t sure.</li>
+            <li>A small animation of a PopSign signer making each sign, drawn as a skeleton and mirrored like your webcam view.</li>
+            <li>“Looks similar to”: signs the model most often mixes up with this one, worth comparing.</li>
+            <li>“Watch a real signer” opens the sign in an online ASL dictionary, the best way to check a match.</li>
+          </ul>
+        </article>
+
+        <article class="guide-step panel glass-panel" id="g-learn">
+          <h2><span class="step-no">6</span> Learn and practice</h2>
+          <p>Save signs to <strong>My signs</strong> (stored on this device). With four or more saved, start a quiz: multiple-choice questions about your signs, written by Signdex’s quiz service. If it can’t be reached, a built-in quiz uses look-alike signs instead.</p>
+        </article>
+
+        <article class="guide-step panel glass-panel" id="g-privacy">
+          <h2><span class="step-no">7</span> Privacy</h2>
+          <p>Your camera and video are processed only in your browser; no video, image or landmark leaves your device. The only data Signdex sends is the list of your saved sign names, when you start a quiz. A “Watch a real signer” link you open takes you to that dictionary’s website.</p>
+        </article>
+
+        <article class="guide-step panel glass-panel" id="g-tips">
+          <h2><span class="step-no">8</span> Tips for good results</h2>
+          <ul>
+            <li>Keep your head, shoulders and both hands in the picture, with good light from the front.</li>
+            <li>Sign one sign, at a normal pace, and keep the clip tight around it.</li>
+            <li>If the top match is unsure, try again or trim the clip closer to the sign.</li>
+          </ul>
+        </article>
+
+        <article class="guide-step panel glass-panel" id="g-limits">
+          <h2><span class="step-no">9</span> What it can’t do</h2>
+          <p>Signdex knows 250 common signs from the PopSign ASL vocabulary. It looks up one isolated sign at a time; it can’t follow fingerspelling, sentences or conversation, and its results are suggestions to compare, not translations.</p>
+        </article>
+
+        <p class="guide-credit">Sign data and reference animations: PopSign ASL v1.0 (CC BY 4.0), via Google’s Isolated Sign Language Recognition dataset.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-go="webcam">Try it with your webcam <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button></div>
       </section>
 
       <!-- ============================================================ quiz (from My signs) -->
