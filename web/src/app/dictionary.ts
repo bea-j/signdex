@@ -1,9 +1,10 @@
 // Dictionary page: all 250 signs in a searchable grid, each with its looping reference animation, meaning and
 // "Watch a real signer" link (dictionary.json + the reference animations). Only cards on screen animate.
-import { preloadAllReferences, referenceClip } from '../reference'
+import { preloadAllReferences, referenceClip, referenceWithheld } from '../reference'
 import { prefersReducedMotion, SkeletonPlayer } from '../ui/skeleton'
 import { entry, knownLabels, loadReferenceData, signerLink } from './engine'
 import { onEnter, onLeave } from './router'
+import { withheldTile } from './results'
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T
 const grid = $('dict-grid')
@@ -49,9 +50,13 @@ const observer = new IntersectionObserver(
       if (!card) continue
       card.visible = e.isIntersecting
       if (card.visible && !card.player) {
-        void referenceClip(card.label).then((clip) => {
+        void referenceClip(card.label).then(async (clip) => {
           if (!clip) {
-            card.canvas.parentElement!.hidden = true
+            const box = card.canvas.parentElement!
+            if (await referenceWithheld(card.label)) {
+              const e = entry(card.label)
+              box.replaceWith(withheldTile(signerLink(e)))
+            } else box.hidden = true
             return
           }
           card.player = new SkeletonPlayer(card.canvas, clip)

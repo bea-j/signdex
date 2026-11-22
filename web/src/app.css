@@ -860,3 +860,17 @@ body.bg-live { background: transparent; }
 .dict-text .meaning { margin-top: 0; }
 .dict-text .link { padding-left: 0; min-height: 32px; }
 @media (max-width: 639px) { .dict-ref { width: 80px; height: 80px; } .dict-grid { grid-template-columns: 1fr; } }
+
+/* ------------------------------------------------------------------ "no animation" tile (two-handed, not tracked) */
+.ref-note {
+  display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 6px; text-align: center;
+  text-decoration: none; color: var(--text); border-style: dashed;
+}
+.ref-note-title { font-size: 11px; font-weight: 800; line-height: 1.2; letter-spacing: 0.02em; }
+.ref-note-link { font-size: 10px; font-weight: 700; line-height: 1.25; color: var(--sage-text); }
+.ref-note-link .icon-sm { width: 10px; height: 10px; vertical-align: -1px; }
+.ref-note:hover { border-color: #91ad96; }
+.ref-note:hover .ref-note-link { text-decoration: underline; }
+.dict-ref.ref-note, .dict-card .ref-note { width: 96px; height: 96px; }
+.dict-card .ref-note-title { font-size: 12px; }
+.dict-card .ref-note-link { font-size: 11px; }

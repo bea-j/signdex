@@ -26,6 +26,8 @@ interface Header {
   fps: number
   points: [RefPoint['group'], number][]
   signs: { label: string; offset: number; frames: number; confidence: number }[]
+  /** Signs deliberately without an animation, e.g. two-handed signs whose recordings never track both hands. */
+  withheld?: { label: string; reason: string }[]
 }
 
 const URL_ = `${import.meta.env.BASE_URL}reference/signs.bin`
@@ -98,6 +100,15 @@ export function referenceClip(label: string): Promise<RefClip | null> {
     cache.set(label, p)
   }
   return p
+}
+
+/**
+ * Why a sign has no animation on purpose ("two_handed_not_tracked"), or null. Cards show a labeled tile instead,
+ * so a two-handed sign is never shown as a misleading one-handed animation.
+ */
+export async function referenceWithheld(label: string): Promise<string | null> {
+  const h = await header()
+  return h?.header.withheld?.find((w) => w.label === label)?.reason ?? null
 }
 
 /** Signs in the reference file with the model's confidence on their sequence (empty if there is no file). */

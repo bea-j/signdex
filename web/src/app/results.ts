@@ -2,7 +2,7 @@
 import { LOW_CONFIDENCE, type SignMatch } from '../model'
 import { entry, signerLink, similarTo } from './engine'
 import { savedSigns } from './saved'
-import { referenceClip } from '../reference'
+import { referenceClip, referenceWithheld } from '../reference'
 import { prefersReducedMotion, SkeletonPlayer } from '../ui/skeleton'
 
 const HIGH = 0.6
@@ -17,6 +17,19 @@ const icon = (name: string, cls = 'icon-sm') => `<svg class="${cls}" aria-hidden
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
 
 // ---------------------------------------------------------------- cards
+/** In place of an animation we won't show (two-handed sign, both hands never tracked): a labeled link tile. */
+export function withheldTile(link: { href: string; aria: string }): HTMLAnchorElement {
+  const a = document.createElement('a')
+  a.className = 'ref ref-note'
+  a.href = link.href
+  a.target = '_blank'
+  a.rel = 'noreferrer'
+  a.title = 'No animation: our recordings of this two-handed sign don’t track both hands, so it would look wrong.'
+  a.setAttribute('aria-label', `Two-handed sign, no animation. ${link.aria}`)
+  a.innerHTML = `<span class="ref-note-title">Two-handed sign</span><span class="ref-note-link">Watch a real signer ${icon('external')}</span>`
+  return a
+}
+
 /** Saved-state subscriptions of the cards in each container, dropped when it is re-rendered. */
 const subscriptions = new WeakMap<HTMLElement, (() => void)[]>()
 
@@ -77,8 +90,12 @@ function card(m: SignMatch, rank: number, unsure: boolean, subs: (() => void)[])
 
   // reference animation (skeleton of a PopSign training signer): the top card loops, the others play on hover/tap
   const refBtn = el.querySelector<HTMLButtonElement>('.ref')!
-  void referenceClip(m.label).then((clip) => {
-    if (!clip || !el.isConnected) return
+  void referenceClip(m.label).then(async (clip) => {
+    if (!el.isConnected) return
+    if (!clip) {
+      if (await referenceWithheld(m.label)) refBtn.replaceWith(withheldTile(signerLink(e)))
+      return
+    }
     refBtn.hidden = false
     const player = new SkeletonPlayer(refBtn.querySelector('canvas')!, clip)
     subs.push(() => player.pause())

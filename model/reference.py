@@ -46,6 +46,15 @@ MIN_FRAMES = 8
 MAX_FRAMES = 48
 SCALE = 0.025  # shoulder widths per int8 step (range about +-3.2)
 KEEP_GROUPS = ("left_hand", "right_hand", "lips", "pose")
+# Signs whose standard ASL form uses both hands (signs with a common one-handed variant are left out).
+# Their animation must show both hands for most of the sign, or none is shown (see cmd_withhold).
+TWO_HANDED_SIGNS = sorted("""
+all alligator animal arm awake balloon bath before beside boat book brother can car chair chocolate clean close
+cloud dance drawer empty every fall fast finger finish first flag gift hate have helicopter hide into jacket jump
+make many mitten morning night now on open outside owl pen pencil person puzzle quiet rain read ride room sad shoe
+sick snow store story table tiger time touch tree wait wake wet zebra
+""".split())
+MIN_BOTH_HANDS = 0.5  # "both hands visible for most of the sign"
 
 
 def api():
@@ -195,14 +204,15 @@ def kept_points(spec: dict) -> tuple[list[int], list[list]]:
     return keep_pos, points
 
 
-def pack(chosen: dict, out: str | Path, spec: dict, model_frames: int, model_name: str) -> Path:
+def pack(chosen: dict, out: str | Path, spec: dict, model_frames: int, model_name: str, kept: bool = False,
+         withheld: list | None = None) -> Path:
     """Write the reference file. chosen: label -> {s1 (stage-1 frames), p, selection, hand_frac, sequence_id,
     participant_id, ...}. Every block is keyed by its label in the header; blocks are stored in label order."""
     keep_pos, points = kept_points(spec)
     blocks, signs, offset = [], [], 0
     for sign in sorted(chosen):
         c = chosen[sign]
-        x = c["s1"][:, keep_pos, :]
+        x = c["s1"] if kept else c["s1"][:, keep_pos, :]
         if len(x) > MAX_FRAMES:  # same nearest resample formula as features
             i = np.arange(MAX_FRAMES)
             x = x[np.minimum(len(x) - 1, ((2 * i + 1) * len(x)) // (2 * MAX_FRAMES))]
@@ -220,12 +230,64 @@ def pack(chosen: dict, out: str | Path, spec: dict, model_frames: int, model_nam
         "source": "Google Isolated Sign Language Recognition (Kaggle asl-signs), PopSign ASL v1.0, CC BY 4.0",
         "transform": "features stage 1: trimmed, left-dominant mirrored, centered on mid-shoulder, / shoulder width",
         "signs": signs,
+        # signs deliberately without an animation (e.g. two-handed, but no clip tracks both hands)
+        "withheld": withheld or [],
     }
     hb = json.dumps(header, separators=(",", ":")).encode()
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(b"SDXR" + struct.pack("<I", len(hb)) + hb + b"".join(blocks))
     return out
+
+
+def read_reference(path: str | Path) -> tuple[dict, dict]:
+    """Header and label -> (frames, points, 2) float32 (NaN = missing), decoded from a reference file."""
+    raw = Path(path).read_bytes()
+    assert raw[:4] == b"SDXR", path
+    hl = struct.unpack("<I", raw[4:8])[0]
+    h = json.loads(raw[8:8 + hl])
+    data = np.frombuffer(raw[8 + hl:], np.int8)
+    P = len(h["points"])
+    clips = {}
+    for s in h["signs"]:
+        q = data[s["offset"]: s["offset"] + s["frames"] * P * 2].reshape(s["frames"], P, 2)
+        clips[s["label"]] = np.where(q == -128, np.nan, q.astype(np.float32) * h["scale"]).astype(np.float32)
+    return h, clips
+
+
+def cmd_withhold(args) -> None:
+    """Two-handed signs: use a clip with both hands visible in >= MIN_BOTH_HANDS of its frames if any training
+    recording has one (from the Kaggle export's shortlist, which holds each sign's best both-hands clips);
+    otherwise leave the sign without an animation. Every other sign keeps the Kaggle export's clip."""
+    spec = prepare.load_spec()
+    keep_pos, _ = kept_points(spec)
+    h, clips = read_reference(args.source)
+    z = np.load(args.shortlist)
+    meta = {s["label"]: s for s in h["signs"]}
+    chosen, withheld, replaced = {}, [], []
+    for label, s in meta.items():
+        if label not in TWO_HANDED_SIGNS:
+            chosen[label] = {**{k: s[k] for k in ("selection", "sequence_id", "participant_id")}, "p": s["confidence"],
+                             "hand_frac": s.get("hand_frac", 0.0), "s1": clips[label]}
+            continue
+        m = np.flatnonzero((z["sign"] == label) & z["correct"] & (z["T"] >= 12))  # same 12-frame minimum as other picks
+        best_both = float(z["both"][m].max()) if len(m) else 0.0
+        ok = m[z["both"][m] >= MIN_BOTH_HANDS]
+        if len(ok):
+            b = ok[np.lexsort((-z["p"][ok], -np.round(z["both"][ok] * 20)))[0]]
+            fr = z["frames"][z["offsets"][b]: z["offsets"][b + 1]].astype(np.float32)[:, keep_pos, :]
+            chosen[label] = {"s1": fr, "p": float(z["p"][b]), "selection": "two_handed_both_visible",
+                             "both_frac": float(z["both"][b]), "sequence_id": int(z["sequence_id"][b]),
+                             "participant_id": int(z["participant_id"][b])}
+            replaced.append((label, best_both))
+        else:
+            withheld.append({"label": label, "reason": "two_handed_not_tracked", "best_both_hands": round(best_both, 3)})
+    out = pack(chosen, args.out, spec, h["model_frames"], h["model"], kept=True, withheld=withheld)
+    print(f"wrote {out}: {len(chosen)} animations, {len(withheld)} withheld, {out.stat().st_size / 1e3:.0f} kB")
+    print(f"two-handed signs with a both-hands clip ({len(replaced)}):",
+          ", ".join(f"{l} {b:.0%}" for l, b in sorted(replaced)) or "none")
+    print(f"withheld, no clip with both hands for most of the sign ({len(withheld)}):")
+    print("  " + ", ".join(f"{w['label']} (best {w['best_both_hands']:.0%})" for w in withheld))
 
 
 def main() -> None:
@@ -237,9 +299,13 @@ def main() -> None:
     s = sub.add_parser("select")
     s.add_argument("--model", default=str(REPO / "model" / "model.onnx"))
     s.add_argument("--out", default=str(REPO / "web" / "public" / "reference" / "signs.bin"))
+    w = sub.add_parser("withhold")
+    w.add_argument("--source", default=str(REPO / "model" / "runs" / "reference-kernel" / "signs.bin"))
+    w.add_argument("--shortlist", default=str(REPO / "model" / "runs" / "reference-kernel" / "shortlist.npz"))
+    w.add_argument("--out", default=str(REPO / "web" / "public" / "reference" / "signs.bin"))
     args = ap.parse_args()
     os.chdir(REPO)
-    {"candidates": cmd_candidates, "download": cmd_download, "select": cmd_select}[args.cmd](args)
+    {"candidates": cmd_candidates, "download": cmd_download, "select": cmd_select, "withhold": cmd_withhold}[args.cmd](args)
 
 
 if __name__ == "__main__":
