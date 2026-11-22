@@ -35,6 +35,7 @@
             <input type="checkbox" role="switch" id="bg-toggle" /><span class="track" aria-hidden="true"></span><span class="bg-label">Background</span>
           </label>
           <button class="nav-link" type="button" data-go="guide">How it works</button>
+          <button class="nav-link" type="button" data-go="privacy">Privacy</button>
           <button class="nav-saved" type="button" data-go="saved" id="nav-saved">
             <svg class="icon-sm" aria-hidden="true"><use href="#i-bookmark" /></svg>
             <span class="label">My signs</span>
@@ -51,14 +52,12 @@
         <div class="blob blob-sage" aria-hidden="true"></div>
         <div class="hero-grid">
           <div class="hero-copy">
-            <span class="badge"><svg class="icon-sm" aria-hidden="true"><use href="#i-chrome" /></svg> Made for Chrome, powered on-device</span>
             <h1 id="home-title">Practice <span>American Sign Language</span> with ease</h1>
             <p class="lede">Your ASL practice partner. Look up any sign from your webcam or a video and practice the ones you save.</p>
             <div class="cta">
               <button class="btn btn-primary square" type="button" id="home-upload"><svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg> Upload a clip</button>
               <button class="btn btn-secondary square" type="button" data-go="webcam"><svg class="icon" aria-hidden="true"><use href="#i-camera" /></svg> Use webcam</button>
             </div>
-            <p class="privacy"><svg class="icon-sm" aria-hidden="true"><use href="#i-lock" /></svg> Runs in your browser. Your video never leaves your device.</p>
           </div>
 
           <figure class="mock" aria-label="Demo animation: an example lookup with a sample signer, not your camera" style="margin: 0 auto">
@@ -101,7 +100,7 @@
             <div class="feature-content">
               <div class="feature-top"><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-scan" /></svg></span><span class="feature-number">02</span></div>
               <h2>Track the movement</h2>
-              <p>Hands, face, and body movement are analyzed locally within the 1 to 3 second moment you select.</p>
+              <p>Your hands, face, and body become landmark points in your browser, and the model matches them to the closest sign on your device.</p>
             </div>
           </li>
           <li class="flow-arrow under" aria-hidden="true"><svg viewBox="0 0 150 150"><path d="M40 52 C 44 150, 110 152, 116 100" marker-end="url(#arrowhead)" /></svg></li>
@@ -340,6 +339,17 @@
         <div class="actions"><button class="btn btn-primary" type="button" data-go="webcam">Try it with your webcam <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button></div>
       </section>
 
+      <!-- ============================================================ privacy -->
+      <section class="saved privacy-page" id="screen-privacy" aria-labelledby="privacy-title" hidden>
+        <button class="back" type="button" data-go="home">← Back to start</button>
+        <p class="eyebrow">Privacy</p>
+        <h1 class="title" id="privacy-title">Your video stays on your device</h1>
+        <div class="panel glass-panel privacy-panel">
+          <svg class="icon" aria-hidden="true"><use href="#i-lock" /></svg>
+          <p>Signdex runs entirely in your browser. When you use your webcam or a video, the frames are turned into landmark points and matched against the model on your own device. Your video and those landmarks are never uploaded or stored. The only thing ever sent off your device is the text names of the signs you save, which are used to generate your practice quizzes.</p>
+        </div>
+      </section>
+
       <!-- ============================================================ quiz (from My signs) -->
       <section class="saved quiz" id="screen-quiz" aria-labelledby="quiz-title" hidden>
         <button class="back" type="button" data-go="saved">← My signs</button>
@@ -380,7 +390,7 @@
     <footer class="site-footer">
       <div class="wrap">
         <p>Sign data and reference animations: PopSign ASL v1.0, licensed <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>, via Google’s <a href="https://www.kaggle.com/competitions/asl-signs" target="_blank" rel="noreferrer">Isolated Sign Language Recognition</a> dataset. Animations show tracked landmarks of PopSign signers.</p>
-        <p>250 common signs • On-device analysis • <a href="./debug.html">Landmark debug</a></p>
+        <p>250 common signs • On-device analysis • <a href="#privacy" data-go="privacy">Privacy</a> • <a href="./debug.html">Landmark debug</a></p>
       </div>
     </footer>
 

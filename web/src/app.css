@@ -827,3 +827,11 @@ body.bg-live { background: transparent; }
   background: rgb(12 11 10 / 62%); backdrop-filter: blur(12px); text-decoration: none;
 }
 .guide-link .link:hover { border-color: rgb(255 255 255 / 40%); }
+
+/* ------------------------------------------------------------------ hero without the badge; privacy page */
+.hero-copy > h1:first-child { margin-top: 0; }
+.privacy-page { display: grid; gap: 16px; }
+.privacy-page .title { margin-top: 0; }
+.privacy-panel { display: flex; align-items: flex-start; gap: 14px; }
+.privacy-panel .icon { width: 24px; height: 24px; flex: none; margin-top: 4px; color: #8ab596; }
+.privacy-panel p { font-size: 18px; line-height: 30px; color: var(--text); }

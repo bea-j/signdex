@@ -1,7 +1,7 @@
 // Screens (home, webcam, trim, saved, quiz): one <section id="screen-…"> visible at a time.
-export type Screen = 'home' | 'webcam' | 'trim' | 'saved' | 'quiz' | 'guide'
+export type Screen = 'home' | 'webcam' | 'trim' | 'saved' | 'quiz' | 'guide' | 'privacy'
 
-const screens: Screen[] = ['home', 'webcam', 'trim', 'saved', 'quiz', 'guide']
+const screens: Screen[] = ['home', 'webcam', 'trim', 'saved', 'quiz', 'guide', 'privacy']
 let current: Screen = 'home'
 // several modules may hook the same screen, so keep a list of handlers per screen
 const enter: Partial<Record<Screen, (() => void)[]>> = {}
