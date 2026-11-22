@@ -582,3 +582,23 @@ kbd {
   .workspace .panel { padding: 14px; }
   .results-panel .result-card { padding: 12px; }
 }
+
+/* ------------------------------------------------------------------ landmark overlay and display switches */
+:root { --lm-left: #ff9a3c; --lm-right: #5aa9ff; --lm-pose: #aaaaaa; --lm-face: #b8c7d9; }
+.media canvas.overlay { position: absolute; left: 0; top: 0; pointer-events: none; }
+.toggles { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px 22px; }
+.switch { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.switch .track {
+  position: relative; width: 38px; height: 22px; flex: none; border-radius: 999px;
+  border: 1px solid #566057; background: rgb(36 42 37 / 85%); transition: background-color 150ms, border-color 150ms;
+}
+.switch .track::after {
+  content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 999px;
+  background: var(--muted); transition: transform 150ms, background-color 150ms;
+}
+.switch input:checked + .track { border-color: #91ad96; background: var(--primary); }
+.switch input:checked + .track::after { transform: translateX(16px); background: #fff; }
+.switch input:focus-visible + .track { outline: 2px solid var(--primary); outline-offset: 3px; }
+.switch:has(input:checked) { color: var(--text); }
+@media (prefers-reduced-motion: reduce) { .switch .track, .switch .track::after { transition: none; } }

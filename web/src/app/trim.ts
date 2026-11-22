@@ -1,6 +1,8 @@
 // Trim screen for an uploaded clip: thumbnail strip with a draggable 1-3 s window (mouse, touch or arrow keys),
 // the window playing on a loop, and the lookup on exactly that window (frame-accurate extraction at 20 fps).
-import { extractClip, toTrainingAspect } from '../landmarks'
+import { extractClip, toTrainingAspect, type TimedFrame } from '../landmarks'
+import { frameAt, LandmarkOverlay } from '../ui/overlay'
+import { prefs } from '../ui/prefs'
 import { lookupSign } from '../lookup'
 import { getExtractor, getModel, loadReferenceData } from './engine'
 import { renderCards } from './results'
@@ -25,6 +27,9 @@ const lookupBtn = $<HTMLButtonElement>('trim-lookup')
 const status = $('trim-status')
 const busyEl = $('trim-busy')
 
+const overlay = new LandmarkOverlay(video)
+/** Landmarks of the last looked-up window (t = seconds in the file), drawn while it loops. */
+let clipFrames: TimedFrame[] = []
 let url: string | null = null
 let duration = 0
 let start = 0
@@ -61,6 +66,8 @@ fileInput.addEventListener('change', () => {
   lookupBtn.disabled = true
   strip.querySelectorAll('.thumb').forEach((t) => t.remove())
   clearResults()
+  clipFrames = []
+  overlay.clear()
   video.src = url
   show('trim')
 })
@@ -234,6 +241,7 @@ function loop() {
   if (duration && !busy) {
     if (video.currentTime >= end || video.currentTime < start - 0.05) video.currentTime = start
     playhead.style.left = `${4 + (video.currentTime / duration) * (strip.clientWidth - 8)}px`
+    overlay.draw(frameAt(clipFrames, video.currentTime)?.frame ?? null, { points: prefs.get('points'), face: prefs.get('face') })
   }
   requestAnimationFrame(loop)
 }
@@ -256,6 +264,7 @@ async function lookup() {
     const frames = await extractClip(extractor, video, start, end, FPS, (done, total) => {
       busyEl.textContent = `Tracking hands… ${Math.round((100 * done) / total)}%`
     })
+    clipFrames = frames
     busyEl.textContent = 'Finding matches…'
     const corrected = toTrainingAspect(
       frames.map((f) => f.frame),
@@ -316,3 +325,8 @@ onLeave('trim', () => {
   looping = false
   video.pause()
 })
+
+// Dev-server-only test hook (removed from production builds), see webcam.ts.
+if (import.meta.env.DEV) {
+  Object.assign(window, { __signdexTrim: { setClipFrames: (f: TimedFrame[]) => (clipFrames = f), window: () => [start, end] } })
+}

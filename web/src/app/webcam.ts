@@ -4,6 +4,8 @@ import { COORDS_PER_POINT as C, LandmarkRecorder, OFFSETS, toTrainingAspect, typ
 import { lookupSign } from '../lookup'
 import type { SignMatch, SignModel } from '../model'
 import { CameraPicker } from '../ui/camera'
+import { frameAt, LandmarkOverlay } from '../ui/overlay'
+import { prefs } from '../ui/prefs'
 import { getExtractor, getModel, loadReferenceData } from './engine'
 import { renderCards } from './results'
 import { onEnter, onLeave } from './router'
@@ -22,6 +24,13 @@ const badge = $('hands-badge')
 const handsText = $('hands-text')
 const countdownEl = $('webcam-countdown')
 const busyEl = $('webcam-busy')
+
+const replay = $<HTMLVideoElement>('webcam-replay')
+const liveOverlay = new LandmarkOverlay(video)
+const replayOverlay = new LandmarkOverlay(replay)
+const layers = () => ({ points: prefs.get('points'), face: prefs.get('face') })
+/** Landmarks of the last recording, t = seconds from the start of the recorded clip. */
+let replayFrames: { t: number; frame: KaggleFrame }[] = []
 
 const picker = new CameraPicker($<HTMLSelectElement>('camera'))
 void picker.refresh()
@@ -100,7 +109,11 @@ async function enter() {
     const [extractor, m] = await engine
     if (my !== session) return
     model = m
-    recorder = new LandmarkRecorder(extractor, video, { fps: 20, bufferSeconds: 6, onFrame: (tf) => showHands(hasHands(tf.frame)) })
+    recorder = new LandmarkRecorder(extractor, video, { fps: 20, bufferSeconds: 6, onFrame: (tf) => {
+        showHands(hasHands(tf.frame))
+        liveOverlay.draw(tf.frame, layers())
+      },
+    })
     recorder.start()
     status.textContent = ''
     updateButton()
@@ -111,7 +124,8 @@ async function enter() {
 
 function leave() {
   session++
-  $<HTMLVideoElement>('webcam-replay').pause()
+  replay.pause()
+  liveOverlay.clear()
   recorder?.stop()
   recorder = null
   picker.close()
@@ -170,8 +184,10 @@ export async function record() {
     recordBtn.classList.remove('recording')
     overlay(null)
     const blob = (await stopClip?.()) ?? null
-    const frames = recorder.frames().map((f) => f.frame)
+    const timed = recorder.frames()
+    const frames = timed.map((f) => f.frame)
     if (frames.length === 0) throw new Error('no video frames were captured')
+    replayFrames = timed.map((f) => ({ t: f.t - timed[0].t, frame: f.frame }))
 
     busyEl.hidden = false
     status.textContent = 'Finding matches…'
@@ -206,7 +222,6 @@ function showResults(matches: SignMatch[], clipUrl: string | null) {
   $('webcam-results-empty').hidden = true
   $('webcam-note').hidden = false
   const box = $('webcam-replay-box')
-  const replay = $<HTMLVideoElement>('webcam-replay')
   box.hidden = !clipUrl
   if (clipUrl) {
     replay.src = clipUrl
@@ -220,5 +235,37 @@ function showResults(matches: SignMatch[], clipUrl: string | null) {
 }
 
 recordBtn.addEventListener('click', () => void record())
+
+// replay overlay: the recorded landmarks, in step with the looping clip
+function replayTick(_now: number, meta: VideoFrameCallbackMetadata) {
+  replayOverlay.draw(frameAt(replayFrames, meta.mediaTime)?.frame ?? null, layers())
+  replay.requestVideoFrameCallback(replayTick)
+}
+const replayEl: HTMLVideoElement = replay
+if ('requestVideoFrameCallback' in replayEl) replayEl.requestVideoFrameCallback(replayTick)
+else (replayEl as HTMLVideoElement).addEventListener('timeupdate', () =>
+  replayOverlay.draw(frameAt(replayFrames, (replayEl as HTMLVideoElement).currentTime)?.frame ?? null, layers()),
+)
+prefs.onChange(() => {
+  if (!prefs.get('points') && !prefs.get('face')) liveOverlay.clear()
+  replayOverlay.draw(frameAt(replayFrames, replay.currentTime)?.frame ?? null, layers())
+})
 onEnter('webcam', () => void enter())
 onLeave('webcam', leave)
+
+// Dev-server-only test hook (removed from production builds): lets the screenshot tests draw real landmark
+// sequences, since a headless browser's fake camera has no person in it.
+if (import.meta.env.DEV) {
+  Object.assign(window, {
+    __signdexWebcam: {
+      stopLive: () => recorder?.stop(),
+      drawLive: (f: KaggleFrame) => liveOverlay.draw(f, layers()),
+      setReplay: (frames: { t: number; frame: KaggleFrame }[], url: string) => {
+        replayFrames = frames
+        $('webcam-replay-box').hidden = false
+        replay.src = url
+        void replay.play()
+      },
+    },
+  })
+}
