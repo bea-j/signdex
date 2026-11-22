@@ -1,8 +1,8 @@
 # Signdex status
 
-_Updated Sun Nov 22, 4:55 PM ET. Submitted and judged (hacking ended Sun 12:00 PM); the live site can change._
+_Updated Sun Nov 22, 5:05 PM ET. Submitted and judged (hacking ended Sun 12:00 PM); the live site can change._
 
-**Live:** https://signdex.study (release `20261122-040825`, deployed Sat Nov 21, 11:08 PM ET), debug page at
+**Live:** https://signdex.study (release `20261122-215646`, deployed Sun Nov 22, 4:56 PM ET), debug page at
 https://signdex.study/debug.html. Add `?debug=1` to any page URL for an on-screen diagnostics panel (phones).
 Everything in git is pushed to `main`. Redeploy with `bash deploy/deploy.sh --yes build upload verify`.
 
@@ -69,6 +69,10 @@ Teammates: unzip `teammate-assets.zip` (repo root, gitignored) into the repo roo
 "Look up last N s", 1–5 s) to look up. Same model, cards, dictionary and animations as the web app.
 
 ## Not verified yet
+
+- **On a real iPhone** (Safari and Chrome): that Record works (the main fix, ORT's memory cap, is only
+  simulated in Chrome); MediaPipe's GPU delegate on iOS; portrait camera shape, autoplay inline, Record
+  pinned above Safari's toolbar; MediaRecorder replay; uploading a .mov from Photos. Use `?debug=1`.
 
 - A real webcam lookup in the current layout (headless tests used recorded Kaggle landmark sequences).
 - The extension's second-hotkey lookup in real Chrome (Chrome no longer loads unpacked extensions from the
