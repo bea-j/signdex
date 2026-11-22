@@ -157,7 +157,11 @@ def cmd_select(args) -> None:
             f = RAW / c["path"]
             if not f.exists():
                 continue
-            raw = prepare.load_raw(str(f))
+            try:
+                raw = prepare.load_raw(str(f))
+            except Exception as e:  # e.g. a file still being downloaded
+                print(f"  skip {c['path']}: {e}")
+                continue
             hands = ~np.isnan(raw[:, 468:489, 0]).all(1) | ~np.isnan(raw[:, 522:543, 0]).all(1)
             s1 = fx.stage1(raw)
             probs = sess.run(None, {"features": fx.stage2(s1)[None]})[0][0]
