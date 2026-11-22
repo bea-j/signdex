@@ -1,5 +1,7 @@
 // Webcam screen: camera picker, live preview with a "hands detected" badge, and Record:
 // 3-2-1 countdown, 2 s of landmarks (and a video recording for the replay), then the lookup.
+// Record shows the loading progress until the model and hand tracking are ready, and offers a retry if loading
+// fails. Nothing here waits forever: video.play(), the clip recorder and the downloads all have time limits.
 import { COORDS_PER_POINT as C, LandmarkRecorder, OFFSETS, toTrainingAspect, type KaggleFrame, type TimedFrame } from '../landmarks'
 import { lookupSign, type LookupResult } from '../lookup'
 import type { SignMatch, SignModel } from '../model'
@@ -7,7 +9,9 @@ import { CameraPicker } from '../ui/camera'
 import { frameAt, LandmarkOverlay } from '../ui/overlay'
 import { prefs } from '../ui/prefs'
 import { frameStats, lookupStats, partStats, renderDetails } from './details'
-import { getExtractor, getModel, loadReferenceData } from './engine'
+import { diag } from './diag'
+import { loadEngine, loadState, onLoadState, useCpuExtractor, type LoadState } from './engine'
+import type { LandmarkExtractor } from '../landmarks'
 import { renderCards } from './results'
 import { bgBusy } from './background'
 import { onEnter, onLeave } from './router'
@@ -15,6 +19,8 @@ import { onEnter, onLeave } from './router'
 export const RECORD_MS = 2000
 const COUNTDOWN_FROM = 3
 const TTA_VARIANTS = 5
+/** Fewer tracked frames than this in a recording: the results get a reliability note. */
+const MIN_GOOD_FRAMES = 12
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T
 const video = $<HTMLVideoElement>('webcam-video')
@@ -26,6 +32,7 @@ const badge = $('hands-badge')
 const handsText = $('hands-text')
 const countdownEl = $('webcam-countdown')
 const busyEl = $('webcam-busy')
+const stage = $('webcam-stage')
 
 const replay = $<HTMLVideoElement>('webcam-replay')
 const liveOverlay = new LandmarkOverlay(video)
@@ -73,16 +80,63 @@ function showHands(on: boolean) {
   handsText.textContent = on ? 'Hands detected' : 'Looking for hands'
 }
 
+const restLabel = () => (hasResult ? 'Record again' : 'Record 2 seconds')
+
+/** Record's state: loading (with progress), failed (tap to retry), waiting for the camera, ready or busy. */
 function updateButton() {
-  recordBtn.disabled = busy || !recorder || !model
+  if (busy) {
+    recordBtn.disabled = true
+    return
+  }
+  const load: LoadState = loadState()
+  const failed = !model && load.phase === 'failed'
+  const loading = !model && !failed
+  recordBtn.disabled = loading || (!!model && !recorder)
+  recordBtn.classList.toggle('loading', loading)
+  recordBtn.setAttribute('aria-busy', String(loading))
+  recordBtn.style.setProperty('--load', loading ? String(load.fraction) : '0')
+  recordLabel.textContent = failed ? 'Try loading again' : loading ? `Loading… ${Math.round(load.fraction * 100)}%` : restLabel()
 }
+
+onLoadState((s) => {
+  if ($('screen-webcam').hidden || model) return
+  updateButton()
+  if (s.phase === 'loading') status.textContent = `Loading hand tracking and the sign model (first visit: about 40 MB)… ${s.step}`
+})
 
 async function attach(s: MediaStream) {
   stream = s
   video.srcObject = s
-  await video.play()
-  empty.hidden = true
+  // iOS: muted + playsinline + autoplay let the preview play inline. Don't let play() hold anything up.
+  try {
+    await Promise.race([video.play(), sleep(4000)])
+  } catch (e) {
+    diag.error(`video.play(): ${(e as Error).message}`)
+  }
+  empty.hidden = !video.paused
+  if (video.paused) empty.textContent = 'Tap here to start the camera preview.'
+  showCameraInfo()
+  // phones: bring the camera into view (Record stays on screen, see app.css)
+  if (matchMedia('(pointer: coarse)').matches && scrollY < 40 && stage.getBoundingClientRect().bottom > innerHeight)
+    stage.scrollIntoView({ block: 'start', behavior: 'smooth' })
 }
+stage.addEventListener('click', () => {
+  if (video.srcObject && video.paused) void video.play().then(() => (empty.hidden = true), () => {})
+})
+
+/** The stage takes the camera's real shape (a phone may deliver portrait video, e.g. 720 x 1280). */
+function showCameraInfo() {
+  const w = video.videoWidth
+  const h = video.videoHeight
+  if (w && h) stage.style.setProperty('--video-aspect', `${w} / ${h}`)
+  diag.set('Camera', 'Track', picker.settingsText)
+  diag.set('Camera', 'Video element', w ? `${w} × ${h} (${w > h ? 'landscape' : w < h ? 'portrait' : 'square'})` : 'no frames yet')
+  const box = video.getBoundingClientRect()
+  diag.set('Camera', 'Shown at', `${Math.round(box.width)} × ${Math.round(box.height)} CSS px, object-fit contain`)
+  diag.set('Camera', 'Playing', video.paused ? 'paused' : 'yes')
+}
+video.addEventListener('loadedmetadata', showCameraInfo)
+video.addEventListener('resize', showCameraInfo)
 
 picker.onSwitch = (s) => void attach(s) // same <video>, so the landmark recorder keeps running
 picker.onError = (m) => (status.textContent = m)
@@ -96,9 +150,9 @@ async function enter() {
   busyEl.hidden = true
   empty.hidden = false
   empty.textContent = 'Starting the camera…'
-  status.textContent = 'Loading hand tracking and the sign model…'
+  status.textContent = model ? '' : 'Loading hand tracking and the sign model…'
   updateButton()
-  const engine = Promise.all([getExtractor(), getModel(), loadReferenceData()])
+  const engine = loadEngine()
   engine.catch(() => {}) // handled below; avoid an unhandled rejection while the camera opens
 
   try {
@@ -107,32 +161,82 @@ async function enter() {
     await attach(s)
   } catch (e) {
     if (my !== session) return
+    diag.error(`camera: ${(e as Error).name}: ${(e as Error).message}`)
     empty.textContent = `Camera unavailable: ${(e as Error).message}. Allow camera access, or upload a clip instead.`
     status.textContent = ''
     return
   }
+  await startTracking(my)
+}
 
+/** Wait for the model and trackers, then track the live video. Also the retry after a failed load. */
+async function startTracking(my: number) {
+  updateButton()
   try {
-    const [extractor, m] = await engine
+    const [extractor, m] = await loadEngine()
     if (my !== session) return
     model = m
-    delegate = extractor.delegate
-    recorder = new LandmarkRecorder(extractor, video, { fps: 20, bufferSeconds: 6, onFrame: (tf) => {
-        showHands(hasHands(tf.frame))
-        liveOverlay.draw(tf.frame, layers())
-        const now = performance.now()
-        frameTimes.push(now)
-        while (frameTimes.length && frameTimes[0] < now - 2000) frameTimes.shift()
-        lastFrame = tf.frame
-        scheduleDetails()
-      },
-    })
-    recorder.start()
+    startRecorder(extractor)
     status.textContent = ''
-    updateButton()
   } catch (e) {
-    if (my === session) status.textContent = `Could not load the sign model or hand tracking: ${(e as Error).message}`
+    if (my === session)
+      status.textContent = `Could not load the sign model or hand tracking: ${(e as Error).message}. Tap “Try loading again”, or reload the page.`
+  } finally {
+    if (my === session) updateButton()
   }
+}
+
+let detectErrors = 0
+function startRecorder(extractor: LandmarkExtractor) {
+  recorder?.stop()
+  delegate = extractor.delegate
+  detectErrors = 0
+  const my = session
+  recorder = new LandmarkRecorder(extractor, video, {
+    fps: 20,
+    bufferSeconds: 6,
+    onFrame: (tf) => {
+      detectErrors = 0
+      showHands(hasHands(tf.frame))
+      liveOverlay.draw(tf.frame, layers())
+      const now = performance.now()
+      frameTimes.push(now)
+      while (frameTimes.length && frameTimes[0] < now - 2000) frameTimes.shift()
+      lastFrame = tf.frame
+      scheduleDetails()
+      if (diag.enabled) {
+        diag.set('Hand tracking', 'Landmark rate', `${(frameTimes.length / 2).toFixed(1)} fps, last detection ${Math.round(recorder?.lastDetectMs ?? 0)} ms`)
+        diag.set('Hand tracking', 'Frame size', `${tf.width} × ${tf.height}`)
+      }
+    },
+    onError: (e) => {
+      detectErrors++
+      diag.error(`detection (${extractor.delegate}): ${(e as Error)?.message ?? e}`)
+      // the GPU keeps failing while tracking (it can set up fine and fail later, e.g. iOS WebGL): use the CPU
+      if (detectErrors === 5) switchToCpu(extractor, my, 'detections failed')
+    },
+  })
+  recorder.start()
+  extractor.onGpuLost(() => switchToCpu(extractor, my, 'GPU context lost'))
+}
+
+function switchToCpu(extractor: LandmarkExtractor, my: number, why: string) {
+  if (extractor.delegate !== 'GPU' || my !== session) return
+  if (busy) return void setTimeout(() => switchToCpu(extractor, my, why), 500) // after the lookup in progress
+  diag.error(`switching hand tracking to CPU: ${why}`)
+  recorder?.stop()
+  recorder = null
+  updateButton()
+  status.textContent = 'Hand tracking had trouble with the graphics chip. Switching to the slower CPU mode…'
+  void useCpuExtractor().then(
+    (cpu) => {
+      if (my !== session) return
+      startRecorder(cpu)
+      status.textContent = ''
+      updateButton()
+    },
+    (err) => my === session && (status.textContent = `Hand tracking stopped working: ${(err as Error).message}`),
+  )
 }
 
 function leave() {
@@ -159,7 +263,8 @@ function startClipRecording(): (() => Promise<Blob | null>) | null {
     mr.start()
     return () => {
       if (mr.state !== 'inactive') mr.stop()
-      return stopped
+      // the replay is optional: never let a recorder that doesn't stop hold up the lookup
+      return Promise.race([stopped, sleep(2000).then(() => null)])
     }
   } catch {
     return null
@@ -167,7 +272,10 @@ function startClipRecording(): (() => Promise<Blob | null>) | null {
 }
 
 export async function record() {
-  if (busy || !recorder || !model) return
+  if (busy) return
+  if (!model && loadState().phase === 'failed') return void startTracking(session) // "Try loading again"
+  if (!recorder || !model) return
+  if (video.paused) void video.play().catch(() => {}) // a tap is a user gesture: iOS may need it to play
   const my = session
   busy = true
   updateButton()
@@ -196,19 +304,17 @@ export async function record() {
     }
     recordBtn.classList.remove('recording')
     overlay(null)
+    const frames = recorder.frames()
     const blob = (await stopClip?.()) ?? null
-    await finishLookup(recorder.frames(), blob, video.videoWidth, video.videoHeight, my)
+    await finishLookup(frames, blob, video.videoWidth, video.videoHeight, my)
   } catch (e) {
     if (my === session) status.textContent = `Lookup failed: ${(e as Error).message}`
   } finally {
     recordBtn.classList.remove('recording')
-    recordLabel.textContent = hasResult ? 'Record again' : 'Record 2 seconds'
     overlay(null)
     busyEl.hidden = true
-    if (my === session) {
-      busy = false
-      updateButton()
-    }
+    busy = false
+    updateButton()
   }
 }
 
@@ -219,9 +325,12 @@ async function finishLookup(timed: TimedFrame[], blob: Blob | null, width: numbe
   replayFrames = timed.map((f) => ({ t: f.t - timed[0].t, frame: f.frame }))
   busyEl.hidden = false
   status.textContent = 'Finding matches…'
-  const corrected = toTrainingAspect(frames, width, height)
+  // each frame with the size it was captured at (the real track size, portrait or landscape)
+  const corrected = timed.map((f) => toTrainingAspect([f.frame], f.width || width, f.height || height)[0])
+  diag.set('Last lookup', 'Frames', `${timed.length}, captured at ${[...new Set(timed.map((f) => `${f.width || width}×${f.height || height}`))].join(', ')}`)
   const res = await lookupSign(model!, corrected, { variants: TTA_VARIANTS, k: 5 })
   if (my !== session) return
+  diag.set('Last lookup', 'Hands in', `${res.handFrames} of ${frames.length} frames; top: ${res.matches[0]?.label ?? '–'}`)
   if (res.handFrames === 0) {
     status.textContent = 'No hands were seen in the recording. Make sure your hands are in view, then try again.'
     return
@@ -231,7 +340,11 @@ async function finishLookup(timed: TimedFrame[], blob: Blob | null, width: numbe
   lastLookup = { recorded: frames.length, res }
   showResults(res.matches, lastClipUrl)
   scheduleDetails()
-  status.textContent = ''
+  // a slow device may track only a few frames in 2 s: say the result is shaky rather than hide it
+  status.textContent =
+    frames.length < MIN_GOOD_FRAMES
+      ? `This device tracked only ${frames.length} frames in the 2 seconds, so these matches are less reliable.`
+      : ''
   busyEl.hidden = true
 }
 
@@ -243,6 +356,11 @@ function showResults(matches: SignMatch[], clipUrl: string | null) {
   const box = $('webcam-replay-box')
   box.hidden = !clipUrl
   if (clipUrl) {
+    replay.addEventListener(
+      'loadedmetadata',
+      () => replay.videoWidth && box.querySelector<HTMLElement>('.stage')!.style.setProperty('--video-aspect', `${replay.videoWidth} / ${replay.videoHeight}`),
+      { once: true },
+    )
     replay.src = clipUrl
     void replay.play().catch(() => {})
   }

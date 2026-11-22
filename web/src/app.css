@@ -380,6 +380,16 @@ kbd {
   font-weight: 700; backdrop-filter: blur(2px);
 }
 .record-row { margin: 20px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+/* Record: big, with the loading progress filling it until the model and hand tracking are ready */
+.record-btn { position: relative; overflow: hidden; min-height: 56px; touch-action: manipulation; }
+.record-btn > span { position: relative; }
+.record-btn > .load-bar {
+  position: absolute; inset: 0 auto 0 0; width: calc(var(--load, 0) * 100%);
+  background: rgb(255 255 255 / 16%); transition: width 250ms ease; pointer-events: none;
+}
+.btn.record-btn.loading:disabled { opacity: 0.85; cursor: progress; }
+.record-btn.loading .rec-dot { background: var(--muted); animation: pulse 1.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .record-btn > .load-bar { transition: none; } .record-btn.loading .rec-dot { animation: none; } }
 .record-row .hint { font-size: 14px; color: var(--muted); }
 .status-line { margin-top: 12px; min-height: 20px; font-size: 14px; color: var(--muted); }
 .actions { margin-top: 28px; display: flex; flex-direction: column-reverse; gap: 12px; }
@@ -425,6 +435,12 @@ kbd {
   .results-panel { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; }
 }
 .main-col .stage { width: 100%; aspect-ratio: 16 / 9; min-height: 0; }
+/* the webcam stage takes the camera's real shape (set from the track by webcam.ts), never taller than the screen */
+.main-col #webcam-stage {
+  aspect-ratio: var(--video-aspect, 16 / 9); scroll-margin-top: 8px;
+  /* wide screens: header, title and Record take about 400 px, so Record stays in view under a portrait camera */
+  max-height: max(320px, calc(100vh - 400px)); max-height: max(320px, calc(100svh - 400px));
+}
 .results-panel { display: grid; gap: 12px; align-content: start; }
 @media (min-width: 640px) { .results-panel { padding: 20px; } }
 .results-empty {
@@ -874,3 +890,62 @@ body.bg-live { background: transparent; }
 .dict-ref.ref-note, .dict-card .ref-note { width: 96px; height: 96px; }
 .dict-card .ref-note-title { font-size: 12px; }
 .dict-card .ref-note-link { font-size: 11px; }
+
+/* ------------------------------------------------------------------ phones and touch devices */
+/* keyboard hints only where there is a keyboard; touch wording instead */
+.touch-only { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .keys-only { display: none; }
+  .touch-only { display: inline; }
+}
+/* no "lift" left stuck on a tapped button */
+@media (hover: none) {
+  .btn-primary:hover:not(:disabled), .btn-secondary:hover:not(:disabled) { transform: none; }
+}
+/* narrow screens: Record stays at the bottom of the screen while the camera panel is in view */
+@media (max-width: 1023px) {
+  .main-col #webcam-stage { max-height: calc(100vh - 160px); max-height: calc(100svh - 160px); }
+  #screen-webcam .record-row {
+    position: sticky; bottom: 0; z-index: 6; margin-top: 12px; padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+    flex-direction: column; align-items: stretch; gap: 6px;
+    background: linear-gradient(rgb(44 44 36 / 0%), rgb(44 44 36 / 90%) 14px); border-radius: 0 0 var(--radius-md) var(--radius-md);
+  }
+  #screen-webcam .record-btn { width: 100%; font-size: 18px; }
+  #screen-webcam .record-row .hint { font-size: 13px; text-align: center; }
+}
+/* tap targets at least 44 px on touch screens; 16 px text in fields so iOS doesn't zoom in */
+@media (pointer: coarse) {
+  .back, .switch, .link, .save, .dict-text .link, .camera-field select { min-height: 44px; }
+  .bg-switch { min-width: 44px; justify-content: center; }
+  .camera-field select, .dict-search input { font-size: 16px; }
+  .dict-search input { min-height: 40px; }
+  .handle::before { content: ''; position: absolute; inset: -4px -14px; }
+  .guide-toc li { margin: 0; }
+  .guide-toc a { display: inline-block; padding: 11px 0; }
+  .site-footer a { display: inline-block; padding: 12px 2px; }
+}
+
+/* the replay keeps the recording's real shape too (portrait on most phones) */
+.replay .stage.compact { aspect-ratio: var(--video-aspect, 16 / 9); max-height: 50vh; max-height: 50svh; margin-inline: auto; }
+/* small "two-handed sign" tiles: the title and the link icon only (the whole tile is the link) */
+@media (max-width: 639px) {
+  .results-panel .ref-note, .saved-item .ref-note { padding: 4px; gap: 2px; }
+  .results-panel .ref-note-title, .saved-item .ref-note-title { font-size: 10px; }
+  .results-panel .ref-note-link, .saved-item .ref-note-link { font-size: 0; }
+  .results-panel .ref-note-link .icon-sm, .saved-item .ref-note-link .icon-sm { width: 12px; height: 12px; }
+}
+
+/* ------------------------------------------------------------------ ?debug=1 panel (diag.ts) */
+.debug-toggle {
+  position: fixed; z-index: 90; top: calc(8px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
+  min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #e3b95f; background: #2b2410; color: #ffe2a3;
+  font-weight: 700;
+}
+.debug-panel {
+  position: fixed; z-index: 90; inset: 0 0 auto; max-height: 45vh; max-height: 45svh; overflow: auto;
+  padding: env(safe-area-inset-top) 12px 12px; border-bottom: 2px solid #e3b95f; background: rgb(12 14 12 / 96%);
+}
+.debug-bar { position: sticky; top: 0; display: flex; align-items: center; gap: 8px; padding: 8px 0; background: rgb(12 14 12); }
+.debug-bar strong { flex: 1; color: #ffe2a3; }
+.debug-bar button { min-height: 44px; padding: 0 16px; border-radius: var(--radius-md); border: 1px solid #566057; background: #242a25; }
+.debug-panel pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; color: var(--text); }

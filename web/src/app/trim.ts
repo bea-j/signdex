@@ -5,7 +5,8 @@ import { frameAt, LandmarkOverlay } from '../ui/overlay'
 import { prefs } from '../ui/prefs'
 import { frameStats, lookupStats, partStats, renderDetails } from './details'
 import { lookupSign, type LookupResult } from '../lookup'
-import { getExtractor, getModel, loadReferenceData } from './engine'
+import { diag } from './diag'
+import { getExtractor, getModel, loadEngine, loadState, onLoadState, useCpuExtractor } from './engine'
 import { renderCards } from './results'
 import type { SignMatch } from '../model'
 import { bgBusy } from './background'
@@ -104,7 +105,8 @@ video.addEventListener('loadedmetadata', async () => {
   layout()
   void thumbnails()
   seekToStart()
-  status.textContent = ready ? '' : 'Loading hand tracking and the sign model…'
+  if (!ready && loadState().phase !== 'failed') status.textContent = 'Loading hand tracking and the sign model…'
+  diag.set('Clip', 'Video', `${video.videoWidth} × ${video.videoHeight}, ${duration.toFixed(1)} s`)
   updateButton()
   updateDetails()
 })
@@ -130,15 +132,22 @@ async function thumbnails() {
   // a second, hidden <video> so thumbnailing doesn't disturb the preview
   const v = document.createElement('video')
   v.muted = true
+  v.playsInline = true // iOS
   v.preload = 'auto'
   v.src = src
-  await new Promise((r) => v.addEventListener('loadeddata', r, { once: true }))
+  v.load()
+  // thumbnails are a nicety: if this browser won't decode the hidden copy, give up quietly after a while
+  const event = (name: string) =>
+    new Promise<boolean>((r) => {
+      const t = setTimeout(() => r(false), 5000)
+      v.addEventListener(name, () => (clearTimeout(t), r(true)), { once: true })
+    })
+  if (!(await event('loadeddata'))) return diag.error('thumbnails: the clip did not load in a second video element')
   for (let i = 0; i < n; i++) {
     if (url !== src) return // another file was chosen meanwhile
-    await new Promise<void>((r) => {
-      v.addEventListener('seeked', () => r(), { once: true })
-      v.currentTime = Math.min(duration - 0.01, ((i + 0.5) * duration) / n)
-    })
+    const seeked = event('seeked')
+    v.currentTime = Math.min(duration - 0.01, ((i + 0.5) * duration) / n)
+    if (!(await seeked)) return diag.error('thumbnails: seeking timed out')
     const ctx = cells[i].getContext('2d')!
     // cover-crop into 16:9
     const s = Math.max(160 / v.videoWidth, 90 / v.videoHeight)
@@ -256,11 +265,30 @@ function loop() {
 video.addEventListener('ended', seekToStart)
 
 // ---------------------------------------------------------------- lookup
+const lookupLabel = lookupBtn.firstChild!
 function updateButton() {
-  lookupBtn.disabled = busy || !ready || !duration
+  const failed = !ready && loadState().phase === 'failed'
+  lookupBtn.disabled = busy || !duration || (!ready && !failed)
+  lookupLabel.textContent = failed ? 'Try loading again ' : 'Look up this sign '
 }
 
+function loadModels() {
+  loadEngine()
+    .then(() => {
+      ready = true
+      if (status.textContent?.startsWith('Loading')) status.textContent = ''
+    })
+    .catch((e) => (status.textContent = `Could not load the sign model or hand tracking: ${(e as Error).message}. Tap “Try loading again”, or reload the page.`))
+    .finally(updateButton)
+}
+onLoadState((s) => {
+  if ($('screen-trim').hidden || ready) return
+  updateButton()
+  if (s.phase === 'loading' && duration) status.textContent = `Loading hand tracking and the sign model… ${Math.round(s.fraction * 100)}% ${s.step}`
+})
+
 async function lookup() {
+  if (!ready && loadState().phase === 'failed') return loadModels()
   if (busy || !ready || !duration) return
   busy = true
   bgBusy(true) // clip analysis runs MediaPipe and the model: background paused until it ends
@@ -269,7 +297,8 @@ async function lookup() {
   busyEl.textContent = 'Tracking hands…'
   status.textContent = ''
   try {
-    const [extractor, model] = await Promise.all([getExtractor(), getModel()])
+    let [extractor, model] = await Promise.all([getExtractor(), getModel()])
+    if (extractor.gpuLost) extractor = await useCpuExtractor()
     delegate = extractor.delegate
     const frames = await extractClip(extractor, video, start, end, FPS, (done, total) => {
       busyEl.textContent = `Tracking hands… ${Math.round((100 * done) / total)}%`
@@ -348,13 +377,7 @@ onEnter('trim', () => {
     layout()
     seekToStart()
   }
-  Promise.all([getExtractor(), getModel(), loadReferenceData()])
-    .then(() => {
-      ready = true
-      if (status.textContent?.startsWith('Loading')) status.textContent = ''
-      updateButton()
-    })
-    .catch((e) => (status.textContent = `Could not load the sign model or hand tracking: ${(e as Error).message}`))
+  loadModels()
 })
 onLeave('trim', () => {
   looping = false

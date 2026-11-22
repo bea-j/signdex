@@ -103,6 +103,35 @@ export interface ExtractorOptions {
   assetsBase?: string
   delegate?: 'GPU' | 'CPU'
   poseModel?: 'pose_landmarker_full.task' | 'pose_landmarker_lite.task'
+  /** The .task files already downloaded (e.g. with progress); any not given are fetched by MediaPipe. */
+  buffers?: Partial<Record<'hand' | 'pose' | 'face', Uint8Array>>
+  /** Called as each part starts, e.g. "hand tracking (GPU)", for loading messages. */
+  onStep?: (step: string) => void
+}
+
+/**
+ * Until the returned function is called, notes every canvas that gets a WebGL context (MediaPipe makes its own
+ * for the GPU delegate), so a lost GPU context can be noticed: tracking then returns nothing instead of throwing.
+ */
+function noteGlCanvases(into: EventTarget[]): () => void {
+  const protos = [globalThis.HTMLCanvasElement?.prototype, globalThis.OffscreenCanvas?.prototype].filter(Boolean) as {
+    getContext: (...a: unknown[]) => unknown
+  }[]
+  const originals = protos.map((p) => p.getContext)
+  protos.forEach((p, i) => {
+    p.getContext = function (this: EventTarget, ...a: unknown[]) {
+      const ctx = originals[i].apply(this, a)
+      if (ctx && /webgl/.test(String(a[0])) && !into.includes(this)) into.push(this)
+      return ctx
+    }
+  })
+  return () => protos.forEach((p, i) => (p.getContext = originals[i]))
+}
+
+/** A small blank picture for the test detection after setup. */
+function testImage(): TexImageSource {
+  if (typeof document !== 'undefined') return Object.assign(document.createElement('canvas'), { width: 64, height: 48 })
+  return new OffscreenCanvas(64, 48)
 }
 
 export class LandmarkExtractor {
@@ -118,34 +147,81 @@ export class LandmarkExtractor {
   static async create(opts: ExtractorOptions = {}): Promise<LandmarkExtractor> {
     const base = opts.assetsBase ?? `${import.meta.env.BASE_URL}mediapipe`
     const fileset = await FilesetResolver.forVisionTasks(`${base}/wasm`)
-    const build = (delegate: 'GPU' | 'CPU') =>
-      Promise.all([
-        HandLandmarker.createFromOptions(fileset, {
-          baseOptions: { modelAssetPath: `${base}/hand_landmarker.task`, delegate },
+    const asset = (key: 'hand' | 'pose' | 'face', file: string) => {
+      const buf = opts.buffers?.[key]
+      return buf ? { modelAssetBuffer: buf } : { modelAssetPath: `${base}/${file}` }
+    }
+    // One task at a time (each has its own wasm instance: lower peak memory on phones), and a test detection at
+    // the end: some GPUs (notably iOS WebGL) set up fine and only fail when used. Any failure: all on CPU.
+    const build = async (delegate: 'GPU' | 'CPU') => {
+      const made: { close(): void }[] = []
+      const canvases: EventTarget[] = []
+      const stopNoting = delegate === 'GPU' ? noteGlCanvases(canvases) : () => {}
+      try {
+        opts.onStep?.(`hand tracking (${delegate})`)
+        const h = await HandLandmarker.createFromOptions(fileset, {
+          baseOptions: { ...asset('hand', 'hand_landmarker.task'), delegate },
           runningMode: 'VIDEO',
           numHands: 2,
-        }),
-        PoseLandmarker.createFromOptions(fileset, {
-          baseOptions: { modelAssetPath: `${base}/${opts.poseModel ?? 'pose_landmarker_full.task'}`, delegate },
+        })
+        made.push(h)
+        opts.onStep?.(`body tracking (${delegate})`)
+        const p = await PoseLandmarker.createFromOptions(fileset, {
+          baseOptions: { ...asset('pose', opts.poseModel ?? 'pose_landmarker_full.task'), delegate },
           runningMode: 'VIDEO',
           numPoses: 1,
-        }),
-        FaceLandmarker.createFromOptions(fileset, {
-          baseOptions: { modelAssetPath: `${base}/face_landmarker.task`, delegate },
+        })
+        made.push(p)
+        opts.onStep?.(`face tracking (${delegate})`)
+        const f = await FaceLandmarker.createFromOptions(fileset, {
+          baseOptions: { ...asset('face', 'face_landmarker.task'), delegate },
           runningMode: 'VIDEO',
           numFaces: 1,
-        }),
-      ])
+        })
+        made.push(f)
+        stopNoting()
+        const ex = new LandmarkExtractor(h, p, f, delegate)
+        for (const c of canvases) c.addEventListener('webglcontextlost', () => ex.markGpuLost())
+        opts.onStep?.(`test detection (${delegate})`)
+        ex.detectRaw(testImage())
+        return ex
+      } catch (e) {
+        stopNoting()
+        for (const m of made) {
+          try {
+            m.close()
+          } catch {
+            /* already broken */
+          }
+        }
+        throw e
+      }
+    }
     const first = opts.delegate ?? 'GPU'
     try {
-      const [h, p, f] = await build(first)
-      return new LandmarkExtractor(h, p, f, first)
+      return await build(first)
     } catch (e) {
       if (first === 'CPU') throw e
       console.warn('MediaPipe GPU delegate failed, using CPU', e)
-      const [h, p, f] = await build('CPU')
-      return new LandmarkExtractor(h, p, f, 'CPU')
+      LandmarkExtractor.gpuError = String((e as Error)?.message ?? e)
+      return build('CPU')
     }
+  }
+
+  /** Why the GPU delegate was given up, if it was (for the debug panel). */
+  static gpuError = ''
+
+  private gpuLostListeners: (() => void)[] = []
+  /** True once the GPU context behind tracking was lost (results are empty from then on). */
+  gpuLost = false
+  onGpuLost(f: () => void): void {
+    this.gpuLostListeners.push(f)
+    if (this.gpuLost) f()
+  }
+  markGpuLost(): void {
+    if (this.gpuLost) return
+    this.gpuLost = true
+    this.gpuLostListeners.forEach((f) => f())
   }
 
   /** Last timestamp passed to MediaPipe (ms). VIDEO mode needs strictly increasing timestamps. */
@@ -184,12 +260,17 @@ export interface TimedFrame {
   /** Media time, seconds. */
   t: number
   frame: KaggleFrame
+  /** Size of the video frame the landmarks are normalized to (live capture; a phone can rotate mid-clip). */
+  width?: number
+  height?: number
 }
 
 export interface RecorderOptions {
   fps?: number
   bufferSeconds?: number
   onFrame?: (f: TimedFrame, raw: RawDetections) => void
+  /** A detection threw. The recorder keeps going; the caller decides whether to switch delegate. */
+  onError?: (e: unknown) => void
 }
 
 /** Runs the extractor on a playing <video> (file or webcam) at ~fps, keeping a rolling buffer. */
@@ -199,6 +280,8 @@ export class LandmarkRecorder {
   private buf: (TimedFrame & { wall: number })[] = []
   private running = false
   private due = 0
+  /** How long the last detection took, ms. */
+  lastDetectMs = 0
 
   constructor(
     private readonly extractor: LandmarkExtractor,
@@ -225,7 +308,7 @@ export class LandmarkRecorder {
   }
 
   frames(): TimedFrame[] {
-    return this.buf.map(({ t, frame }) => ({ t, frame }))
+    return this.buf.map(({ t, frame, width, height }) => ({ t, frame, width, height }))
   }
 
   private schedule(): void {
@@ -244,24 +327,39 @@ export class LandmarkRecorder {
     if (this.video.readyState >= 2 && now >= this.due) {
       // keep a steady average rate; don't try to catch up after a stall
       this.due = this.due < now - interval ? now + interval : this.due + interval
-      const raw = this.extractor.detectRaw(this.video, now)
-      const tf = { t: mediaTime, frame: assembleFrame(raw), wall: now }
-      this.buf.push(tf)
-      while (this.buf.length && this.buf[0].wall < now - this.bufferSeconds * 1000) this.buf.shift()
-      this.opts.onFrame?.({ t: tf.t, frame: tf.frame }, raw)
+      const t0 = performance.now()
+      try {
+        const raw = this.extractor.detectRaw(this.video, now)
+        const v = this.video
+        const tf = { t: mediaTime, frame: assembleFrame(raw), wall: now, width: v.videoWidth, height: v.videoHeight }
+        this.buf.push(tf)
+        while (this.buf.length && this.buf[0].wall < now - this.bufferSeconds * 1000) this.buf.shift()
+        this.opts.onFrame?.({ t: tf.t, frame: tf.frame, width: tf.width, height: tf.height }, raw)
+      } catch (e) {
+        this.opts.onError?.(e) // one bad frame must not stop the loop for good
+      }
+      // On a slow device detection can take longer than the frame interval, and running it back to back would
+      // leave no time for taps and drawing. Leave idle time of at least half the detection time.
+      this.lastDetectMs = performance.now() - t0
+      this.due = Math.max(this.due, t0 + 1.5 * this.lastDetectMs)
     }
     this.schedule()
   }
 }
 
-function seek(video: HTMLVideoElement, t: number): Promise<void> {
+function seek(video: HTMLVideoElement, t: number, timeoutMs = 8000): Promise<void> {
   return new Promise((resolve, reject) => {
-    const done = () => {
+    const timer = setTimeout(() => finish(new Error('the video did not seek (timed out)')), timeoutMs)
+    const finish = (err?: Error) => {
+      clearTimeout(timer)
+      video.removeEventListener('seeked', ok)
       video.removeEventListener('error', fail)
-      resolve()
+      if (err) reject(err)
+      else resolve()
     }
-    const fail = () => reject(new Error('video seek failed'))
-    video.addEventListener('seeked', done, { once: true })
+    const ok = () => finish()
+    const fail = () => finish(new Error('video seek failed'))
+    video.addEventListener('seeked', ok, { once: true })
     video.addEventListener('error', fail, { once: true })
     video.currentTime = t
   })

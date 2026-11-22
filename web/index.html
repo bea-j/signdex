@@ -130,7 +130,7 @@
             </div>
             <div class="stage" id="webcam-stage">
               <div class="media mirror">
-                <video id="webcam-video" playsinline muted aria-label="Webcam preview (mirrored)"></video>
+                <video id="webcam-video" playsinline muted autoplay aria-label="Webcam preview (mirrored)"></video>
               </div>
               <p class="stage-empty" id="webcam-empty">Starting the camera…</p>
               <span class="live-badge warn" id="hands-badge" hidden><span class="dot"></span><span id="hands-text">Looking for hands</span></span>
@@ -138,10 +138,10 @@
               <div class="busy" id="webcam-busy" hidden>Finding matches…</div>
             </div>
             <div class="record-row">
-              <button class="btn btn-primary" type="button" id="record" disabled aria-keyshortcuts="Space R">
-                <span class="rec-dot" aria-hidden="true"></span><span id="record-label">Record 2 seconds</span>
+              <button class="btn btn-primary record-btn" type="button" id="record" disabled aria-keyshortcuts="Space R" aria-describedby="record-hint">
+                <span class="load-bar" aria-hidden="true"></span><span class="rec-dot" aria-hidden="true"></span><span id="record-label">Loading…</span>
               </button>
-              <p class="hint">Press <kbd>Space</kbd> or <kbd>R</kbd>: 3, 2, 1, then sign one sign. Press again to try another.</p>
+              <p class="hint" id="record-hint"><span class="keys-only">Press <kbd>Space</kbd> or <kbd>R</kbd>: 3, 2, 1, then sign one sign. Press again to try another.</span><span class="touch-only">Tap Record: 3, 2, 1, then sign one sign. Tap again to try another.</span></p>
             </div>
             <p class="status-line" id="webcam-status" aria-live="polite"></p>
             <div class="toggles" role="group" aria-label="Display options">
@@ -186,7 +186,7 @@
               <div class="timeline-head">
                 <div>
                   <h3 id="trim-help">Drag the box around the sign</h3>
-                  <p>Choose a 1 to 3 second moment. Arrow keys move the box or its edges.</p>
+                  <p>Choose a 1 to 3 second moment. <span class="keys-only">Arrow keys move the box or its edges.</span><span class="touch-only">Drag the box, or its edges to resize it.</span></p>
                 </div>
                 <span class="duration-pill" id="window-length">–</span>
               </div>
@@ -275,8 +275,8 @@
         <article class="guide-step panel glass-panel" id="g-capture">
           <h2><span class="step-no">1</span> Show it a sign</h2>
           <ul>
-            <li><strong>Webcam:</strong> press Record (or <kbd>Space</kbd> / <kbd>R</kbd>), wait for 3, 2, 1, then sign one sign within the 2 seconds. Press again to try another.</li>
-            <li><strong>Uploaded clip:</strong> drag the box on the timeline around the sign (1 to 3 seconds; arrow keys work too) and choose Look up.</li>
+            <li><strong>Webcam:</strong> press Record<span class="keys-only"> (or <kbd>Space</kbd> / <kbd>R</kbd>)</span>, wait for 3, 2, 1, then sign one sign within the 2 seconds. Press again to try another.</li>
+            <li><strong>Uploaded clip:</strong> drag the box on the timeline around the sign (1 to 3 seconds<span class="keys-only">; arrow keys work too</span>) and choose Look up.</li>
             <li><strong>Chrome extension:</strong> while a video plays, press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> to start, then press it again right after the sign to look up the last 1 to 5 seconds.</li>
           </ul>
         </article>

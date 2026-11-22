@@ -13,6 +13,51 @@ ort.env.wasm.wasmPaths = { wasm: ortWasmUrl }
 // One thread: multi-threading needs cross-origin isolation (COOP/COEP headers), and the model is small.
 ort.env.wasm.numThreads = 1
 
+const PAGE = 65536 // bytes per WebAssembly memory page
+/** iPhone/iPad (iPadOS reports itself as a Mac with touch). */
+export const isIOS = (): boolean =>
+  typeof navigator !== 'undefined' &&
+  (/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
+/** Largest memory ORT may reserve on iOS: 512 MB, far more than this 17 MB model needs. */
+const IOS_MAX_PAGES = 8192
+const MIN_PAGES = 2048 // 128 MB
+/** What ORT's memory ended up as, for the debug panel. */
+export const memoryInfo = { maximumMB: 0, retries: 0 }
+
+/**
+ * ORT's wasm build always creates a *shared* WebAssembly.Memory with a 4 GB maximum, even with one thread.
+ * iOS Safari often refuses that ("RangeError: Out of memory": onnxruntime#22086, WebKit bug 255103), and the
+ * model then never loads. While ORT starts up, shared memories get a smaller maximum: capped on iOS, and
+ * halved on any browser that refuses the size asked for. Other memories (MediaPipe's) are untouched.
+ */
+async function withSafeSharedMemory<T>(start: () => Promise<T>): Promise<T> {
+  const Native = WebAssembly.Memory
+  const Safe = function (d: WebAssembly.MemoryDescriptor) {
+    if (!d?.shared) return new Native(d)
+    let max = d.maximum ?? 65536
+    if (isIOS()) max = Math.min(max, IOS_MAX_PAGES)
+    for (;;) {
+      max = Math.max(max, d.initial)
+      try {
+        const m = new Native({ ...d, maximum: max })
+        memoryInfo.maximumMB = (max * PAGE) / 2 ** 20
+        return m
+      } catch (e) {
+        if (!(e instanceof RangeError) || max <= Math.max(MIN_PAGES, d.initial)) throw e
+        memoryInfo.retries++
+        max = Math.max(MIN_PAGES, d.initial, max >> 1)
+      }
+    }
+  } as unknown as typeof WebAssembly.Memory
+  Safe.prototype = Native.prototype
+  WebAssembly.Memory = Safe
+  try {
+    return await start()
+  } finally {
+    WebAssembly.Memory = Native
+  }
+}
+
 export interface SignMatch {
   index: number
   /** Kaggle label, e.g. "callonphone". */
@@ -33,9 +78,14 @@ export class SignModel {
     readonly length: number,
   ) {}
 
-  static async load(base = `${import.meta.env.BASE_URL}model/`): Promise<SignModel> {
+  /** `modelBytes`: model.onnx already downloaded (e.g. with progress); otherwise ORT fetches it from `base`. */
+  static async load(base = `${import.meta.env.BASE_URL}model/`, modelBytes?: Uint8Array): Promise<SignModel> {
     const [session, labels] = await Promise.all([
-      ort.InferenceSession.create(`${base}model.onnx`, { executionProviders: ['wasm'] }),
+      withSafeSharedMemory(() =>
+        modelBytes
+          ? ort.InferenceSession.create(modelBytes, { executionProviders: ['wasm'] })
+          : ort.InferenceSession.create(`${base}model.onnx`, { executionProviders: ['wasm'] }),
+      ),
       fetch(`${base}labels.json`).then((r) => {
         if (!r.ok) throw new Error(`labels.json: HTTP ${r.status}`)
         return r.json() as Promise<string[]>
