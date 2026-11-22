@@ -12,6 +12,13 @@ const MIN_SIGNS = 4
 /** The Worker takes 2 to 15 signs (it slices anything over 15); we send the 15 most recently saved. */
 const MAX_WORKER_SIGNS = 15
 const MAX_LOCAL_QUESTIONS = 10
+/**
+ * Signs the quiz service is not asked about, and whose generated questions are dropped, because it produced
+ * wrong content for them (DRINK: it claimed an S/fist handshape; DRINK uses a C handshape, like holding a cup).
+ * They stay in My signs and in the offline quiz.
+ */
+const WORKER_EXCLUDED_SIGNS = ['drink']
+const excluded = (s: string) => WORKER_EXCLUDED_SIGNS.some((x) => new RegExp(`(^|[^a-z])${x}([^a-z]|$)`, 'i').test(s))
 const TIMEOUT_MS = 25_000
 
 export interface QuizQuestion {
@@ -69,7 +76,7 @@ async function fetchWorkerQuiz(labels: string[]): Promise<QuizQuestion[]> {
       r = await fetch(QUIZ_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(workerRequest(labels.map((l) => entry(l).display!))),
+        body: JSON.stringify(workerRequest(labels.filter((l) => !excluded(l)).map((l) => entry(l).display!))),
         signal: ctrl.signal,
       })
     } catch (e) {
@@ -177,7 +184,10 @@ export async function startQuiz() {
   try {
     const qs = await fetchWorkerQuiz(saved)
     if (my !== run) return
-    questions = qs.map((q) => ({ ...q, label: labelFor(q.targetSign, saved) }))
+    // drop anything about an excluded sign, even if the service brings it up on its own
+    const kept = qs.filter((q) => ![q.targetSign, q.question, q.explanation, ...q.options].some(excluded))
+    if (!kept.length) throw new QuizServiceError('no usable questions')
+    questions = kept.map((q) => ({ ...q, label: labelFor(q.targetSign, saved) }))
     $('quiz-source').textContent = 'Questions written by the Signdex quiz service'
   } catch (e) {
     if (my !== run) return

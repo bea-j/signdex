@@ -73,8 +73,9 @@ Teammates: unzip `teammate-assets.zip` (repo root, gitignored) into the repo roo
    page ("Download last 6 s as JSON") and add a small converter from those recordings to `signs.bin` blocks
    (same stage 1 as `features.ts`); (c) keep the tiles. Also have a fluent signer review `TWO_HANDED_SIGNS`.
 2. **Try it for real** in Chrome: webcam lookups on signdex.study, an uploaded clip, and the extension on YouTube.
-3. **Quiz content:** tell ph105 that one generated question marks DRINK as an S (fist) handshape; it's
-   usually a C handshape. The app shows whatever the Worker returns.
+3. **Quiz content:** the quiz service wrote a wrong DRINK question (S/fist handshape; DRINK uses a C). The app
+   no longer sends DRINK to it and drops any question about DRINK (`WORKER_EXCLUDED_SIGNS` in
+   `web/src/app/quiz.ts`); tell ph105 so it can be fixed in the Worker, then remove the exclusion.
 4. **Test-time averaging:** doesn't help v4 and costs 5x model time; set `TTA_VARIANTS = 1` in
    `web/src/app/webcam.ts` and `trim.ts` if lookups feel slow.
 5. **Refresh local copies:** rebuild `teammate-assets.zip` (it still has the previous `signs.bin`) and
