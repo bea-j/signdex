@@ -644,3 +644,14 @@ kbd {
 #demo-name { transition: opacity 250ms; }
 #demo-name.pending { opacity: 0.4; }
 @media (prefers-reduced-motion: reduce) { #demo-bar, #demo-name { transition: none; } }
+/* phones: score on its own line under the name, so name and meaning get the card's width */
+@media (max-width: 639px) {
+  .results-panel .card-top { flex-wrap: wrap; }
+  .results-panel .card-top > div:first-child { flex-basis: 100%; }
+  .results-panel .score { display: flex; align-items: baseline; gap: 8px; text-align: left; }
+  .results-panel .card-row { gap: 10px; }
+  .results-panel .rank { width: 30px; height: 30px; font-size: 13px; }
+  .results-panel .ref { width: 56px; height: 56px; }
+  .results-panel .card-actions { flex-wrap: wrap; justify-content: flex-start; }
+  .results-panel .link { white-space: nowrap; padding-left: 0; }
+}
