@@ -602,3 +602,23 @@ kbd {
 .switch input:focus-visible + .track { outline: 2px solid var(--primary); outline-offset: 3px; }
 .switch:has(input:checked) { color: var(--text); }
 @media (prefers-reduced-motion: reduce) { .switch .track, .switch .track::after { transition: none; } }
+
+/* ------------------------------------------------------------------ details panel */
+.details {
+  margin-top: 14px; display: grid; gap: 14px; padding: 16px; border-radius: var(--radius-xl);
+  border: 1px solid rgb(255 255 255 / 12%); background: rgb(10 13 11 / 38%); backdrop-filter: blur(24px);
+}
+.stat-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--sage-text); }
+.stats { margin: 8px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.stat { padding: 10px 12px; border-radius: var(--radius-lg); border: 1px solid #3e463f; background: rgb(36 42 37 / 55%); }
+.stat dt { font-size: 12px; font-weight: 600; color: var(--muted); }
+.stat dd {
+  margin: 2px 0 0; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700;
+  font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+}
+.tone { width: 8px; height: 8px; flex: none; border-radius: 999px; }
+.tone-left { background: var(--lm-left); }
+.tone-right { background: var(--lm-right); }
+.tone-ok { background: var(--conf-high); }
+.tone-off { background: #59605a; }
+@media (max-width: 639px) { .stats { grid-template-columns: 1fr 1fr; } .details { padding: 12px; } }

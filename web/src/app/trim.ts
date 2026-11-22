@@ -3,7 +3,8 @@
 import { extractClip, toTrainingAspect, type TimedFrame } from '../landmarks'
 import { frameAt, LandmarkOverlay } from '../ui/overlay'
 import { prefs } from '../ui/prefs'
-import { lookupSign } from '../lookup'
+import { frameStats, lookupStats, partStats, renderDetails } from './details'
+import { lookupSign, type LookupResult } from '../lookup'
 import { getExtractor, getModel, loadReferenceData } from './engine'
 import { renderCards } from './results'
 import type { SignMatch } from '../model'
@@ -30,6 +31,9 @@ const busyEl = $('trim-busy')
 const overlay = new LandmarkOverlay(video)
 /** Landmarks of the last looked-up window (t = seconds in the file), drawn while it loops. */
 let clipFrames: TimedFrame[] = []
+let lastLookup: { res: LookupResult; modelLength: number } | null = null
+let delegate = ''
+let fileName = ''
 let url: string | null = null
 let duration = 0
 let start = 0
@@ -59,6 +63,8 @@ fileInput.addEventListener('change', () => {
   if (!file) return
   if (url) URL.revokeObjectURL(url)
   url = URL.createObjectURL(file)
+  fileName = file.name
+  lastLookup = null
   $('file-name').textContent = file.name
   $('file-name').title = file.name
   duration = 0
@@ -99,6 +105,7 @@ video.addEventListener('loadedmetadata', async () => {
   seekToStart()
   status.textContent = ready ? '' : 'Loading hand tracking and the sign model…'
   updateButton()
+  updateDetails()
 })
 video.addEventListener('error', () => {
   if (video.getAttribute('src')) status.textContent = 'This browser cannot play that video file. Try an MP4 or WebM clip.'
@@ -261,6 +268,7 @@ async function lookup() {
   status.textContent = ''
   try {
     const [extractor, model] = await Promise.all([getExtractor(), getModel()])
+    delegate = extractor.delegate
     const frames = await extractClip(extractor, video, start, end, FPS, (done, total) => {
       busyEl.textContent = `Tracking hands… ${Math.round((100 * done) / total)}%`
     })
@@ -276,7 +284,9 @@ async function lookup() {
       status.textContent = 'No hands were found in this part of the clip. Move the box to where the sign is.'
       return
     }
+    lastLookup = { res, modelLength: model.length }
     showResults(res.matches)
+    updateDetails()
   } catch (e) {
     status.textContent = `Lookup failed: ${(e as Error).message}`
   } finally {
@@ -287,6 +297,28 @@ async function lookup() {
   }
 }
 lookupBtn.addEventListener('click', () => void lookup())
+
+// ---------------------------------------------------------------- details panel
+const detailsEl = $('trim-details')
+function updateDetails() {
+  detailsEl.hidden = !prefs.get('details')
+  if (detailsEl.hidden) return
+  renderDetails(detailsEl, [
+    {
+      title: 'Clip',
+      stats: [
+        { label: 'File', value: fileName || '–' },
+        { label: 'Resolution', value: video.videoWidth ? `${video.videoWidth} × ${video.videoHeight}, ${duration.toFixed(1)} s` : '–' },
+        { label: 'Hand tracking', value: delegate ? `MediaPipe on ${delegate}` : 'loads with the first lookup' },
+        { label: 'Landmark sampling', value: `${FPS} fps, frame-accurate seeks` },
+        ...frameStats(video.videoWidth, video.videoHeight),
+      ],
+    },
+    { title: 'Looked-up window', stats: partStats(clipFrames.map((f) => f.frame), false) },
+    { title: 'Last lookup', stats: lastLookup ? lookupStats(clipFrames.length, lastLookup.res, lastLookup.modelLength) : [] },
+  ])
+}
+prefs.onChange(updateDetails)
 
 /** Results panel next to the player: the top 5 for the selected window, updated in place. */
 function showResults(matches: SignMatch[]) {

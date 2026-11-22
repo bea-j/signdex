@@ -1,11 +1,12 @@
 // Webcam screen: camera picker, live preview with a "hands detected" badge, and Record:
 // 3-2-1 countdown, 2 s of landmarks (and a video recording for the replay), then the lookup.
-import { COORDS_PER_POINT as C, LandmarkRecorder, OFFSETS, toTrainingAspect, type KaggleFrame } from '../landmarks'
-import { lookupSign } from '../lookup'
+import { COORDS_PER_POINT as C, LandmarkRecorder, OFFSETS, toTrainingAspect, type KaggleFrame, type TimedFrame } from '../landmarks'
+import { lookupSign, type LookupResult } from '../lookup'
 import type { SignMatch, SignModel } from '../model'
 import { CameraPicker } from '../ui/camera'
 import { frameAt, LandmarkOverlay } from '../ui/overlay'
 import { prefs } from '../ui/prefs'
+import { frameStats, lookupStats, partStats, renderDetails } from './details'
 import { getExtractor, getModel, loadReferenceData } from './engine'
 import { renderCards } from './results'
 import { onEnter, onLeave } from './router'
@@ -40,6 +41,11 @@ let model: SignModel | null = null
 let busy = false
 let session = 0 // bumped when leaving the screen: stale async work checks it and stops
 let hasResult = false
+// details panel
+let delegate = ''
+let frameTimes: number[] = []
+let lastFrame: KaggleFrame | null = null
+let lastLookup: { recorded: number; res: LookupResult } | null = null
 let lastClipUrl: string | null = null
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
@@ -109,9 +115,15 @@ async function enter() {
     const [extractor, m] = await engine
     if (my !== session) return
     model = m
+    delegate = extractor.delegate
     recorder = new LandmarkRecorder(extractor, video, { fps: 20, bufferSeconds: 6, onFrame: (tf) => {
         showHands(hasHands(tf.frame))
         liveOverlay.draw(tf.frame, layers())
+        const now = performance.now()
+        frameTimes.push(now)
+        while (frameTimes.length && frameTimes[0] < now - 2000) frameTimes.shift()
+        lastFrame = tf.frame
+        scheduleDetails()
       },
     })
     recorder.start()
@@ -184,24 +196,7 @@ export async function record() {
     recordBtn.classList.remove('recording')
     overlay(null)
     const blob = (await stopClip?.()) ?? null
-    const timed = recorder.frames()
-    const frames = timed.map((f) => f.frame)
-    if (frames.length === 0) throw new Error('no video frames were captured')
-    replayFrames = timed.map((f) => ({ t: f.t - timed[0].t, frame: f.frame }))
-
-    busyEl.hidden = false
-    status.textContent = 'Finding matches…'
-    const corrected = toTrainingAspect(frames, video.videoWidth, video.videoHeight)
-    const res = await lookupSign(model, corrected, { variants: TTA_VARIANTS, k: 5 })
-    if (my !== session) return
-    if (res.handFrames === 0) {
-      status.textContent = 'No hands were seen in the recording. Make sure your hands are in view, then try again.'
-      return
-    }
-    if (lastClipUrl) URL.revokeObjectURL(lastClipUrl)
-    lastClipUrl = blob ? URL.createObjectURL(blob) : null
-    showResults(res.matches, lastClipUrl)
-    status.textContent = ''
+    await finishLookup(recorder.frames(), blob, video.videoWidth, video.videoHeight, my)
   } catch (e) {
     if (my === session) status.textContent = `Lookup failed: ${(e as Error).message}`
   } finally {
@@ -214,6 +209,29 @@ export async function record() {
       updateButton()
     }
   }
+}
+
+/** Recorded landmarks (+ the clip for the replay) -> lookup -> results panel. */
+async function finishLookup(timed: TimedFrame[], blob: Blob | null, width: number, height: number, my: number) {
+  const frames = timed.map((f) => f.frame)
+  if (frames.length === 0) throw new Error('no video frames were captured')
+  replayFrames = timed.map((f) => ({ t: f.t - timed[0].t, frame: f.frame }))
+  busyEl.hidden = false
+  status.textContent = 'Finding matches…'
+  const corrected = toTrainingAspect(frames, width, height)
+  const res = await lookupSign(model!, corrected, { variants: TTA_VARIANTS, k: 5 })
+  if (my !== session) return
+  if (res.handFrames === 0) {
+    status.textContent = 'No hands were seen in the recording. Make sure your hands are in view, then try again.'
+    return
+  }
+  if (lastClipUrl) URL.revokeObjectURL(lastClipUrl)
+  lastClipUrl = blob ? URL.createObjectURL(blob) : null
+  lastLookup = { recorded: frames.length, res }
+  showResults(res.matches, lastClipUrl)
+  scheduleDetails()
+  status.textContent = ''
+  busyEl.hidden = true
 }
 
 /** Results panel next to the camera: replay of the recorded clip and the top 5, updated in place. */
@@ -235,6 +253,36 @@ function showResults(matches: SignMatch[], clipUrl: string | null) {
 }
 
 recordBtn.addEventListener('click', () => void record())
+
+// ---------------------------------------------------------------- details panel (about 4 updates/s)
+const detailsEl = $('webcam-details')
+let detailsQueued = false
+function scheduleDetails() {
+  if (!prefs.get('details') || detailsQueued) return
+  detailsQueued = true
+  setTimeout(() => {
+    detailsQueued = false
+    renderDetails(detailsEl, [
+      {
+        title: 'Camera',
+        stats: [
+          { label: 'Camera', value: picker.isOpen ? picker.label : 'not open' },
+          { label: 'Resolution', value: picker.settingsText || '–' },
+          { label: 'Hand tracking', value: delegate ? `MediaPipe on ${delegate}` : 'loading…' },
+          { label: 'Landmark rate', value: frameTimes.length ? `${(frameTimes.length / 2).toFixed(1)} fps` : '–' },
+          ...frameStats(video.videoWidth, video.videoHeight),
+        ],
+      },
+      { title: 'Live', stats: lastFrame ? partStats([lastFrame], true) : [] },
+      { title: 'Last lookup', stats: lastLookup && model ? lookupStats(lastLookup.recorded, lastLookup.res, model.length) : [] },
+    ])
+  }, 250)
+}
+prefs.onChange(() => {
+  detailsEl.hidden = !prefs.get('details')
+  scheduleDetails()
+})
+detailsEl.hidden = !prefs.get('details')
 
 // replay overlay: the recorded landmarks, in step with the looping clip
 function replayTick(_now: number, meta: VideoFrameCallbackMetadata) {
@@ -260,6 +308,9 @@ if (import.meta.env.DEV) {
     __signdexWebcam: {
       stopLive: () => recorder?.stop(),
       drawLive: (f: KaggleFrame) => liveOverlay.draw(f, layers()),
+      /** Run the real lookup path on given landmark frames (as if just recorded), with a clip for the replay. */
+      lookup: (timed: TimedFrame[], blob: Blob | null, width: number, height: number) =>
+        finishLookup(timed, blob, width, height, session),
       setReplay: (frames: { t: number; frame: KaggleFrame }[], url: string) => {
         replayFrames = frames
         $('webcam-replay-box').hidden = false
