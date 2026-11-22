@@ -34,6 +34,7 @@
           <label class="switch bg-switch" title="Animated background (paused automatically while hand tracking runs)">
             <input type="checkbox" role="switch" id="bg-toggle" /><span class="track" aria-hidden="true"></span><span class="bg-label">Background</span>
           </label>
+          <button class="nav-link" type="button" data-go="dictionary">Dictionary</button>
           <button class="nav-link" type="button" data-go="guide">How it works</button>
           <button class="nav-link" type="button" data-go="privacy">Privacy</button>
           <button class="nav-saved" type="button" data-go="saved" id="nav-saved">
@@ -350,6 +351,29 @@
         </div>
       </section>
 
+      <!-- ============================================================ dictionary: all 250 signs -->
+      <section class="flow flow-wide dictionary" id="screen-dictionary" aria-labelledby="dictionary-title" hidden>
+        <button class="back" type="button" data-go="home">← Back to start</button>
+        <div class="dict-head">
+          <div>
+            <p class="eyebrow">Dictionary</p>
+            <h1 class="title" id="dictionary-title">All the signs Signdex knows</h1>
+            <p class="muted dict-intro">Each animation shows a PopSign signer’s tracked hands and body, mirrored like your webcam view.</p>
+          </div>
+          <div class="dict-tools">
+            <label class="dict-search">
+              <span class="visually-hidden">Search signs by name</span>
+              <svg class="icon-sm" aria-hidden="true"><use href="#i-scan" /></svg>
+              <input type="search" id="dict-search" placeholder="Search signs by name" autocomplete="off" spellcheck="false" aria-describedby="dict-count" />
+            </label>
+            <label class="switch"><input type="checkbox" role="switch" id="dict-pause" /><span class="track" aria-hidden="true"></span>Pause animations</label>
+          </div>
+        </div>
+        <p class="dict-count" id="dict-count" aria-live="polite"></p>
+        <ul class="dict-grid" id="dict-grid"></ul>
+        <p class="results-empty" id="dict-empty" hidden>No signs match that search.</p>
+      </section>
+
       <!-- ============================================================ quiz (from My signs) -->
       <section class="saved quiz" id="screen-quiz" aria-labelledby="quiz-title" hidden>
         <button class="back" type="button" data-go="saved">← My signs</button>
@@ -390,7 +414,7 @@
     <footer class="site-footer">
       <div class="wrap">
         <p>Sign data and reference animations: PopSign ASL v1.0, licensed <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>, via Google’s <a href="https://www.kaggle.com/competitions/asl-signs" target="_blank" rel="noreferrer">Isolated Sign Language Recognition</a> dataset. Animations show tracked landmarks of PopSign signers.</p>
-        <p>250 common signs • On-device analysis • <a href="#privacy" data-go="privacy">Privacy</a> • <a href="./debug.html">Landmark debug</a></p>
+        <p>250 common signs • <a href="#dictionary" data-go="dictionary">Dictionary</a> • On-device analysis • <a href="#privacy" data-go="privacy">Privacy</a> • <a href="./debug.html">Landmark debug</a></p>
       </div>
     </footer>
 

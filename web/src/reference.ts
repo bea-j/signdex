@@ -30,11 +30,13 @@ interface Header {
 
 const URL_ = `${import.meta.env.BASE_URL}reference/signs.bin`
 let headerP: Promise<{ header: Header; dataStart: number } | null> | null = null
-let whole: ArrayBuffer | null = null // set when the server ignored a range request
+let whole: ArrayBuffer | null = null // set when the server ignored a range request, or after a full preload
+let wholeLoading: Promise<void> | null = null
 const cache = new Map<string, Promise<RefClip | null>>()
 
 /** Bytes [start, end) of the file; falls back to the whole file when ranges are not honored. */
 async function bytes(start: number, end: number): Promise<Uint8Array> {
+  if (wholeLoading) await wholeLoading // a full download is under way: use it instead of extra range requests
   if (whole) return new Uint8Array(whole, start, end - start)
   const r = await fetch(URL_, { headers: { Range: `bytes=${start}-${end - 1}` } })
   if (!r.ok) throw new Error(`reference: HTTP ${r.status}`)
@@ -52,6 +54,15 @@ function header() {
     const json = await bytes(8, 8 + len)
     return { header: JSON.parse(new TextDecoder().decode(json)) as Header, dataStart: 8 + len }
   })().catch(() => null))
+}
+
+/** Fetch the whole file once (about 1 MB), for pages that show many signs; later clips decode from memory. */
+export function preloadAllReferences(): Promise<void> {
+  return (wholeLoading ??= fetch(URL_)
+    .then(async (r) => {
+      if (r.ok) whole = await r.arrayBuffer()
+    })
+    .catch(() => {}))
 }
 
 /** The reference clip for a sign label, or null if there is none (file missing or sign not in it). */
