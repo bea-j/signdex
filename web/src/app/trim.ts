@@ -3,7 +3,8 @@
 import { extractClip, toTrainingAspect } from '../landmarks'
 import { lookupSign } from '../lookup'
 import { getExtractor, getModel, loadReferenceData } from './engine'
-import { renderResults } from './results'
+import { renderCards } from './results'
+import type { SignMatch } from '../model'
 import { onEnter, onLeave, show } from './router'
 
 const MIN_S = 1
@@ -59,6 +60,7 @@ fileInput.addEventListener('change', () => {
   status.textContent = 'Opening the clip…'
   lookupBtn.disabled = true
   strip.querySelectorAll('.thumb').forEach((t) => t.remove())
+  clearResults()
   video.src = url
   show('trim')
 })
@@ -265,8 +267,7 @@ async function lookup() {
       status.textContent = 'No hands were found in this part of the clip. Move the box to where the sign is.'
       return
     }
-    renderResults({ matches: res.matches, source: 'upload', clipUrl: url, start, end, seconds: end - start })
-    show('results')
+    showResults(res.matches)
   } catch (e) {
     status.textContent = `Lookup failed: ${(e as Error).message}`
   } finally {
@@ -277,6 +278,24 @@ async function lookup() {
   }
 }
 lookupBtn.addEventListener('click', () => void lookup())
+
+/** Results panel next to the player: the top 5 for the selected window, updated in place. */
+function showResults(matches: SignMatch[]) {
+  $('trim-results-empty').hidden = true
+  $('trim-note').hidden = false
+  const cap = $('trim-caption')
+  cap.hidden = false
+  cap.textContent = `Matches for ${fmt(start, true)} – ${fmt(end, true)} (${(end - start).toFixed(1)} s), playing on a loop in the player`
+  renderCards($('trim-cards'), matches, 'Not sure. Try trimming tighter around the sign.')
+  if (matchMedia('(max-width: 1023px)').matches) $('trim-results-title').scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function clearResults() {
+  $('trim-cards').replaceChildren()
+  $('trim-results-empty').hidden = false
+  $('trim-note').hidden = true
+  $('trim-caption').hidden = true
+}
 
 onEnter('trim', () => {
   looping = true

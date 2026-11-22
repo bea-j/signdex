@@ -1,21 +1,8 @@
-// Results screen: the user's clip on a loop, and the top 5 as result cards.
+// Result cards (top 5) for the web app's results panels and the extension side panel.
 import { LOW_CONFIDENCE, type SignMatch } from '../model'
 import { entry, signerLink, similarTo } from './engine'
 import { savedSigns } from './saved'
 
-export interface ResultView {
-  matches: SignMatch[]
-  source: 'webcam' | 'upload'
-  /** Clip to replay: a blob URL (webcam recording) or the uploaded file's URL. */
-  clipUrl: string | null
-  /** For uploads: the selected window inside the file. */
-  start?: number
-  end?: number
-  seconds: number
-  mirror?: boolean
-}
-
-const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T
 const HIGH = 0.6
 
 export function level(p: number): { cls: string; label: string } {
@@ -27,60 +14,11 @@ export function level(p: number): { cls: string; label: string } {
 const icon = (name: string, cls = 'icon-sm') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
 
-// ---------------------------------------------------------------- looping clip
-let stopLoop: (() => void) | null = null
-
-function playLoop(view: ResultView) {
-  stopLoop?.()
-  const video = $<HTMLVideoElement>('result-video')
-  video.classList.toggle('mirror', !!view.mirror)
-  if (!view.clipUrl) {
-    video.removeAttribute('src')
-    video.load()
-    return
-  }
-  const start = view.start ?? 0
-  const end = view.end
-  video.src = view.clipUrl
-  video.loop = end === undefined
-  let alive = true
-  const check = () => {
-    if (end !== undefined && video.currentTime >= end) video.currentTime = start
-  }
-  const tick = () => {
-    if (!alive) return
-    check()
-    video.requestVideoFrameCallback(tick)
-  }
-  const onLoaded = () => {
-    video.currentTime = start
-    void video.play().catch(() => {})
-    if ('requestVideoFrameCallback' in video) tick()
-  }
-  const onEnded = () => {
-    video.currentTime = start
-    void video.play().catch(() => {})
-  }
-  video.addEventListener('loadedmetadata', onLoaded, { once: true })
-  video.addEventListener('timeupdate', check) // also covers browsers without requestVideoFrameCallback
-  video.addEventListener('ended', onEnded)
-  stopLoop = () => {
-    alive = false
-    video.removeEventListener('loadedmetadata', onLoaded)
-    video.removeEventListener('timeupdate', check)
-    video.removeEventListener('ended', onEnded)
-    video.pause()
-  }
-}
-
-export function stopResults() {
-  stopLoop?.()
-}
-
 // ---------------------------------------------------------------- cards
-let cardSubscriptions: (() => void)[] = []
+/** Saved-state subscriptions of the cards in each container, dropped when it is re-rendered. */
+const subscriptions = new WeakMap<HTMLElement, (() => void)[]>()
 
-function card(m: SignMatch, rank: number, unsure: boolean): HTMLElement {
+function card(m: SignMatch, rank: number, unsure: boolean, subs: (() => void)[]): HTMLElement {
   const e = entry(m.label)
   const lv = level(m.confidence)
   const pct = Math.round(m.confidence * 1000) / 10
@@ -130,7 +68,7 @@ function card(m: SignMatch, rank: number, unsure: boolean): HTMLElement {
   }
   sync()
   save.addEventListener('click', () => savedSigns.toggle(m.label))
-  cardSubscriptions.push(savedSigns.onChange(sync))
+  subs.push(savedSigns.onChange(sync))
 
   // example clip from dictionary.json, loaded only when asked for
   const exBtn = el.querySelector<HTMLButtonElement>('[data-example]')
@@ -165,8 +103,9 @@ function card(m: SignMatch, rank: number, unsure: boolean): HTMLElement {
  */
 export function renderCards(container: HTMLElement, matches: SignMatch[], unsureText: string) {
   const unsure = matches[0].confidence < LOW_CONFIDENCE
-  cardSubscriptions.forEach((off) => off())
-  cardSubscriptions = []
+  subscriptions.get(container)?.forEach((off) => off())
+  const subs: (() => void)[] = []
+  subscriptions.set(container, subs)
   container.innerHTML = ''
   if (unsure) {
     const b = document.createElement('div')
@@ -175,23 +114,5 @@ export function renderCards(container: HTMLElement, matches: SignMatch[], unsure
     b.innerHTML = `${icon('info', 'icon')}<span>${esc(unsureText)}</span>`
     container.append(b)
   }
-  matches.forEach((m, i) => container.append(card(m, i + 1, unsure)))
-}
-
-let lastSource: ResultView['source'] = 'webcam'
-export const resultSource = () => lastSource
-
-export function renderResults(view: ResultView) {
-  lastSource = view.source
-  $('results-count').textContent = `${view.matches.length} possible matches`
-  const secs = view.seconds.toFixed(1)
-  $('clip-caption').textContent = `Your ${view.source === 'webcam' ? 'recorded' : 'selected'} ${secs} second clip plays on a loop`
-  renderCards(
-    $('cards'),
-    view.matches,
-    view.source === 'webcam'
-      ? 'Not sure. Try again with just the one sign inside the 2 seconds.'
-      : 'Not sure. Try trimming tighter around the sign.',
-  )
-  playLoop(view)
+  matches.forEach((m, i) => container.append(card(m, i + 1, unsure, subs)))
 }

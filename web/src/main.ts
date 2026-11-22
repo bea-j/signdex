@@ -1,10 +1,9 @@
-// Signdex main app. Screens: home, webcam, trim (uploaded clip), results, saved ("My signs").
+// Signdex main app. Screens: home, webcam and uploaded clip (each with its results panel), saved ("My signs").
 import './app.css'
-import { resultSource, stopResults } from './app/results'
-import { currentScreen, onLeave, show, type Screen } from './app/router'
+import { currentScreen, show, type Screen } from './app/router'
 import './app/my-signs'
 import './app/trim'
-import { record, recordAgain } from './app/webcam'
+import { record } from './app/webcam'
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T
 
@@ -20,28 +19,20 @@ document.addEventListener('click', (e) => {
   } else show(go as Screen)
 })
 
-// results: "Try another sign" goes back to where the clip came from
-function tryAgain() {
-  if (resultSource() === 'webcam') recordAgain()
-  else show('trim')
-}
-$('try-another').addEventListener('click', tryAgain)
-onLeave('results', stopResults)
-
-// Space or R: record (webcam), look up (trim), try again (results). Form fields keep their own keys.
+// Space or R: record (again) on the webcam screen, look up the selected window on the clip screen.
+// Form fields keep their own keys.
 const isShortcut = (e: KeyboardEvent) =>
   !e.repeat && !e.ctrlKey && !e.altKey && !e.metaKey && (e.code === 'Space' || e.key === ' ' || e.key.toLowerCase() === 'r')
 const inField = (e: Event) =>
   !!(e.target as HTMLElement).closest('input, select, textarea, [contenteditable=""], [contenteditable="true"]')
-const shortcutScreens: Screen[] = ['webcam', 'trim', 'results']
+const shortcutScreens: Screen[] = ['webcam', 'trim']
 
 document.addEventListener('keydown', (e) => {
   if (!isShortcut(e) || inField(e) || !shortcutScreens.includes(currentScreen())) return
   e.preventDefault() // no scrolling and no click on whatever button has focus
   const s = currentScreen()
   if (s === 'webcam') void record()
-  else if (s === 'trim') $<HTMLButtonElement>('trim-lookup').click()
-  else tryAgain()
+  else $<HTMLButtonElement>('trim-lookup').click()
 })
 document.addEventListener('keyup', (e) => {
   if ((e.code === 'Space' || e.key === ' ') && !inField(e) && shortcutScreens.includes(currentScreen())) e.preventDefault()

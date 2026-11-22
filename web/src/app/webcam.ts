@@ -2,11 +2,11 @@
 // 3-2-1 countdown, 2 s of landmarks (and a video recording for the replay), then the lookup.
 import { COORDS_PER_POINT as C, LandmarkRecorder, OFFSETS, toTrainingAspect, type KaggleFrame } from '../landmarks'
 import { lookupSign } from '../lookup'
-import type { SignModel } from '../model'
+import type { SignMatch, SignModel } from '../model'
 import { CameraPicker } from '../ui/camera'
 import { getExtractor, getModel, loadReferenceData } from './engine'
-import { renderResults } from './results'
-import { onEnter, onLeave, show } from './router'
+import { renderCards } from './results'
+import { onEnter, onLeave } from './router'
 
 export const RECORD_MS = 2000
 const COUNTDOWN_FROM = 3
@@ -30,7 +30,7 @@ let recorder: LandmarkRecorder | null = null
 let model: SignModel | null = null
 let busy = false
 let session = 0 // bumped when leaving the screen: stale async work checks it and stops
-let recordWhenReady = false
+let hasResult = false
 let lastClipUrl: string | null = null
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
@@ -104,10 +104,6 @@ async function enter() {
     recorder.start()
     status.textContent = ''
     updateButton()
-    if (recordWhenReady) {
-      recordWhenReady = false
-      void record()
-    }
   } catch (e) {
     if (my === session) status.textContent = `Could not load the sign model or hand tracking: ${(e as Error).message}`
   }
@@ -115,7 +111,7 @@ async function enter() {
 
 function leave() {
   session++
-  recordWhenReady = false
+  $<HTMLVideoElement>('webcam-replay').pause()
   recorder?.stop()
   recorder = null
   picker.close()
@@ -188,13 +184,13 @@ export async function record() {
     }
     if (lastClipUrl) URL.revokeObjectURL(lastClipUrl)
     lastClipUrl = blob ? URL.createObjectURL(blob) : null
-    renderResults({ matches: res.matches, source: 'webcam', clipUrl: lastClipUrl, seconds: RECORD_MS / 1000, mirror: true })
-    show('results')
+    showResults(res.matches, lastClipUrl)
+    status.textContent = ''
   } catch (e) {
     if (my === session) status.textContent = `Lookup failed: ${(e as Error).message}`
   } finally {
     recordBtn.classList.remove('recording')
-    recordLabel.textContent = 'Record 2 seconds'
+    recordLabel.textContent = hasResult ? 'Record again' : 'Record 2 seconds'
     overlay(null)
     busyEl.hidden = true
     if (my === session) {
@@ -204,10 +200,23 @@ export async function record() {
   }
 }
 
-/** From the results screen: go back to the webcam and record again as soon as it is ready. */
-export function recordAgain() {
-  recordWhenReady = true
-  show('webcam')
+/** Results panel next to the camera: replay of the recorded clip and the top 5, updated in place. */
+function showResults(matches: SignMatch[], clipUrl: string | null) {
+  hasResult = true
+  $('webcam-results-empty').hidden = true
+  $('webcam-note').hidden = false
+  const box = $('webcam-replay-box')
+  const replay = $<HTMLVideoElement>('webcam-replay')
+  box.hidden = !clipUrl
+  if (clipUrl) {
+    replay.src = clipUrl
+    void replay.play().catch(() => {})
+  }
+  $('webcam-caption').textContent = `Your ${(RECORD_MS / 1000).toFixed(1)} s clip, on a loop`
+  const cards = $('webcam-cards')
+  renderCards(cards, matches, 'Not sure. Try again with just the one sign inside the 2 seconds.')
+  // phones: the panel is below the camera, bring it into view
+  if (matchMedia('(max-width: 1023px)').matches) $('webcam-results-title').scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
 recordBtn.addEventListener('click', () => void record())

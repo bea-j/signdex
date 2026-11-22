@@ -1,7 +1,7 @@
-// Screens (home, webcam, trim, results, saved): one <section id="screen-…"> visible at a time.
-export type Screen = 'home' | 'webcam' | 'trim' | 'results' | 'saved'
+// Screens (home, webcam, trim, saved): one <section id="screen-…"> visible at a time.
+export type Screen = 'home' | 'webcam' | 'trim' | 'saved'
 
-const screens: Screen[] = ['home', 'webcam', 'trim', 'results', 'saved']
+const screens: Screen[] = ['home', 'webcam', 'trim', 'saved']
 let current: Screen = 'home'
 const enter: Partial<Record<Screen, () => void>> = {}
 const leave: Partial<Record<Screen, () => void>> = {}

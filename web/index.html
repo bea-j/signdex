@@ -108,90 +108,96 @@
         </div>
       </section>
 
-      <!-- ============================================================ webcam -->
-      <section class="flow" id="screen-webcam" aria-labelledby="webcam-title" hidden>
+      <!-- ============================================================ webcam: camera left, results right -->
+      <section class="flow flow-wide" id="screen-webcam" aria-labelledby="webcam-title" hidden>
         <button class="back" type="button" data-go="home">← Back to start</button>
-        <div class="panel glass-panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Webcam lookup</p>
-              <h1 class="title" id="webcam-title">Sign when you’re ready</h1>
-            </div>
-            <label class="camera-field">Camera <select id="camera"><option value="">Default camera</option></select></label>
-          </div>
-          <div class="stage" id="webcam-stage">
-            <video id="webcam-video" class="mirror" playsinline muted aria-label="Webcam preview (mirrored)"></video>
-            <p class="stage-empty" id="webcam-empty">Starting the camera…</p>
-            <span class="live-badge warn" id="hands-badge" hidden><span class="dot"></span><span id="hands-text">Looking for hands</span></span>
-            <div class="countdown" id="webcam-countdown" aria-hidden="true" hidden></div>
-            <div class="busy" id="webcam-busy" hidden>Finding matches…</div>
-          </div>
-          <div class="record-row">
-            <button class="btn btn-primary" type="button" id="record" disabled aria-keyshortcuts="Space R">
-              <span class="rec-dot" aria-hidden="true"></span><span id="record-label">Record 2 seconds</span>
-            </button>
-            <p class="hint">Press <kbd>Space</kbd> or <kbd>R</kbd>: 3, 2, 1, then sign one sign.</p>
-          </div>
-          <p class="status-line" id="webcam-status" aria-live="polite"></p>
-        </div>
-      </section>
-
-      <!-- ============================================================ trim (uploaded clip) -->
-      <section class="flow" id="screen-trim" aria-labelledby="trim-title" hidden>
-        <button class="back" type="button" data-go="home">← Back to start</button>
-        <div class="panel glass-panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Uploaded clip</p>
-              <h1 class="title" id="trim-title">Choose the sign moment</h1>
-            </div>
-            <span class="file-pill" id="file-name"></span>
-          </div>
-          <div class="stage">
-            <video id="trim-video" playsinline muted aria-label="Selected part of the uploaded clip"></video>
-            <div class="busy" id="trim-busy" hidden></div>
-          </div>
-          <div class="timeline">
-            <div class="timeline-head">
+        <div class="workspace">
+          <div class="panel glass-panel main-col">
+            <div class="panel-head">
               <div>
-                <h3 id="trim-help">Drag the box around the sign</h3>
-                <p>Choose a 1 to 3 second moment. Arrow keys move the box or its edges.</p>
+                <p class="eyebrow">Webcam lookup</p>
+                <h1 class="title" id="webcam-title">Sign when you’re ready</h1>
               </div>
-              <span class="duration-pill" id="window-length">–</span>
+              <label class="camera-field">Camera <select id="camera"><option value="">Default camera</option></select></label>
             </div>
-            <div class="strip" id="strip">
-              <div class="window" id="window" tabindex="0" role="group" aria-labelledby="trim-help" aria-describedby="window-length">
-                <span class="handle start" id="handle-start" tabindex="0" role="slider" aria-label="Start of the sign"></span>
-                <span class="handle end" id="handle-end" tabindex="0" role="slider" aria-label="End of the sign"></span>
+            <div class="stage" id="webcam-stage">
+              <div class="media mirror">
+                <video id="webcam-video" playsinline muted aria-label="Webcam preview (mirrored)"></video>
               </div>
-              <span class="playhead" id="playhead" aria-hidden="true"></span>
+              <p class="stage-empty" id="webcam-empty">Starting the camera…</p>
+              <span class="live-badge warn" id="hands-badge" hidden><span class="dot"></span><span id="hands-text">Looking for hands</span></span>
+              <div class="countdown" id="webcam-countdown" aria-hidden="true" hidden></div>
+              <div class="busy" id="webcam-busy" hidden>Finding matches…</div>
             </div>
-            <div class="times"><span id="window-start">00:00</span><span id="clip-length">00:00</span></div>
+            <div class="record-row">
+              <button class="btn btn-primary" type="button" id="record" disabled aria-keyshortcuts="Space R">
+                <span class="rec-dot" aria-hidden="true"></span><span id="record-label">Record 2 seconds</span>
+              </button>
+              <p class="hint">Press <kbd>Space</kbd> or <kbd>R</kbd>: 3, 2, 1, then sign one sign. Press again to try another.</p>
+            </div>
+            <p class="status-line" id="webcam-status" aria-live="polite"></p>
           </div>
-          <p class="status-line" id="trim-status" aria-live="polite"></p>
-          <div class="actions">
-            <button class="btn btn-secondary" type="button" id="another-clip">Choose another clip</button>
-            <button class="btn btn-primary" type="button" id="trim-lookup" disabled aria-keyshortcuts="Space R">Look up this sign <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button>
-          </div>
+          <aside class="results-panel panel glass-panel" aria-labelledby="webcam-results-title">
+            <p class="eyebrow" id="webcam-results-title">Top 5 matches</p>
+            <p class="results-empty" id="webcam-results-empty">Record a sign. The five closest matches appear here and update after every lookup.</p>
+            <div class="replay" id="webcam-replay-box" hidden>
+              <div class="stage compact">
+                <div class="media mirror"><video id="webcam-replay" playsinline muted loop aria-label="Your recorded clip, playing on a loop"></video></div>
+              </div>
+              <p class="clip-caption" id="webcam-caption"></p>
+            </div>
+            <div class="cards" id="webcam-cards" aria-live="polite"></div>
+            <div class="banner banner-info" role="note" id="webcam-note" hidden><svg class="icon" aria-hidden="true"><use href="#i-info" /></svg><span>Results are suggestions, not translations. Compare the movement with a real signer.</span></div>
+          </aside>
         </div>
       </section>
 
-      <!-- ============================================================ results -->
-      <section class="results" id="screen-results" aria-labelledby="results-title" hidden>
-        <div class="results-head">
-          <div>
-            <p class="eyebrow" id="results-count">5 possible matches</p>
-            <h1 class="title" id="results-title">Here’s what the sign could be</h1>
+      <!-- ============================================================ uploaded clip: player + trim left, results right -->
+      <section class="flow flow-wide" id="screen-trim" aria-labelledby="trim-title" hidden>
+        <button class="back" type="button" data-go="home">← Back to start</button>
+        <div class="workspace">
+          <div class="panel glass-panel main-col">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Uploaded clip</p>
+                <h1 class="title" id="trim-title">Choose the sign moment</h1>
+              </div>
+              <span class="file-pill" id="file-name"></span>
+            </div>
+            <div class="stage">
+              <div class="media"><video id="trim-video" playsinline muted aria-label="Selected part of the uploaded clip, playing on a loop"></video></div>
+              <div class="busy" id="trim-busy" hidden></div>
+            </div>
+            <div class="timeline">
+              <div class="timeline-head">
+                <div>
+                  <h3 id="trim-help">Drag the box around the sign</h3>
+                  <p>Choose a 1 to 3 second moment. Arrow keys move the box or its edges.</p>
+                </div>
+                <span class="duration-pill" id="window-length">–</span>
+              </div>
+              <div class="strip" id="strip">
+                <div class="window" id="window" tabindex="0" role="group" aria-labelledby="trim-help" aria-describedby="window-length">
+                  <span class="handle start" id="handle-start" tabindex="0" role="slider" aria-label="Start of the sign"></span>
+                  <span class="handle end" id="handle-end" tabindex="0" role="slider" aria-label="End of the sign"></span>
+                </div>
+                <span class="playhead" id="playhead" aria-hidden="true"></span>
+              </div>
+              <div class="times"><span id="window-start">00:00</span><span id="clip-length">00:00</span></div>
+            </div>
+            <p class="status-line" id="trim-status" aria-live="polite"></p>
+            <div class="actions">
+              <button class="btn btn-secondary" type="button" id="another-clip">Choose another clip</button>
+              <button class="btn btn-primary" type="button" id="trim-lookup" disabled aria-keyshortcuts="Space R">Look up this sign <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button>
+            </div>
           </div>
-          <button class="btn btn-secondary" type="button" id="try-another">Try another sign</button>
-        </div>
-        <div class="results-grid">
-          <div class="results-side">
-            <div class="stage compact"><video id="result-video" playsinline muted loop aria-label="Your clip, playing on a loop"></video></div>
-            <p class="clip-caption" id="clip-caption"></p>
-            <div class="banner banner-info" role="note"><svg class="icon" aria-hidden="true"><use href="#i-info" /></svg><span>Results are suggestions, not translations. Compare the movement with a dictionary example.</span></div>
-          </div>
-          <div class="cards" id="cards" aria-live="polite"></div>
+          <aside class="results-panel panel glass-panel" aria-labelledby="trim-results-title">
+            <p class="eyebrow" id="trim-results-title">Top 5 matches</p>
+            <p class="results-empty" id="trim-results-empty">Put the box around one sign and look it up. The five closest matches appear here.</p>
+            <p class="clip-caption" id="trim-caption" hidden></p>
+            <div class="cards" id="trim-cards" aria-live="polite"></div>
+            <div class="banner banner-info" role="note" id="trim-note" hidden><svg class="icon" aria-hidden="true"><use href="#i-info" /></svg><span>Results are suggestions, not translations. Compare the movement with a real signer.</span></div>
+          </aside>
         </div>
       </section>
 
