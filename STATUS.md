@@ -1,8 +1,9 @@
 # Signdex status
 
-_Updated Sun Nov 22, 12:05 AM ET. Hacking ends Sun 12:00 PM._
+_Updated Sun Nov 22, 4:55 PM ET. Submitted and judged (hacking ended Sun 12:00 PM); the live site can change._
 
-**Live:** https://signdex.study (release `20261122-035755`), debug page at https://signdex.study/debug.html.
+**Live:** https://signdex.study (release `20261122-040825`, deployed Sat Nov 21, 11:08 PM ET), debug page at
+https://signdex.study/debug.html. Add `?debug=1` to any page URL for an on-screen diagnostics panel (phones).
 Everything in git is pushed to `main`. Redeploy with `bash deploy/deploy.sh --yes build upload verify`.
 
 ## What's live
@@ -12,13 +13,21 @@ Everything in git is pushed to `main`. Redeploy with `bash deploy/deploy.sh --ye
 - **Webcam and uploaded-clip screens:** camera or player on the left, top 5 on the right (below on phones),
   updated in place. Webcam: Space/R, 3-2-1 countdown, 2 s recording, replay of the clip. Upload: drag a 1–3 s
   window. Switches (remembered): hand & body points, face points, details panel.
+- **Phones (iOS Safari / Chrome on iOS):** Record shows loading progress and offers a retry; ORT's wasm memory
+  is capped for iOS; MediaPipe falls back to CPU if the GPU fails at setup or later; the camera preview keeps
+  its real shape (portrait too); touch wording instead of key hints; 56 px Record pinned under the camera;
+  44 px tap targets. Tested in Chrome with iPhone emulation and in WebKit (engine only); not yet on a real iPhone.
 - **Result cards:** display name and meaning (`web/public/dictionary.json`, built from `demo/dictionary.csv`
   with `npm run dictionary -w web`), confidence colors, "Looks similar to", "Watch a real signer", Save, and a
   reference animation, or a "Two-handed sign" tile (see below).
 - **Dictionary page:** all 250 signs, searchable by name, animations only for cards on screen, pause switch.
-- **My signs + quiz:** questions from ph105's Worker (`POST {"savedWords": [...]}`, 15 most recent); offline
-  quiz from `similar.json` only when the Worker is unreachable.
-- **Guide ("How it works") and Privacy pages.** Only saved sign names ever leave the device (for the quiz).
+- **My signs + quiz:** meanings and usage only, never how a sign is made. The Worker (`POST {"savedWords":
+  [...]}`, 15 most recent) is asked first, but only its meaning/usage questions are shown (`quiz-content.ts`),
+  with explanations from `dictionary.json`; every sign it leaves out gets a dictionary meaning question.
+  Right now the Worker returns formation questions only (25 of 25 sampled), so quizzes are all dictionary
+  questions. The whole quiz comes from the dictionary when the Worker is unreachable.
+- **Guide ("How it works") and Privacy pages.** Signdex itself sends only saved sign names (for the quiz).
+  MediaPipe also sends small usage pings to Google (`odml.pa.googleapis.com`); the pages don't mention that yet.
 - **Animated background** (p5 sketch, self-hosted): header switch, off by default on phones/low-power devices,
   paused on the webcam screen and during clip analysis. It measured no lookup slowdown on this laptop.
 
@@ -73,13 +82,15 @@ Teammates: unzip `teammate-assets.zip` (repo root, gitignored) into the repo roo
    page ("Download last 6 s as JSON") and add a small converter from those recordings to `signs.bin` blocks
    (same stage 1 as `features.ts`); (c) keep the tiles. Also have a fluent signer review `TWO_HANDED_SIGNS`.
 2. **Try it for real** in Chrome: webcam lookups on signdex.study, an uploaded clip, and the extension on YouTube.
-3. **Quiz content:** the quiz service wrote a wrong DRINK question (S/fist handshape; DRINK uses a C). The app
-   no longer sends DRINK to it and drops any question about DRINK (`WORKER_EXCLUDED_SIGNS` in
-   `web/src/app/quiz.ts`); tell ph105 so it can be fixed in the Worker, then remove the exclusion.
+3. **Quiz content (ph105):** the Worker's prompt should ask only for meaning and usage questions (what a sign
+   means, which sign fits a situation or sentence), never handshape, movement, location, orientation, facial
+   expression or comparisons between signs. Until then the app filters (see above). DRINK is still never sent
+   (`WORKER_EXCLUDED_SIGNS` in `web/src/app/quiz.ts`).
 4. **Test-time averaging:** doesn't help v4 and costs 5x model time; set `TTA_VARIANTS = 1` in
    `web/src/app/webcam.ts` and `trim.ts` if lookups feel slow.
-5. **Refresh local copies:** rebuild `teammate-assets.zip` (it still has the previous `signs.bin`) and
-   rebuild the extension (`npm run build -w extension`) to pick up the withheld animations.
+5. **Refresh local copies:** `teammate-assets.zip` was rebuilt Sun Nov 22 with the current `signs.bin`
+   (`5871be8caaff`, 179 animated + 71 withheld). Still to do: rebuild the extension (`npm run build -w
+   extension`) to pick up the withheld animations.
 6. **Final model:** retrain v4 on all 21 participants for the demo build (no held-out score afterwards).
 7. **Demo:** 3–5 pre-tested clips in `demo/` with expected results.
 8. **Open questions:** the home-page list started at item 2 (item 1 never arrived); no `design/wallpaper.*`
