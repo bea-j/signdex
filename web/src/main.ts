@@ -2,6 +2,7 @@
 import './app.css'
 import { resultSource, stopResults } from './app/results'
 import { currentScreen, onLeave, show, type Screen } from './app/router'
+import './app/trim'
 import { record, recordAgain } from './app/webcam'
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T

@@ -182,7 +182,7 @@ export async function record() {
     const corrected = toTrainingAspect(frames, video.videoWidth, video.videoHeight)
     const res = await lookupSign(model, corrected, { variants: TTA_VARIANTS, k: 5 })
     if (my !== session) return
-    if (res.stage1.T === 0) {
+    if (res.handFrames === 0) {
       status.textContent = 'No hands were seen in the recording. Make sure your hands are in view, then try again.'
       return
     }

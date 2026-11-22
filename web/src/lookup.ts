@@ -1,7 +1,7 @@
 // One sign lookup: aspect-corrected landmark frames -> features (at the model's frame length) -> model -> top k,
 // with optional test-time averaging over trimmed variants of the clip. Shared by the debug page and the app.
 import { stage1, stage2, trimStage1, type Stage1 } from './features'
-import type { KaggleFrame } from './layout'
+import { COORDS_PER_POINT, OFFSETS, type KaggleFrame } from './layout'
 import type { SignMatch, SignModel } from './model'
 
 export interface LookupResult {
@@ -9,6 +9,8 @@ export interface LookupResult {
   /** Stage-1 of the whole clip (frames with hands, mirrored or not). */
   stage1: Stage1
   variants: number
+  /** Frames (of the input) with at least one hand. 0 means the matches are meaningless. */
+  handFrames: number
   timing: { featuresMs: number; modelMs: number; totalMs: number }
 }
 
@@ -23,6 +25,19 @@ export function ttaOffsets(T: number, n: number): [number, number][] {
   const d = Math.max(1, Math.round(0.06 * T))
   all.push([d, 0], [0, d], [2 * d, 0], [0, 2 * d])
   return all.slice(0, Math.min(n, all.length))
+}
+
+/** Number of frames with at least one detected hand landmark. */
+export function countHandFrames(frames: KaggleFrame[]): number {
+  let n = 0
+  for (const f of frames) {
+    let found = false
+    for (const off of [OFFSETS.left_hand, OFFSETS.right_hand]) {
+      for (let i = 0; i < 21 && !found; i++) if (!Number.isNaN(f[(off + i) * COORDS_PER_POINT])) found = true
+    }
+    if (found) n++
+  }
+  return n
 }
 
 export async function lookupSign(
@@ -40,6 +55,7 @@ export async function lookupSign(
     matches,
     stage1: s1,
     variants: inputs.length,
+    handFrames: countHandFrames(frames),
     timing: { featuresMs: t1 - t0, modelMs: t2 - t1, totalMs: t2 - t0 },
   }
 }
