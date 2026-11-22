@@ -141,15 +141,6 @@ def cmd_select(args) -> None:
     index = {s: i for i, s in enumerate(labels)}
     cands = json.loads((WORK / "candidates.json").read_text())
 
-    # points kept from the stage-1 layout (spec group order), with their Kaggle landmark index
-    keep_pos, points, pos = [], [], 0
-    for g in spec["groups"]:
-        for gi in g["global_index"]:
-            if g["name"] in KEEP_GROUPS:
-                keep_pos.append(pos)
-                points.append([g["name"], int(gi)])
-            pos += 1
-
     chosen, stats = {}, {"correct": 0, "fallback_wrong": 0, "fallback_hands": 0, "missing": 0}
     for sign in sorted(cands):
         scored = []
@@ -182,7 +173,32 @@ def cmd_select(args) -> None:
         stats[how] += 1
         chosen[sign] = {**best, "selection": how}
 
-    # quantize and pack
+    out = pack(chosen, args.out, spec, L, Path(args.model).name)
+    print(f"wrote {out}: {len(chosen)} signs, {out.stat().st_size / 1e3:.0f} kB; selection {stats}")
+    for sign in ("hat", "cat", "drink", "yes"):
+        if sign in chosen:
+            c = chosen[sign]
+            print(f"  {sign}: p={c['p']:.3f} ({c['selection']}), {c['frames']} frames, hands in {c['hand_frac']:.0%}")
+    (WORK / "selection.json").write_text(json.dumps(
+        {s: {k: v for k, v in c.items() if k != "s1"} for s, c in chosen.items()}, indent=1))
+
+
+def kept_points(spec: dict) -> tuple[list[int], list[list]]:
+    """Positions (in the stage-1 point order) of the hands, lips and pose points, and their [group, Kaggle index]."""
+    keep_pos, points, pos = [], [], 0
+    for g in spec["groups"]:
+        for gi in g["global_index"]:
+            if g["name"] in KEEP_GROUPS:
+                keep_pos.append(pos)
+                points.append([g["name"], int(gi)])
+            pos += 1
+    return keep_pos, points
+
+
+def pack(chosen: dict, out: str | Path, spec: dict, model_frames: int, model_name: str) -> Path:
+    """Write the reference file. chosen: label -> {s1 (stage-1 frames), p, selection, hand_frac, sequence_id,
+    participant_id, ...}. Every block is keyed by its label in the header; blocks are stored in label order."""
+    keep_pos, points = kept_points(spec)
     blocks, signs, offset = [], [], 0
     for sign in sorted(chosen):
         c = chosen[sign]
@@ -192,28 +208,24 @@ def cmd_select(args) -> None:
             x = x[np.minimum(len(x) - 1, ((2 * i + 1) * len(x)) // (2 * MAX_FRAMES))]
         q = np.where(np.isnan(x), -128, np.clip(np.round(x / SCALE), -127, 127)).astype(np.int8)
         blocks.append(q.tobytes())
-        signs.append({"label": sign, "offset": offset, "frames": int(len(q)), "confidence": round(c["p"], 4),
-                      "selection": c["selection"], "hand_frac": round(c["hand_frac"], 3),
+        extra = {k: (round(v, 3) if isinstance(v, float) else v) for k, v in c.items()
+                 if k in ("hand_frac", "both_frac", "visibility", "two_handed")}
+        signs.append({"label": sign, "offset": offset, "frames": int(len(q)), "confidence": round(float(c["p"]), 4),
+                      "selection": c["selection"], **extra,
                       "sequence_id": int(c["sequence_id"]), "participant_id": int(c["participant_id"])})
         offset += len(blocks[-1])
     header = {
         "format": "signdex-reference-v1", "scale": SCALE, "aspect_y": spec["input_aspect"]["train_H_over_W"],
-        "fps": 20, "points": points, "model": Path(args.model).name, "model_frames": L,
+        "fps": 20, "points": points, "model": model_name, "model_frames": int(model_frames),
         "source": "Google Isolated Sign Language Recognition (Kaggle asl-signs), PopSign ASL v1.0, CC BY 4.0",
         "transform": "features stage 1: trimmed, left-dominant mirrored, centered on mid-shoulder, / shoulder width",
         "signs": signs,
     }
     hb = json.dumps(header, separators=(",", ":")).encode()
-    out = Path(args.out)
+    out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(b"SDXR" + struct.pack("<I", len(hb)) + hb + b"".join(blocks))
-    print(f"wrote {out}: {len(signs)} signs, {out.stat().st_size / 1e3:.0f} kB; selection {stats}")
-    for sign in ("hat", "cat", "drink", "yes"):
-        if sign in chosen:
-            c = chosen[sign]
-            print(f"  {sign}: p={c['p']:.3f} ({c['selection']}), {c['frames']} frames, hands in {c['hand_frac']:.0%}")
-    (WORK / "selection.json").write_text(json.dumps(
-        {s: {k: v for k, v in c.items() if k != "s1"} for s, c in chosen.items()}, indent=1))
+    return out
 
 
 def main() -> None:

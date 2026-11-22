@@ -1,0 +1,13 @@
+{
+  "id": "beatricej/signseek-reference",
+  "title": "SignSeek reference",
+  "code_file": "signseek_reference.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": true,
+  "dataset_sources": ["beatricej/signseek-models"],
+  "competition_sources": ["asl-signs"],
+  "kernel_sources": []
+}
