@@ -34,7 +34,9 @@
           <label class="switch bg-switch" title="Animated background (paused automatically while hand tracking runs)">
             <input type="checkbox" role="switch" id="bg-toggle" /><span class="track" aria-hidden="true"></span><span class="bg-label">Background</span>
           </label>
-          <button class="nav-link" type="button" data-go="guide">How it works</button>
+            <span class="nav-saved"><svg class="icon-sm" aria-hidden="true">
+                          <use href="#i-chrome" />
+                        </svg>Chrome extension</span>
           <button class="nav-saved" type="button" data-go="saved" id="nav-saved">
             <svg class="icon-sm" aria-hidden="true"><use href="#i-bookmark" /></svg>
             <span class="label">My signs</span>
@@ -51,14 +53,12 @@
         <div class="blob blob-sage" aria-hidden="true"></div>
         <div class="hero-grid">
           <div class="hero-copy">
-            <span class="badge"><svg class="icon-sm" aria-hidden="true"><use href="#i-chrome" /></svg> Made for Chrome, powered on-device</span>
             <h1 id="home-title">Understand <span>American Sign Language</span> with ease</h1>
             <p class="lede">Look up ASL signs from any video without leaving the page. Capture the moment and find the closest matches in a snap.</p>
             <div class="cta">
               <button class="btn btn-primary square" type="button" id="home-upload"><svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg> Upload a clip</button>
               <button class="btn btn-secondary square" type="button" data-go="webcam"><svg class="icon" aria-hidden="true"><use href="#i-camera" /></svg> Use webcam</button>
             </div>
-            <p class="privacy"><svg class="icon-sm" aria-hidden="true"><use href="#i-lock" /></svg> Runs in your browser. Your video never leaves your device.</p>
           </div>
 
           <figure class="mock" aria-label="Demo animation: an example lookup with a sample signer, not your camera" style="margin: 0 auto">
