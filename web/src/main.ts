@@ -1,6 +1,7 @@
 // Signdex main app. Screens: home, webcam and uploaded clip (each with its results panel), saved ("My signs").
 import './app.css'
 import { currentScreen, show, type Screen } from './app/router'
+import './app/demo'
 import './app/my-signs'
 import './app/trim'
 import { record } from './app/webcam'
