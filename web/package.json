@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "fetch-mediapipe": "node scripts/fetch-mediapipe.mjs",
-    "predev": "node scripts/fetch-mediapipe.mjs && node scripts/copy-model.mjs",
+    "predev": "node scripts/fetch-mediapipe.mjs && node scripts/copy-model.mjs && node scripts/copy-vendor.mjs",
     "dev": "vite",
-    "prebuild": "node scripts/fetch-mediapipe.mjs && node scripts/copy-model.mjs",
+    "prebuild": "node scripts/fetch-mediapipe.mjs && node scripts/copy-model.mjs && node scripts/copy-vendor.mjs",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test",
@@ -24,6 +24,7 @@
   "dependencies": {
     "@fontsource/manrope": "^5.3.0",
     "@mediapipe/tasks-vision": "^1.2.3",
-    "onnxruntime-web": "^1.31.1"
+    "onnxruntime-web": "^1.31.1",
+    "p5": "1.11.1"
   }
 }

@@ -30,6 +30,9 @@
       <div class="wrap">
         <a class="logo" href="./" data-go="home"><img src="/brand/signdex-logo.png" alt="Signdex home" width="64" height="64" /></a>
         <nav class="nav" aria-label="Main navigation">
+          <label class="switch bg-switch" title="Animated background (paused automatically while hand tracking runs)">
+            <input type="checkbox" role="switch" id="bg-toggle" /><span class="track" aria-hidden="true"></span><span class="bg-label">Background</span>
+          </label>
           <span class="nav-pill"><svg class="icon-sm" aria-hidden="true"><use href="#i-chrome" /></svg> Chrome extension</span>
           <button class="nav-link" type="button" data-go="how">How it works</button>
           <button class="nav-saved" type="button" data-go="saved" id="nav-saved">
@@ -47,7 +50,7 @@
         <div class="blob blob-sand" aria-hidden="true"></div>
         <div class="blob blob-sage" aria-hidden="true"></div>
         <div class="hero-grid">
-          <div>
+          <div class="hero-copy">
             <span class="badge"><svg class="icon-sm" aria-hidden="true"><use href="#i-chrome" /></svg> Made for Chrome, powered on-device</span>
             <h1 id="home-title">Understand <span>American Sign Language with ease</span></h1>
             <p class="lede">Look up ASL signs from any video without leaving the page. Capture the moment and find the closest matches in a snap.</p>

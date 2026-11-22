@@ -9,6 +9,7 @@ import { prefs } from '../ui/prefs'
 import { frameStats, lookupStats, partStats, renderDetails } from './details'
 import { getExtractor, getModel, loadReferenceData } from './engine'
 import { renderCards } from './results'
+import { bgBusy } from './background'
 import { onEnter, onLeave } from './router'
 
 export const RECORD_MS = 2000
@@ -298,8 +299,15 @@ prefs.onChange(() => {
   if (!prefs.get('points') && !prefs.get('face')) liveOverlay.clear()
   replayOverlay.draw(frameAt(replayFrames, replay.currentTime)?.frame ?? null, layers())
 })
-onEnter('webcam', () => void enter())
-onLeave('webcam', leave)
+// the webcam screen runs MediaPipe the whole time (live tracking, recording, lookup): background paused meanwhile
+onEnter('webcam', () => {
+  bgBusy(true)
+  void enter()
+})
+onLeave('webcam', () => {
+  leave()
+  bgBusy(false)
+})
 
 // Dev-server-only test hook (removed from production builds): lets the screenshot tests draw real landmark
 // sequences, since a headless browser's fake camera has no person in it.

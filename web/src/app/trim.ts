@@ -8,6 +8,7 @@ import { lookupSign, type LookupResult } from '../lookup'
 import { getExtractor, getModel, loadReferenceData } from './engine'
 import { renderCards } from './results'
 import type { SignMatch } from '../model'
+import { bgBusy } from './background'
 import { onEnter, onLeave, show } from './router'
 
 const MIN_S = 1
@@ -262,6 +263,7 @@ function updateButton() {
 async function lookup() {
   if (busy || !ready || !duration) return
   busy = true
+  bgBusy(true) // clip analysis runs MediaPipe and the model: background paused until it ends
   updateButton()
   busyEl.hidden = false
   busyEl.textContent = 'Tracking hands…'
@@ -291,6 +293,7 @@ async function lookup() {
     status.textContent = `Lookup failed: ${(e as Error).message}`
   } finally {
     busy = false
+    bgBusy(false)
     busyEl.hidden = true
     updateButton()
     if (!$('screen-trim').hidden) seekToStart()

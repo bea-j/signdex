@@ -707,3 +707,23 @@ kbd {
 .quiz-privacy { margin-top: 14px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
 .quiz-privacy .icon-sm { color: #8ab596; }
 .link.inline { display: inline; min-height: 0; padding: 0; color: inherit; text-decoration: underline; font-weight: 700; }
+
+/* ------------------------------------------------------------------ animated background (public/bg/signdex-bg.js) */
+/* The sketch mounts a fixed canvas#signdex-bg at z-index 0; page content sits above it. */
+.site-header, main, .site-footer { position: relative; z-index: 1; }
+.site-header { z-index: 20; }
+html:has(body.bg-live) { background: #0c0b0a; }
+body.bg-live { background: transparent; }
+.bg-switch { font-size: 13px; margin-right: 4px; }
+@media (max-width: 639px) { .bg-switch .bg-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+
+/* readability over the animated background: a feathered dark scrim behind the hero copy (the shader is untouched) */
+.hero-copy { position: relative; isolation: isolate; }
+.bg-live .hero-copy::before {
+  content: ''; position: absolute; inset: -56px -72px -110px; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, rgb(9 8 7 / 82%), rgb(9 8 7 / 74%) 65%, rgb(9 8 7 / 0%));
+}
+/* panels and cards over the animated background: darker glass (the doc's rgba(12, 11, 10, 0.6) + blur) */
+.bg-live .panel, .bg-live .results-panel, .bg-live .feature, .bg-live .saved-item, .bg-live .saved-empty, .bg-live .details {
+  background-color: rgb(12 11 10 / 60%);
+}
