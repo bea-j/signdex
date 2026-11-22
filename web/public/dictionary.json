@@ -1,1760 +1,2010 @@
 {
  "_readme": [
-  "One entry per sign the model knows, keyed by its label. null = not filled in yet; the app then falls back:",
-  "display -> the label with a capital first letter; meaning -> hidden; link -> https://www.signasl.org/sign/<label>;",
-  "clip -> no example clip. clip is a URL or a path under web/public/ (e.g. /examples/after.mp4);",
-  "clip_captions is an optional WebVTT file for that clip. Do not copy videos from other dictionaries; link to them."
+  "Generated from demo/dictionary.csv by web/scripts/build-dictionary.mjs (npm run dictionary); edit the CSV, not this file.",
+  "Keyed by the model label. display/meaning are shown on result cards; link is the \"Watch a real signer\" link;",
+  "clip is an optional example clip (URL or /path under web/public), clip_captions an optional WebVTT file;",
+  "practice marks signs for the practice/quiz list."
  ],
  "signs": {
   "after": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "After",
+   "meaning": "Later than; following something",
+   "link": "https://www.signingsavvy.com/search/after",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "airplane": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Airplane",
+   "meaning": "A plane that flies through the air",
+   "link": "https://www.signingsavvy.com/search/airplane",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "all": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "All",
+   "meaning": "Every one; the whole amount",
+   "link": "https://www.signingsavvy.com/search/all",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "alligator": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Alligator",
+   "meaning": "A large reptile with a long snout",
+   "link": "https://www.signingsavvy.com/search/alligator",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "animal": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Animal",
+   "meaning": "A living creature such as a dog or bird",
+   "link": "https://www.signingsavvy.com/search/animal",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "another": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Another",
+   "meaning": "One more; a different one",
+   "link": "https://www.signingsavvy.com/search/another",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "any": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Any",
+   "meaning": "Whichever; one or some of something",
+   "link": "https://www.signingsavvy.com/search/any",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "apple": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Apple",
+   "meaning": "A round fruit",
+   "link": "https://www.signingsavvy.com/search/apple",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "arm": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Arm",
+   "meaning": "The body part from shoulder to hand",
+   "link": "https://www.signingsavvy.com/search/arm",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "aunt": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Aunt",
+   "meaning": "Your parent's sister",
+   "link": "https://www.signingsavvy.com/search/aunt",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "awake": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Awake",
+   "meaning": "Not asleep",
+   "link": "https://www.signingsavvy.com/search/awake",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "backyard": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Backyard",
+   "meaning": "The yard behind a house",
+   "link": "https://www.signingsavvy.com/search/backyard",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "bad": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Bad",
+   "meaning": "Not good",
+   "link": "https://www.signingsavvy.com/search/bad",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "balloon": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Balloon",
+   "meaning": "A rubber bag filled with air",
+   "link": "https://www.signingsavvy.com/search/balloon",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "bath": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Bath",
+   "meaning": "Washing your body in a tub",
+   "link": "https://www.signingsavvy.com/search/bath",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "because": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Because",
+   "meaning": "For the reason that",
+   "link": "https://www.signingsavvy.com/search/because",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "bed": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Bed",
+   "meaning": "Furniture you sleep on",
+   "link": "https://www.signingsavvy.com/search/bed",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "bedroom": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Bedroom",
+   "meaning": "The room where you sleep",
+   "link": "https://www.signingsavvy.com/search/bedroom",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "bee": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Bee",
+   "meaning": "A flying insect that makes honey",
+   "link": "https://www.signingsavvy.com/search/bee",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "before": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Before",
+   "meaning": "Earlier than",
+   "link": "https://www.signingsavvy.com/search/before",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "beside": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Beside",
+   "meaning": "Next to",
+   "link": "https://www.signingsavvy.com/search/beside",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "better": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Better",
+   "meaning": "More good; improved",
+   "link": "https://www.signingsavvy.com/search/better",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "bird": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Bird",
+   "meaning": "An animal with feathers and wings",
+   "link": "https://www.signingsavvy.com/search/bird",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "black": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Black",
+   "meaning": "The darkest color",
+   "link": "https://www.signingsavvy.com/search/black",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "blow": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Blow",
+   "meaning": "To push air out of your mouth",
+   "link": "https://www.signingsavvy.com/search/blow",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "blue": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Blue",
+   "meaning": "The color of a clear sky",
+   "link": "https://www.signingsavvy.com/search/blue",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "boat": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Boat",
+   "meaning": "A vehicle that floats on water",
+   "link": "https://www.signingsavvy.com/search/boat",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "book": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Book",
+   "meaning": "Pages bound together to read",
+   "link": "https://www.signingsavvy.com/search/book",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "boy": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Boy",
+   "meaning": "A male child",
+   "link": "https://www.signingsavvy.com/search/boy",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "brother": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Brother",
+   "meaning": "A male sibling",
+   "link": "https://www.signingsavvy.com/search/brother",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "brown": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Brown",
+   "meaning": "The color of chocolate or wood",
+   "link": "https://www.signingsavvy.com/search/brown",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "bug": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Bug",
+   "meaning": "A small insect",
+   "link": "https://www.signingsavvy.com/search/bug",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "bye": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Bye",
+   "meaning": "Goodbye",
+   "link": "https://www.signingsavvy.com/search/bye",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "callonphone": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Call (on phone)",
+   "meaning": "To phone someone",
+   "link": "https://www.signingsavvy.com/search/call",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "can": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Can",
+   "meaning": "To be able to",
+   "link": "https://www.signingsavvy.com/search/can",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "car": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Car",
+   "meaning": "A vehicle you drive",
+   "link": "https://www.signingsavvy.com/search/car",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "carrot": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Carrot",
+   "meaning": "An orange root vegetable",
+   "link": "https://www.signingsavvy.com/search/carrot",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "cat": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Cat",
+   "meaning": "A small furry pet that meows",
+   "link": "https://www.signingsavvy.com/search/cat",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "cereal": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Cereal",
+   "meaning": "Breakfast grain eaten with milk",
+   "link": "https://www.signingsavvy.com/search/cereal",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "chair": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Chair",
+   "meaning": "A seat for one person",
+   "link": "https://www.signingsavvy.com/search/chair",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "cheek": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Cheek",
+   "meaning": "The side of your face",
+   "link": "https://www.signingsavvy.com/search/cheek",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "child": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Child",
+   "meaning": "A young person",
+   "link": "https://www.signingsavvy.com/search/child",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "chin": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Chin",
+   "meaning": "The bottom of your face",
+   "link": "https://www.signingsavvy.com/search/chin",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "chocolate": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Chocolate",
+   "meaning": "A sweet brown treat",
+   "link": "https://www.signingsavvy.com/search/chocolate",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "clean": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Clean",
+   "meaning": "Not dirty",
+   "link": "https://www.signingsavvy.com/search/clean",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "close": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Close",
+   "meaning": "To shut",
+   "link": "https://www.signingsavvy.com/search/close",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "closet": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Closet",
+   "meaning": "A small room for storing clothes",
+   "link": "https://www.signingsavvy.com/search/closet",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "cloud": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Cloud",
+   "meaning": "White or gray shapes in the sky",
+   "link": "https://www.signingsavvy.com/search/cloud",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "clown": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Clown",
+   "meaning": "A funny performer in costume",
+   "link": "https://www.signingsavvy.com/search/clown",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "cow": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Cow",
+   "meaning": "A farm animal that gives milk",
+   "link": "https://www.signingsavvy.com/search/cow",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "cowboy": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Cowboy",
+   "meaning": "A person who rides horses and herds cattle",
+   "link": "https://www.signingsavvy.com/search/cowboy",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "cry": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Cry",
+   "meaning": "To shed tears",
+   "link": "https://www.signingsavvy.com/search/cry",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "cut": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Cut",
+   "meaning": "To divide with something sharp",
+   "link": "https://www.signingsavvy.com/search/cut",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "cute": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Cute",
+   "meaning": "Sweet and adorable",
+   "link": "https://www.signingsavvy.com/search/cute",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "dad": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Dad",
+   "meaning": "Father",
+   "link": "https://www.signingsavvy.com/search/dad",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "dance": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Dance",
+   "meaning": "To move your body to music",
+   "link": "https://www.signingsavvy.com/search/dance",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "dirty": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Dirty",
+   "meaning": "Not clean",
+   "link": "https://www.signingsavvy.com/search/dirty",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "dog": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Dog",
+   "meaning": "A pet that barks",
+   "link": "https://www.signingsavvy.com/search/dog",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "doll": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Doll",
+   "meaning": "A toy shaped like a person",
+   "link": "https://www.signingsavvy.com/search/doll",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "donkey": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Donkey",
+   "meaning": "An animal like a small horse with long ears",
+   "link": "https://www.signingsavvy.com/search/donkey",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "down": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Down",
+   "meaning": "Toward a lower place",
+   "link": "https://www.signingsavvy.com/search/down",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "drawer": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Drawer",
+   "meaning": "A box that slides out of furniture",
+   "link": "https://www.signingsavvy.com/search/drawer",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "drink": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Drink",
+   "meaning": "To swallow a liquid",
+   "link": "https://www.signingsavvy.com/search/drink",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "drop": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Drop",
+   "meaning": "To let something fall",
+   "link": "https://www.signingsavvy.com/search/drop",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "dry": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Dry",
+   "meaning": "Not wet",
+   "link": "https://www.signingsavvy.com/search/dry",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "dryer": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Dryer",
+   "meaning": "A machine that dries clothes",
+   "link": "https://www.signingsavvy.com/search/dryer",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "duck": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Duck",
+   "meaning": "A water bird that quacks",
+   "link": "https://www.signingsavvy.com/search/duck",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "ear": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Ear",
+   "meaning": "The body part you hear with",
+   "link": "https://www.signingsavvy.com/search/ear",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "elephant": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Elephant",
+   "meaning": "A huge animal with a trunk",
+   "link": "https://www.signingsavvy.com/search/elephant",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "empty": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Empty",
+   "meaning": "Containing nothing",
+   "link": "https://www.signingsavvy.com/search/empty",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "every": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Every",
+   "meaning": "Each one",
+   "link": "https://www.signingsavvy.com/search/every",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "eye": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Eye",
+   "meaning": "The body part you see with",
+   "link": "https://www.signingsavvy.com/search/eye",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "face": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Face",
+   "meaning": "The front of your head",
+   "link": "https://www.signingsavvy.com/search/face",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "fall": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Fall",
+   "meaning": "To drop down; also autumn",
+   "link": "https://www.signingsavvy.com/search/fall",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "farm": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Farm",
+   "meaning": "Land for growing food and raising animals",
+   "link": "https://www.signingsavvy.com/search/farm",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "fast": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Fast",
+   "meaning": "Quick",
+   "link": "https://www.signingsavvy.com/search/fast",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "feet": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Feet",
+   "meaning": "The body parts you stand on",
+   "link": "https://www.signingsavvy.com/search/feet",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "find": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Find",
+   "meaning": "To discover something you were looking for",
+   "link": "https://www.signingsavvy.com/search/find",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "fine": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Fine",
+   "meaning": "Okay; all right",
+   "link": "https://www.signingsavvy.com/search/fine",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "finger": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Finger",
+   "meaning": "One of the five parts of your hand",
+   "link": "https://www.signingsavvy.com/search/finger",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "finish": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Finish",
+   "meaning": "To complete; to be done",
+   "link": "https://www.signingsavvy.com/search/finish",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "fireman": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Firefighter",
+   "meaning": "A person who puts out fires",
+   "link": "https://www.signingsavvy.com/search/firefighter",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "first": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "First",
+   "meaning": "Before all others",
+   "link": "https://www.signingsavvy.com/search/first",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "fish": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Fish",
+   "meaning": "An animal that swims and lives in water",
+   "link": "https://www.signingsavvy.com/search/fish",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "flag": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Flag",
+   "meaning": "A cloth with a symbol on a pole",
+   "link": "https://www.signingsavvy.com/search/flag",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "flower": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Flower",
+   "meaning": "The colorful part of a plant",
+   "link": "https://www.signingsavvy.com/search/flower",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "food": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Food",
+   "meaning": "Things you eat",
+   "link": "https://www.signingsavvy.com/search/food",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "for": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "For",
+   "meaning": "Meant for someone or something",
+   "link": "https://www.signingsavvy.com/search/for",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "frenchfries": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "French fries",
+   "meaning": "Thin fried potato strips",
+   "link": "https://www.signingsavvy.com/search/french%20fries",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "frog": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Frog",
+   "meaning": "A small jumping amphibian",
+   "link": "https://www.signingsavvy.com/search/frog",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "garbage": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Garbage",
+   "meaning": "Trash",
+   "link": "https://www.signingsavvy.com/search/garbage",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "gift": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Gift",
+   "meaning": "A present",
+   "link": "https://www.signingsavvy.com/search/gift",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "giraffe": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Giraffe",
+   "meaning": "A tall animal with a long neck",
+   "link": "https://www.signingsavvy.com/search/giraffe",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "girl": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Girl",
+   "meaning": "A female child",
+   "link": "https://www.signingsavvy.com/search/girl",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "give": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Give",
+   "meaning": "To hand something to someone",
+   "link": "https://www.signingsavvy.com/search/give",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "glasswindow": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Glass / window",
+   "meaning": "Glass, or a window",
+   "link": "https://www.signingsavvy.com/search/glass",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "go": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Go",
+   "meaning": "To move or leave",
+   "link": "https://www.signingsavvy.com/search/go",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "goose": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Goose",
+   "meaning": "A large water bird",
+   "link": "https://www.signingsavvy.com/search/goose",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "grandma": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Grandma",
+   "meaning": "Grandmother",
+   "link": "https://www.signingsavvy.com/search/grandma",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "grandpa": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Grandpa",
+   "meaning": "Grandfather",
+   "link": "https://www.signingsavvy.com/search/grandpa",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "grass": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Grass",
+   "meaning": "Green plants covering the ground",
+   "link": "https://www.signingsavvy.com/search/grass",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "green": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Green",
+   "meaning": "The color of grass",
+   "link": "https://www.signingsavvy.com/search/green",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "gum": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Gum",
+   "meaning": "Chewing gum",
+   "link": "https://www.signingsavvy.com/search/gum",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "hair": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Hair",
+   "meaning": "What grows on your head",
+   "link": "https://www.signingsavvy.com/search/hair",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "happy": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Happy",
+   "meaning": "Feeling good",
+   "link": "https://www.signingsavvy.com/search/happy",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "hat": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Hat",
+   "meaning": "Something you wear on your head",
+   "link": "https://www.signingsavvy.com/search/hat",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "hate": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Hate",
+   "meaning": "To strongly dislike",
+   "link": "https://www.signingsavvy.com/search/hate",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "have": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Have",
+   "meaning": "To own or hold",
+   "link": "https://www.signingsavvy.com/search/have",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "haveto": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Have to",
+   "meaning": "Must; need to",
+   "link": "https://www.signingsavvy.com/search/have%20to",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "head": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Head",
+   "meaning": "The top part of your body",
+   "link": "https://www.signingsavvy.com/search/head",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "hear": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Hear",
+   "meaning": "To notice sounds",
+   "link": "https://www.signingsavvy.com/search/hear",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "helicopter": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Helicopter",
+   "meaning": "An aircraft with spinning blades on top",
+   "link": "https://www.signingsavvy.com/search/helicopter",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "hello": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Hello",
+   "meaning": "A greeting",
+   "link": "https://www.signingsavvy.com/search/hello",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "hen": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Hen",
+   "meaning": "A female chicken",
+   "link": "https://www.signingsavvy.com/search/hen",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "hesheit": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "He / she / it",
+   "meaning": "Pointing to a person or thing",
+   "link": "https://www.signingsavvy.com/search/he",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "hide": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Hide",
+   "meaning": "To go or put out of sight",
+   "link": "https://www.signingsavvy.com/search/hide",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "high": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "High",
+   "meaning": "Far up",
+   "link": "https://www.signingsavvy.com/search/high",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "home": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Home",
+   "meaning": "Where you live",
+   "link": "https://www.signingsavvy.com/search/home",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "horse": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Horse",
+   "meaning": "A large animal people ride",
+   "link": "https://www.signingsavvy.com/search/horse",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "hot": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Hot",
+   "meaning": "Very warm",
+   "link": "https://www.signingsavvy.com/search/hot",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "hungry": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Hungry",
+   "meaning": "Wanting food",
+   "link": "https://www.signingsavvy.com/search/hungry",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "icecream": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Ice cream",
+   "meaning": "A frozen sweet dessert",
+   "link": "https://www.signingsavvy.com/search/ice%20cream",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "if": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "If",
+   "meaning": "In case; on the condition that",
+   "link": "https://www.signingsavvy.com/search/if",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "into": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Into",
+   "meaning": "To the inside of",
+   "link": "https://www.signingsavvy.com/search/into",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "jacket": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Jacket",
+   "meaning": "A short coat",
+   "link": "https://www.signingsavvy.com/search/jacket",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "jeans": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Jeans",
+   "meaning": "Denim pants",
+   "link": "https://www.signingsavvy.com/search/jeans",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "jump": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Jump",
+   "meaning": "To push off the ground into the air",
+   "link": "https://www.signingsavvy.com/search/jump",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "kiss": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Kiss",
+   "meaning": "To touch with your lips to show love",
+   "link": "https://www.signingsavvy.com/search/kiss",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "kitty": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Kitty",
+   "meaning": "A kitten or cat",
+   "link": "https://www.signingsavvy.com/search/kitty",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "lamp": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Lamp",
+   "meaning": "A light you turn on",
+   "link": "https://www.signingsavvy.com/search/lamp",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "later": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Later",
+   "meaning": "At a future time",
+   "link": "https://www.signingsavvy.com/search/later",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "like": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Like",
+   "meaning": "To enjoy",
+   "link": "https://www.signingsavvy.com/search/like",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "lion": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Lion",
+   "meaning": "A big wild cat with a mane",
+   "link": "https://www.signingsavvy.com/search/lion",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "lips": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Lips",
+   "meaning": "The edges of your mouth",
+   "link": "https://www.signingsavvy.com/search/lips",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "listen": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Listen",
+   "meaning": "To pay attention to sound",
+   "link": "https://www.signingsavvy.com/search/listen",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "look": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Look",
+   "meaning": "To direct your eyes at something",
+   "link": "https://www.signingsavvy.com/search/look",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "loud": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Loud",
+   "meaning": "Making a lot of noise",
+   "link": "https://www.signingsavvy.com/search/loud",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "mad": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Mad",
+   "meaning": "Angry",
+   "link": "https://www.signingsavvy.com/search/mad",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "make": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Make",
+   "meaning": "To create or build",
+   "link": "https://www.signingsavvy.com/search/make",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "man": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Man",
+   "meaning": "An adult male",
+   "link": "https://www.signingsavvy.com/search/man",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "many": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Many",
+   "meaning": "A large number",
+   "link": "https://www.signingsavvy.com/search/many",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "milk": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Milk",
+   "meaning": "A white drink from cows",
+   "link": "https://www.signingsavvy.com/search/milk",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "minemy": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Mine / my",
+   "meaning": "Belonging to me",
+   "link": "https://www.signingsavvy.com/search/mine",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "mitten": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Mitten",
+   "meaning": "A glove without separate fingers",
+   "link": "https://www.signingsavvy.com/search/mitten",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "mom": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Mom",
+   "meaning": "Mother",
+   "link": "https://www.signingsavvy.com/search/mom",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "moon": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Moon",
+   "meaning": "What shines in the night sky",
+   "link": "https://www.signingsavvy.com/search/moon",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "morning": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Morning",
+   "meaning": "The early part of the day",
+   "link": "https://www.signingsavvy.com/search/morning",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "mouse": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Mouse",
+   "meaning": "A small rodent",
+   "link": "https://www.signingsavvy.com/search/mouse",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "mouth": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Mouth",
+   "meaning": "The body part you eat and speak with",
+   "link": "https://www.signingsavvy.com/search/mouth",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "nap": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Nap",
+   "meaning": "A short sleep",
+   "link": "https://www.signingsavvy.com/search/nap",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "napkin": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Napkin",
+   "meaning": "A cloth or paper to wipe your mouth",
+   "link": "https://www.signingsavvy.com/search/napkin",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "night": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Night",
+   "meaning": "When it is dark outside",
+   "link": "https://www.signingsavvy.com/search/night",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "no": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "No",
+   "meaning": "Not yes",
+   "link": "https://www.signingsavvy.com/search/no",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "noisy": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Noisy",
+   "meaning": "Full of noise",
+   "link": "https://www.signingsavvy.com/search/noisy",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "nose": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Nose",
+   "meaning": "The body part you smell with",
+   "link": "https://www.signingsavvy.com/search/nose",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "not": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Not",
+   "meaning": "Used to say something isn't so",
+   "link": "https://www.signingsavvy.com/search/not",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "now": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Now",
+   "meaning": "At this moment",
+   "link": "https://www.signingsavvy.com/search/now",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "nuts": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Nuts",
+   "meaning": "Hard-shelled seeds you can eat",
+   "link": "https://www.signingsavvy.com/search/nuts",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "old": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Old",
+   "meaning": "Having lived a long time",
+   "link": "https://www.signingsavvy.com/search/old",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "on": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "On",
+   "meaning": "On top of",
+   "link": "https://www.signingsavvy.com/search/on",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "open": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Open",
+   "meaning": "Not closed",
+   "link": "https://www.signingsavvy.com/search/open",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "orange": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Orange",
+   "meaning": "A color, or a citrus fruit",
+   "link": "https://www.signingsavvy.com/search/orange",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "outside": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Outside",
+   "meaning": "Out of a building",
+   "link": "https://www.signingsavvy.com/search/outside",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "owie": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Owie",
+   "meaning": "A small hurt (child's word)",
+   "link": "https://www.signingsavvy.com/search/owie",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "owl": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Owl",
+   "meaning": "A bird that is awake at night",
+   "link": "https://www.signingsavvy.com/search/owl",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "pajamas": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Pajamas",
+   "meaning": "Clothes for sleeping",
+   "link": "https://www.signingsavvy.com/search/pajamas",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "pen": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Pen",
+   "meaning": "A tool for writing with ink",
+   "link": "https://www.signingsavvy.com/search/pen",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "pencil": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Pencil",
+   "meaning": "A tool for writing that can be erased",
+   "link": "https://www.signingsavvy.com/search/pencil",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "penny": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Penny",
+   "meaning": "A one-cent coin",
+   "link": "https://www.signingsavvy.com/search/penny",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "person": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Person",
+   "meaning": "A human",
+   "link": "https://www.signingsavvy.com/search/person",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "pig": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Pig",
+   "meaning": "A pink farm animal",
+   "link": "https://www.signingsavvy.com/search/pig",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "pizza": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Pizza",
+   "meaning": "A flat bread with cheese and toppings",
+   "link": "https://www.signingsavvy.com/search/pizza",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "please": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Please",
+   "meaning": "A polite word when asking",
+   "link": "https://www.signingsavvy.com/search/please",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "police": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Police",
+   "meaning": "Officers who enforce laws",
+   "link": "https://www.signingsavvy.com/search/police",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "pool": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Pool",
+   "meaning": "A place filled with water for swimming",
+   "link": "https://www.signingsavvy.com/search/pool",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "potty": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Potty",
+   "meaning": "Toilet (child's word)",
+   "link": "https://www.signingsavvy.com/search/potty",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "pretend": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Pretend",
+   "meaning": "To act as if something is true",
+   "link": "https://www.signingsavvy.com/search/pretend",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "pretty": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Pretty",
+   "meaning": "Nice to look at",
+   "link": "https://www.signingsavvy.com/search/pretty",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "puppy": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Puppy",
+   "meaning": "A young dog",
+   "link": "https://www.signingsavvy.com/search/puppy",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "puzzle": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Puzzle",
+   "meaning": "A game of fitting pieces together",
+   "link": "https://www.signingsavvy.com/search/puzzle",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "quiet": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Quiet",
+   "meaning": "Making little or no noise",
+   "link": "https://www.signingsavvy.com/search/quiet",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "radio": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Radio",
+   "meaning": "A device that plays broadcasts",
+   "link": "https://www.signingsavvy.com/search/radio",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "rain": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Rain",
+   "meaning": "Water falling from clouds",
+   "link": "https://www.signingsavvy.com/search/rain",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "read": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Read",
+   "meaning": "To look at and understand writing",
+   "link": "https://www.signingsavvy.com/search/read",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "red": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Red",
+   "meaning": "The color of a strawberry",
+   "link": "https://www.signingsavvy.com/search/red",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "refrigerator": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Refrigerator",
+   "meaning": "A machine that keeps food cold",
+   "link": "https://www.signingsavvy.com/search/refrigerator",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "ride": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Ride",
+   "meaning": "To travel on or in something",
+   "link": "https://www.signingsavvy.com/search/ride",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "room": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Room",
+   "meaning": "A space inside a building",
+   "link": "https://www.signingsavvy.com/search/room",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "sad": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Sad",
+   "meaning": "Unhappy",
+   "link": "https://www.signingsavvy.com/search/sad",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "same": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Same",
+   "meaning": "Alike",
+   "link": "https://www.signingsavvy.com/search/same",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "say": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Say",
+   "meaning": "To speak words",
+   "link": "https://www.signingsavvy.com/search/say",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "scissors": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Scissors",
+   "meaning": "A tool for cutting",
+   "link": "https://www.signingsavvy.com/search/scissors",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "see": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "See",
+   "meaning": "To notice with your eyes",
+   "link": "https://www.signingsavvy.com/search/see",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "shhh": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Shh",
+   "meaning": "Be quiet",
+   "link": "https://www.signingsavvy.com/search/shh",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "shirt": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Shirt",
+   "meaning": "Clothing for the upper body",
+   "link": "https://www.signingsavvy.com/search/shirt",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "shoe": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Shoe",
+   "meaning": "Something you wear on your foot",
+   "link": "https://www.signingsavvy.com/search/shoe",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "shower": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Shower",
+   "meaning": "Washing under spraying water",
+   "link": "https://www.signingsavvy.com/search/shower",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "sick": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Sick",
+   "meaning": "Not well; ill",
+   "link": "https://www.signingsavvy.com/search/sick",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "sleep": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Sleep",
+   "meaning": "To rest with eyes closed",
+   "link": "https://www.signingsavvy.com/search/sleep",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "sleepy": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Sleepy",
+   "meaning": "Tired; ready for sleep",
+   "link": "https://www.signingsavvy.com/search/sleepy",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "smile": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Smile",
+   "meaning": "To make a happy face",
+   "link": "https://www.signingsavvy.com/search/smile",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "snack": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Snack",
+   "meaning": "A small bit of food between meals",
+   "link": "https://www.signingsavvy.com/search/snack",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "snow": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Snow",
+   "meaning": "White flakes that fall when it's cold",
+   "link": "https://www.signingsavvy.com/search/snow",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "stairs": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Stairs",
+   "meaning": "Steps to go up or down",
+   "link": "https://www.signingsavvy.com/search/stairs",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "stay": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Stay",
+   "meaning": "To remain in a place",
+   "link": "https://www.signingsavvy.com/search/stay",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "sticky": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Sticky",
+   "meaning": "Gluey",
+   "link": "https://www.signingsavvy.com/search/sticky",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "store": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Store",
+   "meaning": "A shop",
+   "link": "https://www.signingsavvy.com/search/store",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "story": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Story",
+   "meaning": "A tale",
+   "link": "https://www.signingsavvy.com/search/story",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "stuck": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Stuck",
+   "meaning": "Unable to move",
+   "link": "https://www.signingsavvy.com/search/stuck",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "sun": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Sun",
+   "meaning": "The star that lights the day",
+   "link": "https://www.signingsavvy.com/search/sun",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "table": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Table",
+   "meaning": "Furniture with a flat top",
+   "link": "https://www.signingsavvy.com/search/table",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "talk": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Talk",
+   "meaning": "To speak with someone",
+   "link": "https://www.signingsavvy.com/search/talk",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "taste": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Taste",
+   "meaning": "To notice flavor with your tongue",
+   "link": "https://www.signingsavvy.com/search/taste",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "thankyou": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Thank you",
+   "meaning": "Words of thanks",
+   "link": "https://www.signingsavvy.com/search/thank%20you",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "that": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "That",
+   "meaning": "Pointing to a specific thing",
+   "link": "https://www.signingsavvy.com/search/that",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "there": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "There",
+   "meaning": "In that place",
+   "link": "https://www.signingsavvy.com/search/there",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "think": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Think",
+   "meaning": "To use your mind",
+   "link": "https://www.signingsavvy.com/search/think",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "thirsty": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Thirsty",
+   "meaning": "Wanting something to drink",
+   "link": "https://www.signingsavvy.com/search/thirsty",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "tiger": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Tiger",
+   "meaning": "A big striped wild cat",
+   "link": "https://www.signingsavvy.com/search/tiger",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "time": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Time",
+   "meaning": "What a clock shows",
+   "link": "https://www.signingsavvy.com/search/time",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "tomorrow": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Tomorrow",
+   "meaning": "The day after today",
+   "link": "https://www.signingsavvy.com/search/tomorrow",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "tongue": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Tongue",
+   "meaning": "The muscle in your mouth used for tasting",
+   "link": "https://www.signingsavvy.com/search/tongue",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "tooth": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Tooth",
+   "meaning": "One of the hard white parts in your mouth",
+   "link": "https://www.signingsavvy.com/search/tooth",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "toothbrush": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Toothbrush",
+   "meaning": "A brush for cleaning teeth",
+   "link": "https://www.signingsavvy.com/search/toothbrush",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "touch": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Touch",
+   "meaning": "To feel with your hand",
+   "link": "https://www.signingsavvy.com/search/touch",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "toy": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Toy",
+   "meaning": "Something to play with",
+   "link": "https://www.signingsavvy.com/search/toy",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "tree": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Tree",
+   "meaning": "A tall plant with a trunk",
+   "link": "https://www.signingsavvy.com/search/tree",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "TV": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "TV",
+   "meaning": "Television",
+   "link": "https://www.signingsavvy.com/search/tv",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "uncle": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Uncle",
+   "meaning": "Your parent's brother",
+   "link": "https://www.signingsavvy.com/search/uncle",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "underwear": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Underwear",
+   "meaning": "Clothes worn under other clothes",
+   "link": "https://www.signingsavvy.com/search/underwear",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "up": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Up",
+   "meaning": "Toward a higher place",
+   "link": "https://www.signingsavvy.com/search/up",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "vacuum": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Vacuum",
+   "meaning": "A machine that sucks up dirt",
+   "link": "https://www.signingsavvy.com/search/vacuum",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "wait": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Wait",
+   "meaning": "To stay until something happens",
+   "link": "https://www.signingsavvy.com/search/wait",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "wake": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Wake (up)",
+   "meaning": "To stop sleeping",
+   "link": "https://www.signingsavvy.com/search/wake",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "water": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Water",
+   "meaning": "Clear liquid you drink",
+   "link": "https://www.signingsavvy.com/search/water",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "wet": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Wet",
+   "meaning": "Covered in water",
+   "link": "https://www.signingsavvy.com/search/wet",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "weus": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "We / us",
+   "meaning": "You and me together",
+   "link": "https://www.signingsavvy.com/search/we",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "where": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Where",
+   "meaning": "Asking about a place",
+   "link": "https://www.signingsavvy.com/search/where",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "white": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "White",
+   "meaning": "The color of snow",
+   "link": "https://www.signingsavvy.com/search/white",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "who": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Who",
+   "meaning": "Asking about a person",
+   "link": "https://www.signingsavvy.com/search/who",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "why": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Why",
+   "meaning": "Asking for a reason",
+   "link": "https://www.signingsavvy.com/search/why",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "will": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Will",
+   "meaning": "Going to, in the future",
+   "link": "https://www.signingsavvy.com/search/will",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "wolf": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Wolf",
+   "meaning": "A wild animal like a large dog",
+   "link": "https://www.signingsavvy.com/search/wolf",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "yellow": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Yellow",
+   "meaning": "The color of a banana",
+   "link": "https://www.signingsavvy.com/search/yellow",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "yes": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Yes",
+   "meaning": "Not no",
+   "link": "https://www.signingsavvy.com/search/yes",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": true
   },
   "yesterday": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Yesterday",
+   "meaning": "The day before today",
+   "link": "https://www.signingsavvy.com/search/yesterday",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "yourself": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Yourself",
+   "meaning": "You, referring back to you",
+   "link": "https://www.signingsavvy.com/search/yourself",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "yucky": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Yucky",
+   "meaning": "Gross; disgusting",
+   "link": "https://www.signingsavvy.com/search/yucky",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "zebra": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Zebra",
+   "meaning": "A striped animal like a horse",
+   "link": "https://www.signingsavvy.com/search/zebra",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   },
   "zipper": {
-   "display": null,
-   "meaning": null,
-   "link": null,
+   "display": "Zipper",
+   "meaning": "A fastener with teeth on clothing",
+   "link": "https://www.signingsavvy.com/search/zipper",
    "clip": null,
-   "clip_captions": null
+   "clip_captions": null,
+   "practice": false
   }
  }
 }

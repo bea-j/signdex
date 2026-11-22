@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test",
     "test": "vitest run",
-    "test:parity": "vitest run test/parity.test.ts"
+    "test:parity": "vitest run test/parity.test.ts",
+    "dictionary": "node scripts/build-dictionary.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

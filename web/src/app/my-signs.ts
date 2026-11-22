@@ -1,5 +1,5 @@
 // "My signs" screen and the header count.
-import { entry, loadReferenceData } from './engine'
+import { entry, loadReferenceData, signerLink } from './engine'
 import { onEnter } from './router'
 import { savedSigns } from './saved'
 
@@ -21,6 +21,7 @@ function render() {
   list.innerHTML = ''
   for (const label of items) {
     const e = entry(label)
+    const link = signerLink(e)
     const li = document.createElement('li')
     li.className = 'saved-item glass-panel'
     li.innerHTML = `
@@ -29,7 +30,7 @@ function render() {
         ${e.meaning ? `<p class="meaning">${esc(e.meaning)}</p>` : ''}
       </div>
       <div class="card-actions">
-        <a class="link" href="${esc(e.link!)}" target="_blank" rel="noreferrer" aria-label="See ${esc(e.display!)} in a dictionary (opens in a new tab)">See sign <svg class="icon-sm" aria-hidden="true"><use href="#i-external"/></svg></a>
+        <a class="link" href="${esc(link.href)}" target="_blank" rel="noreferrer" aria-label="${esc(link.aria)}">Watch a real signer <svg class="icon-sm" aria-hidden="true"><use href="#i-external"/></svg></a>
         <button class="link" type="button" aria-label="Remove ${esc(e.display!)} from My signs">Remove</button>
       </div>`
     li.querySelector('button')!.addEventListener('click', () => savedSigns.toggle(label))

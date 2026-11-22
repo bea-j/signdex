@@ -1,6 +1,6 @@
 // Results screen: the user's clip on a loop, and the top 5 as result cards.
 import { LOW_CONFIDENCE, type SignMatch } from '../model'
-import { entry, similarTo } from './engine'
+import { entry, signerLink, similarTo } from './engine'
 import { savedSigns } from './saved'
 
 export interface ResultView {
@@ -86,6 +86,7 @@ function card(m: SignMatch, rank: number, unsure: boolean): HTMLElement {
   const pct = Math.round(m.confidence * 1000) / 10
   const pctText = pct >= 10 ? pct.toFixed(0) : pct.toFixed(1)
   const sims = similarTo(m.label)
+  const link = signerLink(e)
   const el = document.createElement('article')
   el.className = `result-card glass-panel ${rank === 1 ? 'first' : ''}`
   el.setAttribute('aria-label', `Match ${rank}: ${e.display}, ${pctText} percent`)
@@ -112,7 +113,7 @@ function card(m: SignMatch, rank: number, unsure: boolean): HTMLElement {
           }</div>
           <div class="card-actions">
             ${e.clip ? `<button class="link" type="button" data-example aria-expanded="false">${icon('play')} Example</button>` : ''}
-            <a class="link" href="${esc(e.link!)}" target="_blank" rel="noreferrer" aria-label="See ${esc(e.display!)} in a dictionary (opens in a new tab)">See this sign ${icon('external')}</a>
+            <a class="link" href="${esc(link.href)}" target="_blank" rel="noreferrer" aria-label="${esc(link.aria)}">Watch a real signer ${icon('external')}</a>
             <button class="save" type="button" aria-pressed="false">${icon('bookmark')} <span>Save</span></button>
           </div>
         </div>

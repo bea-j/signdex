@@ -56,6 +56,17 @@ export function entry(label: string): DictionaryEntry {
   }
 }
 
+/** "Watch a real signer" link: visible text plus an accessible label naming the site. */
+export function signerLink(e: DictionaryEntry): { href: string; aria: string } {
+  let site = 'a dictionary'
+  try {
+    site = new URL(e.link!, location.href).host.replace(/^www\./, '')
+  } catch {
+    /* keep the generic name */
+  }
+  return { href: e.link!, aria: `Watch a real signer sign ${e.display} on ${site} (opens in a new tab)` }
+}
+
 /** Signs most often confused with this one (from the validation set), as display names. */
 export function similarTo(label: string, k = 3): { label: string; display: string }[] {
   return (similar[label] ?? [])
