@@ -9,6 +9,8 @@ import { savedSigns } from './saved'
 
 export const QUIZ_URL = 'https://asl-tutor-api.ph105.workers.dev/'
 const MIN_SIGNS = 4
+/** The Worker takes 2 to 15 signs (it slices anything over 15); we send the 15 most recently saved. */
+const MAX_WORKER_SIGNS = 15
 const MAX_LOCAL_QUESTIONS = 10
 const TIMEOUT_MS = 25_000
 
@@ -22,12 +24,18 @@ export interface QuizQuestion {
   label?: string
 }
 
-/** Request body for the Worker. Only sign names. (Field name and name style to be confirmed with its owner.) */
-export function workerRequest(displayNames: string[]): unknown {
-  return { savedSigns: displayNames }
+/**
+ * Request body for the Worker (format confirmed by its owner): {"savedWords": [sign names]}, 2 to 15 names
+ * (display names or labels both work). `names` is in save order, oldest first: the 15 most recent are sent.
+ */
+export function workerRequest(names: string[]): { savedWords: string[] } {
+  return { savedWords: names.slice(-MAX_WORKER_SIGNS) }
 }
 
+/** The Worker answered, but with an error or unusable JSON (no offline fallback for this). */
 class QuizServiceError extends Error {}
+/** The Worker could not be reached at all (offline, DNS, timeout): the offline quiz is used. */
+class QuizUnreachableError extends Error {}
 
 /** Validate the Worker's JSON: { questions: [{ targetSign, question, options[], correctIndex, explanation }] }. */
 export function parseQuiz(data: unknown): QuizQuestion[] {
@@ -56,12 +64,17 @@ async function fetchWorkerQuiz(labels: string[]): Promise<QuizQuestion[]> {
   const ctrl = new AbortController()
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS)
   try {
-    const r = await fetch(QUIZ_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(workerRequest(labels.map((l) => entry(l).display!))),
-      signal: ctrl.signal,
-    })
+    let r: Response
+    try {
+      r = await fetch(QUIZ_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(workerRequest(labels.map((l) => entry(l).display!))),
+        signal: ctrl.signal,
+      })
+    } catch (e) {
+      throw new QuizUnreachableError((e as Error).name === 'AbortError' ? 'timed out' : (e as Error).message)
+    }
     let data: unknown
     try {
       data = await r.json()
@@ -134,10 +147,12 @@ function updateStart() {
   $('quiz-hint').textContent =
     n < MIN_SIGNS
       ? `Save at least ${MIN_SIGNS} signs to start a quiz (${n} saved).`
-      : `Multiple choice on your ${n} saved signs.`
+      : n > MAX_WORKER_SIGNS
+        ? `Multiple choice on your ${MAX_WORKER_SIGNS} most recently saved signs.`
+        : `Multiple choice on your ${n} saved signs.`
 }
 
-function view(state: 'loading' | 'question' | 'summary') {
+function view(state: 'loading' | 'question' | 'summary' | 'error') {
   $('quiz-loading').hidden = state !== 'loading'
   $('quiz-q').hidden = state !== 'question'
   $('quiz-summary').hidden = state !== 'summary'
@@ -167,8 +182,14 @@ export async function startQuiz() {
   } catch (e) {
     if (my !== run) return
     console.warn('quiz service failed:', e)
-    $('quiz-error-text').textContent = 'We couldn’t get questions from the quiz service, so here is an offline quiz built from look-alike signs.'
     $('quiz-error').hidden = false
+    if (!(e instanceof QuizUnreachableError)) {
+      // reachable but broken: say so, offer Try again (no offline quiz in this case)
+      $('quiz-error-text').textContent = 'The quiz service had a problem making your questions. Please try again in a moment.'
+      view('error')
+      return
+    }
+    $('quiz-error-text').textContent = 'We couldn’t reach the quiz service, so here is an offline quiz built from look-alike signs.'
     questions = await localQuiz(saved)
     if (my !== run) return
     $('quiz-source').textContent = 'Offline quiz'
