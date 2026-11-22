@@ -2,6 +2,8 @@
 import { LOW_CONFIDENCE, type SignMatch } from '../model'
 import { entry, signerLink, similarTo } from './engine'
 import { savedSigns } from './saved'
+import { referenceClip } from '../reference'
+import { prefersReducedMotion, SkeletonPlayer } from '../ui/skeleton'
 
 const HIGH = 0.6
 
@@ -31,6 +33,9 @@ function card(m: SignMatch, rank: number, unsure: boolean, subs: (() => void)[])
   el.innerHTML = `
     <div class="card-row">
       <span class="rank" aria-hidden="true">${rank}</span>
+      <button class="ref" type="button" hidden aria-pressed="false"
+        aria-label="Play a reference signer's movement for ${esc(e.display!)}"
+        title="Reference: a PopSign ASL signer (CC BY 4.0), as landmarks"><canvas aria-hidden="true"></canvas></button>
       <div class="card-main">
         <div class="card-top">
           <div>
@@ -69,6 +74,34 @@ function card(m: SignMatch, rank: number, unsure: boolean, subs: (() => void)[])
   sync()
   save.addEventListener('click', () => savedSigns.toggle(m.label))
   subs.push(savedSigns.onChange(sync))
+
+  // reference animation (skeleton of a PopSign training signer): the top card loops, the others play on hover/tap
+  const refBtn = el.querySelector<HTMLButtonElement>('.ref')!
+  void referenceClip(m.label).then((clip) => {
+    if (!clip || !el.isConnected) return
+    refBtn.hidden = false
+    const player = new SkeletonPlayer(refBtn.querySelector('canvas')!, clip)
+    subs.push(() => player.pause())
+    let pinned = rank === 1 && !prefersReducedMotion()
+    const sync = () => refBtn.setAttribute('aria-pressed', String(player.isPlaying))
+    if (pinned) player.play()
+    else player.still()
+    sync()
+    el.addEventListener('pointerenter', (ev) => {
+      if (ev.pointerType === 'mouse' && !player.isPlaying) player.play(0)
+      sync()
+    })
+    el.addEventListener('pointerleave', (ev) => {
+      if (ev.pointerType === 'mouse' && !pinned) player.still()
+      sync()
+    })
+    refBtn.addEventListener('click', () => {
+      pinned = !pinned
+      if (pinned) player.play(0)
+      else player.still()
+      sync()
+    })
+  })
 
   // example clip from dictionary.json, loaded only when asked for
   const exBtn = el.querySelector<HTMLButtonElement>('[data-example]')

@@ -58,25 +58,26 @@
             <p class="privacy"><svg class="icon-sm" aria-hidden="true"><use href="#i-lock" /></svg> Runs in your browser. Your video never leaves your device.</p>
           </div>
 
-          <figure class="mock" aria-label="Illustration: the Signdex side panel showing a best match" style="margin: 0 auto">
+          <figure class="mock" aria-label="Demo: Signdex tracking a signer's hands and showing the closest match" style="margin: 0 auto">
             <div class="mock-glow" aria-hidden="true"></div>
             <div class="mock-panel" aria-hidden="true">
               <div class="mock-bar">
                 <div class="traffic"><span></span><span></span><span></span></div>
                 <span class="mock-title">Signdex panel</span>
               </div>
-              <div class="figure">
-                <span class="bg"></span><span class="head"></span><span class="body"></span><span class="hand-l"></span><span class="hand-r"></span>
+              <div class="figure" id="demo-stage">
+                <span class="bg"></span>
+                <canvas class="demo-canvas" id="demo-canvas"></canvas><span class="head"></span><span class="body"></span><span class="hand-l"></span><span class="hand-r"></span>
                 <span class="focus"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i></span>
-                <span class="live-badge"><span class="dot"></span>Tracking hands and body</span>
+                <span class="live-badge" id="demo-badge"><span class="dot"></span><span id="demo-badge-text">Tracking hands and body</span></span>
                 <span class="play"><svg class="icon" style="margin-left: 2px; width: 24px; height: 24px"><use href="#i-play" /></svg></span>
               </div>
               <div class="mock-match">
                 <div class="row">
-                  <div><p class="small">Best match</p><p class="big">Thank you</p></div>
-                  <span class="match-pill">82% match</span>
+                  <div><p class="small">Best match</p><p class="big" id="demo-name">Thank you</p></div>
+                  <span class="match-pill" id="demo-pill">82% match</span>
                 </div>
-                <div class="bar conf-high"><span style="width: 82%; box-shadow: 0 0 12px rgb(83 148 111 / 35%)"></span></div>
+                <div class="bar conf-high" id="demo-barwrap"><span id="demo-bar" style="width: 82%; box-shadow: 0 0 12px rgb(83 148 111 / 35%)"></span></div>
               </div>
               <p class="mock-hint">Alt + Shift + S captures the last few seconds</p>
             </div>
@@ -230,7 +231,7 @@
 
     <footer class="site-footer">
       <div class="wrap">
-        <p>Built with PopSign ASL v1.0 (CC BY 4.0) and Google’s <a href="https://www.kaggle.com/competitions/asl-signs" target="_blank" rel="noreferrer">Isolated Sign Language Recognition</a> dataset.</p>
+        <p>Sign data and reference animations: PopSign ASL v1.0, licensed <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>, via Google’s <a href="https://www.kaggle.com/competitions/asl-signs" target="_blank" rel="noreferrer">Isolated Sign Language Recognition</a> dataset. Animations show tracked landmarks of PopSign signers.</p>
         <p>250 common signs • On-device analysis • <a href="./debug.html">Landmark debug</a></p>
       </div>
     </footer>

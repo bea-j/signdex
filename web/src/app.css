@@ -622,3 +622,25 @@ kbd {
 .tone-ok { background: var(--conf-high); }
 .tone-off { background: #59605a; }
 @media (max-width: 639px) { .stats { grid-template-columns: 1fr 1fr; } .details { padding: 12px; } }
+
+/* ------------------------------------------------------------------ reference animation in result cards */
+:root { --ref-hand: #cfe0d1; --ref-hand-2: #dbc99f; --ref-pose: rgb(184 188 179 / 55%); --ref-lips: rgb(200 197 212 / 55%); }
+.ref {
+  flex: none; width: 76px; height: 76px; padding: 0; overflow: hidden; border-radius: var(--radius-lg);
+  border: 1px solid #4a544b; background: radial-gradient(circle at 50% 30%, #3b423d 0%, #232825 60%, #1a1e1b 100%);
+}
+.ref canvas { display: block; width: 100%; height: 100%; }
+.ref[aria-pressed='true'] { border-color: #91ad96; box-shadow: 0 0 14px rgb(127 161 134 / 18%); }
+.ref:hover { border-color: #8ea293; }
+.side-panel .ref { width: 60px; height: 60px; }
+@media (max-width: 639px) { .ref { width: 64px; height: 64px; } }
+
+/* ------------------------------------------------------------------ home demo (hero panel) */
+.figure .demo-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: none; }
+.figure.has-demo .demo-canvas { display: block; }
+.figure.has-demo > .head, .figure.has-demo > .body, .figure.has-demo > .hand-l, .figure.has-demo > .hand-r,
+.figure.has-demo > .focus, .figure.has-demo > .play { display: none; }
+#demo-bar { transition: width 700ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+#demo-name { transition: opacity 250ms; }
+#demo-name.pending { opacity: 0.4; }
+@media (prefers-reduced-motion: reduce) { #demo-bar, #demo-name { transition: none; } }

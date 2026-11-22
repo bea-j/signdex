@@ -18,3 +18,5 @@ extension/public/model/
 extension/public/dictionary.json
 extension/public/brand/
 extension/public/ambient/
+web/public/reference/
+extension/public/reference/

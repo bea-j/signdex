@@ -2,6 +2,7 @@
 //   model/{model.onnx, labels.json, similar.json}  (web/public/model, filled by web/scripts/copy-model.mjs)
 //   dictionary.json                                  (web/public, from demo/dictionary.csv)
 //   brand/signdex-logo.png, ambient/ambient-main.png (the design's logo and background)
+//   reference/signs.bin                              (reference animations, from model/reference.py)
 // The copies are gitignored; the web app's files are the source of truth.
 import { cp, mkdir, stat } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -18,6 +19,7 @@ const FILES = [
   'brand/signdex-logo.png',
   'brand/favicon.svg',
   'ambient/ambient-main.png',
+  'reference/signs.bin', // reference animations in the result cards (model/reference.py)
 ]
 
 let missing = 0
